@@ -1,6 +1,14 @@
 <script lang="ts">
 	import '../app.css';
-	let { children } = $props();
+	import type { PageData } from "./$types";
+
+	let { children, data } = $props();
 </script>
 
-{@render children()}
+<svelte:head>
+	<title>{data.title}</title>
+</svelte:head>
+
+<div class="min-w-screen min-h-screen bg-slate-900 text-slate-100 flex align-middle justify-center items-center">
+	{@render children()}
+</div>
