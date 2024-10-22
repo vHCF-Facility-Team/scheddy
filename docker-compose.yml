@@ -9,3 +9,7 @@ services:
       MYSQL_PASSWORD: ztl
       MYSQL_ROOT_PASSWORD: ztl2
       MYSQL_DATABASE: scheddy
+    volumes:
+      - ztl-scheddy-data:/var/lib/mysql
+volumes:
+  ztl-scheddy-data:

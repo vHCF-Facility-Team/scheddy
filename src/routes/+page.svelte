@@ -12,6 +12,7 @@
 </script>
 
 <Card>
+	<p class="font-bold text-red-500">Internal Development Release - DO NOT SHARE</p>
 	<h1 class="font-bold text-2xl text-center">{PUBLIC_FACILITY_NAME} - Scheddy</h1>
 
 	<Button href="{PUBLIC_VATSIM_OAUTH_BASE}/oauth/authorize?response_type=code&client_id={PUBLIC_VATSIM_OAUTH_CLIENT_ID}&redirect_uri={PUBLIC_VATSIM_OAUTH_REDIRECT_URL}">
