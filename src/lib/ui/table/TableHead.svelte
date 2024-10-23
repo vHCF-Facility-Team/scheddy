@@ -11,7 +11,7 @@
 	let { children, class: className = "", ...rest }: Props = $props();
 </script>
 
-<thead class={cn("text-xs uppercase bg-gray-700 text-gray-400", className)} {...rest}>
+<thead class={cn("text-xs uppercase bg-slate-700 text-slate-400", className)} {...rest}>
 <tr>
 	{@render children()}
 </tr>

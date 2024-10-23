@@ -7,21 +7,34 @@
 	import TableBody from '$lib/ui/table/TableBody.svelte';
 	import TableRow from '$lib/ui/table/TableRow.svelte';
 	import TableColumn from '$lib/ui/table/TableColumn.svelte';
+	import Button from '$lib/ui/Button.svelte';
+	import { EditIcon, PlusIcon, TrashIcon } from 'lucide-svelte';
+	import Modal from '$lib/ui/Modal.svelte';
 	interface Props {
 		data: PageData
 	}
 	let { data }: Props = $props();
+
+	let createOpen = $state(false);
 </script>
 
-	<i class="ml-1">ATMs, DATMs, WMs, and TAs will not appear on this list, as their access is granted automatically by their VATUSA role.</i>
+<i class="ml-1">ATMs, DATMs, WMs, and TAs will not appear on this list, as their access is granted automatically by their VATUSA role.</i>
 
-	<div class="relative overflow-x-auto shadow-md rounded mt-2">
+<div class="relative overflow-x-auto shadow-md rounded mt-2">
 	<TableRoot>
 		<TableHead>
 			<TableHeadColumn>User</TableHeadColumn>
 			<TableHeadColumn>Role Override</TableHeadColumn>
 			<TableHeadColumn>VATUSA Role</TableHeadColumn>
-			<TableHeadColumn>Actions</TableHeadColumn>
+			<TableHeadColumn>
+				<div class="flex flex-row align-middle justify-between items-center">
+					<span>Actions</span>
+					<Button onclick={() => {createOpen = true;}} variant="tableCreateAction">
+						<PlusIcon class="w-4 h-4 mr-2" />
+						Add
+					</Button>
+				</div>
+			</TableHeadColumn>
 		</TableHead>
 		<TableBody>
 			{#each data.users as user}
@@ -43,10 +56,19 @@
 						<TableColumn>Unknown?</TableColumn>
 					{/if}
 					<TableColumn>
-						Remove
+						<Button size="icon">
+							<EditIcon class="w-4 h-4" />
+						</Button>
+						<Button variant="danger" size="icon">
+							<TrashIcon class="w-4 h-4" />
+						</Button>
 					</TableColumn>
 				</TableRow>
 			{/each}
 		</TableBody>
 	</TableRoot>
-	</div>
+</div>
+
+<Modal onclose={() => {createOpen = false;}} bind:open={createOpen}>
+	<p>test</p>
+</Modal>

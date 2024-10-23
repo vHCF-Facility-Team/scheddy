@@ -1,9 +1,10 @@
 <script lang="ts">
 	import type { PageData } from "./$types";
 	import { PUBLIC_FACILITY_NAME } from "$env/static/public";
-	import { CalendarIcon, LibraryIcon, UsersIcon } from 'lucide-svelte';
+	import { CalendarClockIcon, CalendarIcon, CalendarPlusIcon, LibraryIcon, LogOutIcon, UsersIcon } from 'lucide-svelte';
 	import type { Snippet } from 'svelte';
 	import { page } from '$app/stores';
+	import { goto, invalidateAll } from '$app/navigation';
 
 	interface Props {
 		data: PageData,
@@ -12,10 +13,18 @@
 	let { data, children }: Props = $props();
 
 	let pages = [
-		{ path: "/dash", name: "Calendar", icon: CalendarIcon },
-		{ path: "/dash/users", name: "Users", icon: UsersIcon },
-		{ path: "/dash/types", name: "Session Types", icon: LibraryIcon }
-	]
+		{ path: "/dash", name: "Facility Calendar", icon: CalendarIcon },
+		{ path: "/my", name: "My Schedule", icon: CalendarClockIcon },
+		{ path: "/dash/types", name: "Session Management", icon: LibraryIcon },
+		{ path: "/dash/users", name: "User Management", icon: UsersIcon },
+		{ path: "/schedule", name: "Book Session", icon: CalendarPlusIcon }
+	];
+
+	function logout() {
+		document.cookie = "scheddy_token=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/;"
+		invalidateAll();
+		goto("/");
+	}
 </script>
 
 <div class="flex flex-col">
@@ -34,6 +43,10 @@
 					<span>{p.name}</span>
 				</a>
 			{/each}
+			<button onclick={logout} class="flex flex-row min-w-64 px-4 py-3 rounded hover:text-slate-300 transition justify-start items-start text-left hover:cursor-pointer">
+				<LogOutIcon class="w-5 mr-2 font-medium" />
+				<span>Log out</span>
+			</button>
 		</div>
 		<div class="flex-1 px-8 py-4">
 			{@render children()}

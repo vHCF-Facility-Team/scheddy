@@ -12,6 +12,6 @@
 </script>
 
 
-	<table class={cn("w-full txt-sm text-left rtl:text-right text-gray-400", className)} {...rest}>
+	<table class={cn("w-full txt-sm text-left rtl:text-right text-slate-400", className)} {...rest}>
 		{@render children()}
 	</table>
