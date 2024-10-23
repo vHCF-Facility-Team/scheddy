@@ -8,14 +8,36 @@
 	import TableRow from '$lib/ui/table/TableRow.svelte';
 	import TableColumn from '$lib/ui/table/TableColumn.svelte';
 	import Button from '$lib/ui/Button.svelte';
-	import { EditIcon, PlusIcon, TrashIcon } from 'lucide-svelte';
-	import Modal from '$lib/ui/Modal.svelte';
+	import { CogIcon, EditIcon, PlusIcon, TrashIcon } from 'lucide-svelte';
+	import Modal from '$lib/ui/modal/Modal.svelte';
+	import ModalHeader from '$lib/ui/modal/ModalHeader.svelte';
+	import ModalBody from '$lib/ui/modal/ModalBody.svelte';
+	import ModalFooter from '$lib/ui/modal/ModalFooter.svelte';
+	import CreateForm from './CreateForm.svelte';
+	import { invalidateAll } from '$app/navigation';
 	interface Props {
 		data: PageData
 	}
 	let { data }: Props = $props();
 
 	let createOpen = $state(false);
+	let deleteOpen = $state(false);
+	let deleteUser: string | null = $state(null);
+	async function del() {
+		if (!deleteUser) return;
+		let params = new URLSearchParams();
+		params.set("id", deleteUser);
+		await fetch("?/remove", {
+			method: 'POST',
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded"
+			},
+			body: params.toString()
+		});
+		await invalidateAll();
+		deleteOpen = false;
+		deleteUser = null;
+	}
 </script>
 
 <i class="ml-1">ATMs, DATMs, WMs, and TAs will not appear on this list, as their access is granted automatically by their VATUSA role.</i>
@@ -31,7 +53,7 @@
 					<span>Actions</span>
 					<Button onclick={() => {createOpen = true;}} variant="tableCreateAction">
 						<PlusIcon class="w-4 h-4 mr-2" />
-						Add
+						Add/Update
 					</Button>
 				</div>
 			</TableHeadColumn>
@@ -56,10 +78,10 @@
 						<TableColumn>Unknown?</TableColumn>
 					{/if}
 					<TableColumn>
-						<Button size="icon">
-							<EditIcon class="w-4 h-4" />
-						</Button>
-						<Button variant="danger" size="icon">
+						<Button onclick={() => {
+							deleteUser = user.id;
+							deleteOpen = true;
+						}} variant="danger" size="icon">
 							<TrashIcon class="w-4 h-4" />
 						</Button>
 					</TableColumn>
@@ -70,5 +92,23 @@
 </div>
 
 <Modal onclose={() => {createOpen = false;}} bind:open={createOpen}>
-	<p>test</p>
+	<ModalHeader onclose={() => {createOpen = false;}} title="Set role override" />
+	<ModalBody>
+		<CreateForm onsuccess={() => {createOpen = false;}} oncancel={() => {createOpen = false;}} data={data.createForm} />
+	</ModalBody>
+</Modal>
+
+<Modal onclose={() => {deleteOpen = false;}} bind:open={deleteOpen}>
+	<ModalHeader onclose={() => {deleteOpen = false;}} title="Confirm override removal" />
+	<ModalBody>
+		<div class="px-4">
+			<p>The user's permissions will be reset to their VATUSA role.</p>
+		</div>
+	</ModalBody>
+	<ModalFooter>
+		<Button onclick={() => {deleteOpen = false;}} variant="ghost" size="sm">Cancel</Button>
+		<Button onclick={del} variant="danger" size="sm">
+			Remove
+		</Button>
+	</ModalFooter>
 </Modal>

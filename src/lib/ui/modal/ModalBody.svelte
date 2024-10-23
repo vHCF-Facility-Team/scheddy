@@ -3,8 +3,10 @@
 
 	interface Props {
 		children: Snippet,
-		open: boolean,
-		onclose: () => void,
 	}
-	let { children, open = $bindable(), onclose }: Props = $props();
+	let { children }: Props = $props();
 </script>
+
+<div>
+	{@render children()}
+</div>
