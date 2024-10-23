@@ -29,7 +29,7 @@
 	<div class="flex min-h-[calc(100vh-3.5rem)] h-[calc(100vh-3.5rem)] flex-row flex-1">
 		<div class="flex flex-col bg-slate-700 px-3 py-4 text-md">
 			{#each pages as p}
-				<a href={p.path} class:bg-slate-600={$page.url.pathname.startsWith(p.path)} class="flex flex-row min-w-64 px-4 py-3 rounded hover:text-slate-300 transition justify-start items-start text-left hover:cursor-pointer">
+				<a href={p.path} class:bg-slate-600={$page.url.pathname === p.path} class="flex flex-row min-w-64 px-4 py-3 rounded hover:text-slate-300 transition justify-start items-start text-left hover:cursor-pointer">
 					<p.icon class="w-5 mr-2 font-medium" />
 					<span>{p.name}</span>
 				</a>
