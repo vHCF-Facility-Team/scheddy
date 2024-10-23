@@ -57,7 +57,7 @@ export const actions: Actions = {
 			return fail(403);
 		}
 
-		let uid = Number.parseInt((await event.request.formData()).get("id")!.toString());
+		const uid = Number.parseInt((await event.request.formData()).get("id")!.toString());
 
 		await db.update(users)
 			.set({ roleOverride: 0 })

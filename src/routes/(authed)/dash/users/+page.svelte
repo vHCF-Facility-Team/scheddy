@@ -8,7 +8,7 @@
 	import TableRow from '$lib/ui/table/TableRow.svelte';
 	import TableColumn from '$lib/ui/table/TableColumn.svelte';
 	import Button from '$lib/ui/Button.svelte';
-	import { CogIcon, EditIcon, PlusIcon, TrashIcon } from 'lucide-svelte';
+	import { PlusIcon, TrashIcon } from 'lucide-svelte';
 	import Modal from '$lib/ui/modal/Modal.svelte';
 	import ModalHeader from '$lib/ui/modal/ModalHeader.svelte';
 	import ModalBody from '$lib/ui/modal/ModalBody.svelte';

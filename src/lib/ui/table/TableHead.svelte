@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { ClassValue } from 'clsx';
-	import type { HTMLAttributes } from 'svelte/elements';
 	import { cn } from '$lib/utils';
 
 	interface Props {
