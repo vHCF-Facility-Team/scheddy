@@ -4,22 +4,27 @@ import { db } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 
 export interface UserData {
-	user: typeof users.$inferSelect,
-	userToken: typeof userTokens.$inferSelect
+	user: typeof users.$inferSelect;
+	userToken: typeof userTokens.$inferSelect;
 }
 
 function condFail(a: boolean): null {
 	if (a) return null;
-	redirect(307, "/");
+	redirect(307, '/');
 }
 
-export async function loadUserData(cookies: Cookies, allowLoggedOut = false): Promise<UserData | null> {
-	const token = cookies.get("scheddy_token");
+export async function loadUserData(
+	cookies: Cookies,
+	allowLoggedOut = false
+): Promise<UserData | null> {
+	const token = cookies.get('scheddy_token');
 	if (!token) {
 		return condFail(allowLoggedOut);
 	}
 
-	const returnedUsers = await db.select().from(userTokens)
+	const returnedUsers = await db
+		.select()
+		.from(userTokens)
 		.leftJoin(users, eq(userTokens.user, users.id))
 		.where(eq(userTokens.id, token));
 
@@ -39,5 +44,5 @@ export async function loadUserData(cookies: Cookies, allowLoggedOut = false): Pr
 	return {
 		user: userAndToken.user,
 		userToken: userAndToken.userToken
-	}
+	};
 }

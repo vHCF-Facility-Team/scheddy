@@ -1,11 +1,11 @@
 <script lang="ts">
 	import '../app.css';
-	import type { PageData } from "./$types";
+	import type { PageData } from './$types';
 	import type { Snippet } from 'svelte';
 
 	interface Props {
-		children: Snippet,
-		data: PageData
+		children: Snippet;
+		data: PageData;
 	}
 	let { children, data }: Props = $props();
 </script>

@@ -2,8 +2,8 @@
 	import { XIcon } from 'lucide-svelte';
 
 	interface Props {
-		title: string,
-		onclose: () => void,
+		title: string;
+		onclose: () => void;
 	}
 	let { title, onclose }: Props = $props();
 </script>

@@ -2,13 +2,13 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-@import "$lib/inter/web/inter.css";
+@import '$lib/inter/web/inter.css';
 :root {
-    font-family: "Inter", sans-serif;
+	font-family: 'Inter', sans-serif;
 }
 @supports (font-variation-settings: normal) {
-    :root {
-        font-family: "InterVariable", sans-serif;
-        font-optical-sizing: auto;
-    }
+	:root {
+		font-family: 'InterVariable', sans-serif;
+		font-optical-sizing: auto;
+	}
 }

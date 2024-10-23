@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PageData } from "./$types";
+	import type { PageData } from './$types';
 	import { roleString } from '$lib/utils';
 	import TableRoot from '$lib/ui/table/TableRoot.svelte';
 	import TableHead from '$lib/ui/table/TableHead.svelte';
@@ -16,7 +16,7 @@
 	import CreateForm from './CreateForm.svelte';
 	import { invalidateAll } from '$app/navigation';
 	interface Props {
-		data: PageData
+		data: PageData;
 	}
 	let { data }: Props = $props();
 
@@ -26,11 +26,11 @@
 	async function del() {
 		if (!deleteUser) return;
 		let params = new URLSearchParams();
-		params.set("id", deleteUser);
-		await fetch("?/remove", {
+		params.set('id', deleteUser);
+		await fetch('?/remove', {
 			method: 'POST',
 			headers: {
-				"Content-Type": "application/x-www-form-urlencoded"
+				'Content-Type': 'application/x-www-form-urlencoded'
 			},
 			body: params.toString()
 		});
@@ -40,7 +40,10 @@
 	}
 </script>
 
-<i class="ml-1">ATMs, DATMs, WMs, and TAs will not appear on this list, as their access is granted automatically by their VATUSA role.</i>
+<i class="ml-1"
+	>ATMs, DATMs, WMs, and TAs will not appear on this list, as their access is granted automatically
+	by their VATUSA role.</i
+>
 
 <div class="relative overflow-x-auto shadow-md rounded mt-2">
 	<TableRoot>
@@ -51,7 +54,12 @@
 			<TableHeadColumn>
 				<div class="flex flex-row align-middle justify-between items-center">
 					<span>Actions</span>
-					<Button onclick={() => {createOpen = true;}} variant="tableCreateAction">
+					<Button
+						onclick={() => {
+							createOpen = true;
+						}}
+						variant="tableCreateAction"
+					>
 						<PlusIcon class="w-4 h-4 mr-2" />
 						Add/Update
 					</Button>
@@ -78,10 +86,14 @@
 						<TableColumn>Unknown?</TableColumn>
 					{/if}
 					<TableColumn>
-						<Button onclick={() => {
-							deleteUser = user.id;
-							deleteOpen = true;
-						}} variant="danger" size="icon">
+						<Button
+							onclick={() => {
+								deleteUser = user.id;
+								deleteOpen = true;
+							}}
+							variant="danger"
+							size="icon"
+						>
 							<TrashIcon class="w-4 h-4" />
 						</Button>
 					</TableColumn>
@@ -91,24 +103,56 @@
 	</TableRoot>
 </div>
 
-<Modal onclose={() => {createOpen = false;}} bind:open={createOpen}>
-	<ModalHeader onclose={() => {createOpen = false;}} title="Set role override" />
+<Modal
+	onclose={() => {
+		createOpen = false;
+	}}
+	bind:open={createOpen}
+>
+	<ModalHeader
+		onclose={() => {
+			createOpen = false;
+		}}
+		title="Set role override"
+	/>
 	<ModalBody>
-		<CreateForm onsuccess={() => {createOpen = false;}} oncancel={() => {createOpen = false;}} data={data.createForm} />
+		<CreateForm
+			onsuccess={() => {
+				createOpen = false;
+			}}
+			oncancel={() => {
+				createOpen = false;
+			}}
+			data={data.createForm}
+		/>
 	</ModalBody>
 </Modal>
 
-<Modal onclose={() => {deleteOpen = false;}} bind:open={deleteOpen}>
-	<ModalHeader onclose={() => {deleteOpen = false;}} title="Confirm override removal" />
+<Modal
+	onclose={() => {
+		deleteOpen = false;
+	}}
+	bind:open={deleteOpen}
+>
+	<ModalHeader
+		onclose={() => {
+			deleteOpen = false;
+		}}
+		title="Confirm override removal"
+	/>
 	<ModalBody>
 		<div class="px-4">
 			<p>The user's permissions will be reset to their VATUSA role.</p>
 		</div>
 	</ModalBody>
 	<ModalFooter>
-		<Button onclick={() => {deleteOpen = false;}} variant="ghost" size="sm">Cancel</Button>
-		<Button onclick={del} variant="danger" size="sm">
-			Remove
-		</Button>
+		<Button
+			onclick={() => {
+				deleteOpen = false;
+			}}
+			variant="ghost"
+			size="sm">Cancel</Button
+		>
+		<Button onclick={del} variant="danger" size="sm">Remove</Button>
 	</ModalFooter>
 </Modal>

@@ -1,23 +1,28 @@
-import type { PageServerLoad } from "./$types";
+import type { PageServerLoad } from './$types';
 import {
 	PUBLIC_FACILITY_NAME,
 	PUBLIC_VATSIM_OAUTH_BASE,
 	PUBLIC_VATSIM_OAUTH_CLIENT_ID,
 	PUBLIC_VATSIM_OAUTH_REDIRECT_URL
 } from '$env/static/public';
-import { VATSIM_OAUTH_CLIENT_SECRET, VATUSA_API_BASE, VATUSA_FACILITY_ID, VATUSA_API_KEY } from '$env/static/private';
-import { env } from "$env/dynamic/private";
+import {
+	VATSIM_OAUTH_CLIENT_SECRET,
+	VATUSA_API_BASE,
+	VATUSA_FACILITY_ID,
+	VATUSA_API_KEY
+} from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { db } from '$lib/server/db';
 import { userTokens, users } from '$lib/server/db/schema';
 import { nanoid } from 'nanoid';
-import { redirect } from "@sveltejs/kit";
-import { ROLE_DEVELOPER, ROLE_STAFF, ROLE_MENTOR, ROLE_STUDENT } from "$lib/utils";
+import { redirect } from '@sveltejs/kit';
+import { ROLE_DEVELOPER, ROLE_STAFF, ROLE_MENTOR, ROLE_STUDENT } from '$lib/utils';
 
 export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
-	if (url.searchParams.has("error")) {
-		const error_code: string = url.searchParams.get("error")!;
-		const error_description: string = url.searchParams.get("error_description")!;
-		const error_message: string = url.searchParams.get("message")!;
+	if (url.searchParams.has('error')) {
+		const error_code: string = url.searchParams.get('error')!;
+		const error_description: string = url.searchParams.get('error_description')!;
+		const error_message: string = url.searchParams.get('message')!;
 
 		console.log(error_code, error_description, error_message);
 
@@ -26,31 +31,31 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
 			error_code,
 			error_description,
 			error_message
-		}
+		};
 	}
 
-	const code = url.searchParams.get("code");
+	const code = url.searchParams.get('code');
 	if (!code) {
 		return {
 			success: false,
-			error_code: "no_auth_code",
+			error_code: 'no_auth_code',
 			error_description: "No auth code was present in VATSIM's response.",
 			error_message: "No auth code was present in VATSIM's response."
-		}
+		};
 	}
 
 	const request_body = new URLSearchParams();
-	request_body.set("grant_type", "authorization_code");
-	request_body.set("client_id", PUBLIC_VATSIM_OAUTH_CLIENT_ID);
-	request_body.set("client_secret", VATSIM_OAUTH_CLIENT_SECRET);
-	request_body.set("redirect_uri", PUBLIC_VATSIM_OAUTH_REDIRECT_URL);
-	request_body.set("code", code);
-	request_body.set("scope", "");
+	request_body.set('grant_type', 'authorization_code');
+	request_body.set('client_id', PUBLIC_VATSIM_OAUTH_CLIENT_ID);
+	request_body.set('client_secret', VATSIM_OAUTH_CLIENT_SECRET);
+	request_body.set('redirect_uri', PUBLIC_VATSIM_OAUTH_REDIRECT_URL);
+	request_body.set('code', code);
+	request_body.set('scope', '');
 
 	const token_response = await fetch(`${PUBLIC_VATSIM_OAUTH_BASE}/oauth/token`, {
 		method: 'POST',
 		headers: {
-			"Content-Type": "application/x-www-form-urlencoded"
+			'Content-Type': 'application/x-www-form-urlencoded'
 		},
 		body: request_body.toString()
 	});
@@ -58,13 +63,15 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
 	const resp = await token_response.json();
 
 	if (!token_response.ok) {
-		console.log("VATSIM auth failed: " + resp.error + " " + resp.hint + " " + resp.error_description);
+		console.log(
+			'VATSIM auth failed: ' + resp.error + ' ' + resp.hint + ' ' + resp.error_description
+		);
 		return {
 			success: false,
 			error_code: resp.error,
 			error_description: resp.error_description,
 			error_message: resp.hint
-		}
+		};
 	}
 
 	const token = resp.access_token;
@@ -72,9 +79,9 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
 	// get the CID now
 
 	const user_data_resp = await fetch(`${PUBLIC_VATSIM_OAUTH_BASE}/api/user`, {
-		"headers": {
-			"Accept": "application/json",
-			"Authorization": `Bearer ${token}`
+		headers: {
+			Accept: 'application/json',
+			Authorization: `Bearer ${token}`
 		}
 	});
 
@@ -82,10 +89,10 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
 		console.log(`Failed user data resp!`);
 		return {
 			success: false,
-			error_code: "user_data_failed",
-			error_description: "Failed to load user data from VATSIM.",
-			error_message: "Failed to load user data from VATSIM."
-		}
+			error_code: 'user_data_failed',
+			error_description: 'Failed to load user data from VATSIM.',
+			error_message: 'Failed to load user data from VATSIM.'
+		};
 	}
 
 	const user_data_str = await user_data_resp.text();
@@ -101,19 +108,19 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
 	// finally, load the division data from VATUSA
 	const vatusa_user_resp = await fetch(`${VATUSA_API_BASE}/user/${cid}?apikey=${VATUSA_API_KEY}`, {
 		headers: {
-			"Authorization": `Bearer ${VATUSA_API_KEY}`
+			Authorization: `Bearer ${VATUSA_API_KEY}`
 		}
 	});
 
 	if (!vatusa_user_resp.ok) {
-		console.log("Failed VATUSA data resp!");
+		console.log('Failed VATUSA data resp!');
 		console.log(vatusa_user_resp);
 		return {
 			success: false,
-			error_code: "vatusa_data_failed",
-			error_description: "Failed to load user data from VATUSA.",
-			error_message: "Failed to load user data from VATUSA."
-		}
+			error_code: 'vatusa_data_failed',
+			error_description: 'Failed to load user data from VATUSA.',
+			error_message: 'Failed to load user data from VATUSA.'
+		};
 	}
 
 	const vatusa_info = await vatusa_user_resp.json();
@@ -138,11 +145,11 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
 	// INS, MTR: 				ROLE_MENTOR
 	for (const role of vatusa_info.data.roles) {
 		if (role.facility == VATUSA_FACILITY_ID) {
-			if (role.role == "WM") {
+			if (role.role == 'WM') {
 				highest_role = ROLE_DEVELOPER;
-			} else if (role.role == "ATM" || role.role == "DATM" || role.role == "TA") {
+			} else if (role.role == 'ATM' || role.role == 'DATM' || role.role == 'TA') {
 				highest_role = ROLE_STAFF;
-			} else if (role.role == "INS" || role.role == "MTR") {
+			} else if (role.role == 'INS' || role.role == 'MTR') {
 				highest_role = ROLE_MENTOR;
 			}
 		}
@@ -152,13 +159,14 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
 	if (highest_role < ROLE_STUDENT) {
 		return {
 			success: false,
-			error_code: "not_a_student",
+			error_code: 'not_a_student',
 			error_description: `You do not appear to be a student or training staff member of the ${PUBLIC_FACILITY_NAME}. If you believe you are receiving this message in error, please contact your facility staff.`,
 			error_message: `You do not appear to be a student or training staff member of the ${PUBLIC_FACILITY_NAME}. If you believe you are receiving this message in error, please contact your facility staff.`
-		}
+		};
 	}
 
-	await db.insert(users)
+	await db
+		.insert(users)
 		.values({
 			id: cid,
 			firstName: vatusa_info.data.fname,
@@ -182,13 +190,12 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
 		});
 
 	const utoken = nanoid();
-	await db.insert(userTokens)
-		.values({
-			id: utoken,
-			user: cid
-		});
+	await db.insert(userTokens).values({
+		id: utoken,
+		user: cid
+	});
 
-	cookies.set("scheddy_token", utoken, { path: "/", httpOnly: false });
+	cookies.set('scheddy_token', utoken, { path: '/', httpOnly: false });
 
-	redirect(307, "/schedule");
-}
+	redirect(307, '/schedule');
+};

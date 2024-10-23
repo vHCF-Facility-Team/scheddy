@@ -1,16 +1,13 @@
 <script lang="ts">
-	import type { PageData } from "./$types";
-	import Button from "$lib/ui/Button.svelte";
+	import type { PageData } from './$types';
+	import Button from '$lib/ui/Button.svelte';
 	import Card from '$lib/ui/Card.svelte';
 
 	interface Props {
-		data: PageData
+		data: PageData;
 	}
 
-	let {
-		data
-	}: Props = $props();
-
+	let { data }: Props = $props();
 </script>
 
 <p class="font-bold text-red-500">INTERNAL DEVELOPMENT RELEASE - DO NOT DISTRIBUTE</p>

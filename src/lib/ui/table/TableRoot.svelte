@@ -5,13 +5,16 @@
 	import { cn } from '$lib/utils';
 
 	interface Props {
-		children: Snippet,
-		class: ClassValue | ClassValue[]
+		children: Snippet;
+		class: ClassValue | ClassValue[];
 	}
-	let { children, class: className = "", ...rest }: Props & HTMLAttributes<HTMLTableElement> = $props();
+	let {
+		children,
+		class: className = '',
+		...rest
+	}: Props & HTMLAttributes<HTMLTableElement> = $props();
 </script>
 
-
-	<table class={cn("w-full txt-sm text-left rtl:text-right text-slate-400", className)} {...rest}>
-		{@render children()}
-	</table>
+<table class={cn('w-full txt-sm text-left rtl:text-right text-slate-400', className)} {...rest}>
+	{@render children()}
+</table>

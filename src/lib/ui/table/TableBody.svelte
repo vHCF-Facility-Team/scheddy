@@ -5,10 +5,14 @@
 	import { cn } from '$lib/utils';
 
 	interface Props {
-		children: Snippet,
-		class: ClassValue | ClassValue[]
+		children: Snippet;
+		class: ClassValue | ClassValue[];
 	}
-	let { children, class: className = "", ...rest }: Props & HTMLAttributes<HTMLTableSectionElement> = $props();
+	let {
+		children,
+		class: className = '',
+		...rest
+	}: Props & HTMLAttributes<HTMLTableSectionElement> = $props();
 </script>
 
 <thead class={cn(className)} {...rest}>

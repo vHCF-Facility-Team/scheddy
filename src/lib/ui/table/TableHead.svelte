@@ -4,14 +4,14 @@
 	import { cn } from '$lib/utils';
 
 	interface Props {
-		children: Snippet,
-		class: ClassValue | ClassValue[]
+		children: Snippet;
+		class: ClassValue | ClassValue[];
 	}
-	let { children, class: className = "", ...rest }: Props = $props();
+	let { children, class: className = '', ...rest }: Props = $props();
 </script>
 
-<thead class={cn("text-xs uppercase bg-slate-700 text-slate-400", className)} {...rest}>
-<tr>
-	{@render children()}
-</tr>
+<thead class={cn('text-xs uppercase bg-slate-700 text-slate-400', className)} {...rest}>
+	<tr>
+		{@render children()}
+	</tr>
 </thead>
