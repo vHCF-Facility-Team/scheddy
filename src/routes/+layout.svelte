@@ -14,6 +14,6 @@
 	<title>{data.title}</title>
 </svelte:head>
 
-<div class="min-w-screen min-h-screen bg-slate-900 text-slate-100 flex align-middle justify-center items-center">
+<div class="min-w-screen min-h-screen bg-slate-900 text-slate-100">
 	{@render children()}
 </div>

@@ -13,6 +13,7 @@
 
 </script>
 
+<p class="font-bold text-red-500">Internal Development Release - DO NOT SHARE</p>
 <Card>
 	{#if data.success}
 		<p>Logged in successfully. You'll be redirected in a moment!</p>

@@ -8,9 +8,10 @@ import {
 import { VATSIM_OAUTH_CLIENT_SECRET, VATUSA_API_BASE, VATUSA_FACILITY_ID, VATUSA_API_KEY } from '$env/static/private';
 import { env } from "$env/dynamic/private";
 import { db } from '$lib/server/db';
-import { ROLE_DEVELOPER, ROLE_MENTOR, ROLE_STAFF, ROLE_STUDENT, userTokens, users } from '$lib/server/db/schema';
+import { userTokens, users } from '$lib/server/db/schema';
 import { nanoid } from 'nanoid';
 import { redirect } from "@sveltejs/kit";
+import { ROLE_DEVELOPER, ROLE_STAFF, ROLE_MENTOR, ROLE_STUDENT } from "$lib/utils";
 
 export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
 	if (url.searchParams.has("error")) {
@@ -164,7 +165,7 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
 			lastName: vatusa_info.data.lname,
 			email: vatusa_info.data.email,
 			role: highest_role,
-			roleOverride: highest_role,
+			roleOverride: 0,
 			isVisitor: vatusa_info.data.facility != VATUSA_FACILITY_ID,
 			rating: vatusa_info.data.rating
 		})
@@ -187,7 +188,7 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
 			user: cid
 		});
 
-	cookies.set("scheddy_token", utoken, { path: "/" });
+	cookies.set("scheddy_token", utoken, { path: "/", httpOnly: false });
 
 	redirect(307, "/schedule");
 }

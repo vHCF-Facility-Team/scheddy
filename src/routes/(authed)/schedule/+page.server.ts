@@ -1,33 +1,16 @@
 import type { PageServerLoad } from "./$types";
-import { redirect } from '@sveltejs/kit';
-import { db } from '$lib/server/db';
-import { eq } from 'drizzle-orm';
-import { users, userTokens } from '$lib/server/db/schema';
+import { loadUserData } from '$lib/userInfo';
+import { ROLE_DEVELOPER, ROLE_MENTOR, ROLE_STAFF, roleString } from '$lib/utils';
+import { roleOf } from '$lib';
 
 export const load: PageServerLoad = async ({ cookies }) => {
-	const token = cookies.get("scheddy_token");
-	if (!token) {
-		redirect(307, "/");
-	}
-
-	const returnedUsers = await db.select().from(userTokens)
-		.leftJoin(users, eq(userTokens.user, users.id))
-		.where(eq(userTokens.id, token));
-
-	if (returnedUsers.length == 0) {
-		redirect(307, "/");
-	}
-
-	const userAndToken = returnedUsers[0];
-
-	if (!userAndToken) {
-		redirect(307, "/");
-	}
-	if (!userAndToken.user) {
-		redirect(307, "/");
-	}
+	const { user } = (await loadUserData(cookies))!;
 
 	return {
-		user: userAndToken.user
+		user,
+		role: roleString(roleOf(user)),
+		isTrainer: roleOf(user) >= ROLE_MENTOR,
+		isStaff: roleOf(user) >= ROLE_STAFF,
+		isDeveloper: roleOf(user) >= ROLE_DEVELOPER
 	}
 }
