@@ -27,26 +27,27 @@
 <form method="POST" action="?/create" use:enhance>
 	<div class="px-4 flex flex-col text-left gap-4">
 		<Input
-			label="VATSIM CID"
-			{...$constraints.cid}
-			bind:value={$form.cid}
-			name="cid"
-			type="number"
-			error={$errors.cid}
+			label="Name"
+			{...$constraints.name}
+			bind:value={$form.name}
+			name="name"
+			error={$errors.name}
 		/>
-
-		<Select
-			label="Role"
-			{...$constraints.roleOverride}
-			bind:value={$form.roleOverride}
-			name="roleOverride"
-			error={$errors.roleOverride}
-		>
-			<option value={ROLE_STUDENT}>Student</option>
-			<option value={ROLE_MENTOR}>Mentor</option>
-			<option value={ROLE_STAFF}>Staff</option>
-			<option value={ROLE_DEVELOPER}>Developer</option>
-		</Select>
+		<Input
+			label="Duration (Minutes)"
+			{...$constraints.duration}
+			bind:value={$form.duration}
+			name="duration"
+			type="number"
+			error={$errors.duration}
+		/>
+		<Input
+			label="Category"
+			{...$constraints.category}
+			bind:value={$form.category}
+			name="category"
+			error={$errors.category}
+		/>
 	</div>
 
 	<ModalFooter>
@@ -55,7 +56,7 @@
 			{#if $delayed}
 				<CogIcon class="w-6 h-6 inline animate-spin" />
 			{:else}
-				Update
+				Create
 			{/if}
 		</Button>
 	</ModalFooter>

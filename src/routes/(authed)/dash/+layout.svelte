@@ -22,7 +22,7 @@
 	let pages = [
 		{ path: '/dash', name: 'Facility Calendar', icon: CalendarIcon },
 		{ path: '/my', name: 'My Schedule', icon: CalendarClockIcon },
-		{ path: '/dash/types', name: 'Session Management', icon: LibraryIcon },
+		{ path: '/dash/types', name: 'Session Types', icon: LibraryIcon },
 		{ path: '/dash/users', name: 'User Management', icon: UsersIcon },
 		{ path: '/schedule', name: 'Book Session', icon: CalendarPlusIcon }
 	];

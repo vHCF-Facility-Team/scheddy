@@ -15,3 +15,10 @@ export const userTokens = mysqlTable('userToken', {
 	id: varchar({ length: 21 }).primaryKey(),
 	user: int().references(() => users.id)
 });
+
+export const sessionTypes = mysqlTable('sessionType', {
+	id: varchar({ length: 21 }).primaryKey(),
+	name: text(),
+	category: text(),
+	length: int()
+});

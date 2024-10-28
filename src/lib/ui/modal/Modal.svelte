@@ -12,7 +12,6 @@
 
 <!-- eslint-disable-next-line -->
 <div
-	onkeydown={onclose}
 	onclick={onclose}
 	class:hidden={!open}
 	class:pointer-events-none={!open}

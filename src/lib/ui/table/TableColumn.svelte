@@ -16,5 +16,5 @@
 </script>
 
 <td class={cn('px-6 py-4', className)} {...rest}>
-	{@render children()}
+	{@render children?.()}
 </td>

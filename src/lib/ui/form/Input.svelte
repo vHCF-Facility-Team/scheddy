@@ -27,7 +27,6 @@
 		aria-invalid={invalid}
 		bind:value
 		{...rest}
-		type="number"
 		{name}
 		id={name}
 	/>
