@@ -175,7 +175,10 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
 			role: highest_role,
 			roleOverride: 0,
 			isVisitor: vatusa_info.data.facility != VATUSA_FACILITY_ID,
-			rating: vatusa_info.data.rating
+			rating: vatusa_info.data.rating,
+			timezone: 'America/New_York',
+			mentorAvailability: 'null',
+			allowedSessionTypes: 'null',
 		})
 		.onDuplicateKeyUpdate({
 			set: {

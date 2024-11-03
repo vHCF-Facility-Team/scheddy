@@ -7,6 +7,8 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import Select from '$lib/ui/form/Select.svelte';
 	import Button from '$lib/ui/Button.svelte';
+	import { DateTime, Interval } from 'luxon';
+	import { getTimeZones } from '@vvo/tzdb';
 
 	interface Props {
 		data: PageData;
@@ -36,9 +38,62 @@
 		for (let t of data.sessionTypes) {
 			c[t.id] = t;
 		}
+		return c;
 	});
 
 	let sessionType: string | null = $state(null);
+
+	let timezones = $state(getTimeZones());
+	timezones.sort((a, b) => {
+		const nameA = a.name.toUpperCase(); // ignore upper and lowercase
+		const nameB = b.name.toUpperCase(); // ignore upper and lowercase
+		if (nameA < nameB) {
+			return -1;
+		}
+		if (nameA > nameB) {
+			return 1;
+		}
+
+		// names must be equal
+		return 0;
+	});
+
+	let step = $state(1);
+	let timezone = $state(DateTime.local().zoneName);
+	let timeslot: string | null = $state(null);
+	let interval = $derived(timeslot ? Interval.fromISO(timeslot.split("@")[0]) : null);
+	let start = $derived(interval ? interval.start : null);
+
+	let twentyFourHourPolicyUnderstood = $state(false);
+	let trainingOrderPolicyUnderstood = $state(false);
+
+	let bookingState: 'success' | 'fail' | 'loading' = $state('loading');
+
+	async function book() {
+		if (!timeslot) return;
+
+		step = 4;
+		bookingState = 'loading';
+
+		let data = new URLSearchParams();
+		data.set("timeslot", timeslot);
+		data.set("type", sessionType!);
+		data.set("timezone", timezone);
+
+		let r = await fetch('?', {
+			method: 'POST',
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded"
+			},
+			body: data.toString()
+		});
+		if (r.ok) {
+			bookingState = 'success';
+		} else {
+			await invalidateAll();
+			bookingState = 'fail';
+		}
+	}
 </script>
 
 <div class="min-w-screen min-h-screen flex flex-col align-middle justify-center items-center">
@@ -56,19 +111,82 @@
 			</h1>
 
 			<div class="text-left mt-3 mb-6 flex flex-col gap-4 justify-center">
-				<Select bind:value={sessionType} label="Session Type">
-					{#each Object.entries(categories) as [k, v]}
-						<optgroup label={k}>
-							{#each v as typ}
-								<option value={typ.id}>{typ.name} ({typ.length} minutes)</option>
+				{#if step === 1}
+					<Select bind:value={sessionType} label="Session Type">
+						{#each Object.entries(categories) as [k, v]}
+							<optgroup label={k}>
+								{#each v as typ}
+									<option value={typ.id}>{typ.name} ({typ.length} minutes)</option>
+								{/each}
+							</optgroup>
+						{/each}
+					</Select>
+					{#if sessionType !== null}
+						<Button onclick={() => {step = 2;}}>
+							Next
+						</Button>
+					{/if}
+				{:else if step === 2}
+					<Select name="timezone" bind:value={timezone} label="Timezone">
+						{#each timezones as tz}
+							<option value={tz.name}>{tz.name} ({tz.alternativeName})</option>
+						{/each}
+					</Select>
+					{#if sessionType}
+						<Select name="slot" bind:value={timeslot} label="Session Date/Time">
+							{#each data.slotData[sessionType] as slot}
+								<option value="{slot.slot}@{slot.mentor}">{Interval.fromISO(slot.slot).start.setZone(timezone).toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)} - {sTyps[sessionType].length} minutes</option>
+							{:else}
+								<option disabled>No slots available :( Check back another time</option>
 							{/each}
-						</optgroup>
-					{/each}
-				</Select>
-				{#if sessionType !== null}
-					<Button>
-						Next
-					</Button>
+						</Select>
+					{/if}
+					<div class="flex flex-row justify-center gap-4 flex-grow">
+						<Button class="flex-1" variant="ghost" onclick={() => {step = 1;}}>
+							Back
+						</Button>
+						{#if timeslot !== null}
+							<Button class="flex-1" onclick={() => {step = 3;}}>
+								Next
+							</Button>
+						{/if}
+					</div>
+				{:else if step === 3}
+					<p><b>Session type:</b> {sTyps[sessionType].name}</p>
+					<p><b>Timezone:</b> {timezone}</p>
+					<p><b>Start time:</b> {start.setZone(timezone).toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)}</p>
+					<p><b>Duration:</b> {sTyps[sessionType].length} minutes</p>
+
+					<div class="flex flex-row gap-2 align-baseline">
+						<input class="w-6 h-6 border-blue-500 ring-blue-500 rounded bg-transparent" id="24h" type="checkbox" bind:checked={twentyFourHourPolicyUnderstood} />
+						<label for="24h">I understand that I need to contact my mentor to make changes within 24 hours</label>
+					</div>
+					<div class="flex flex-row gap-2 align-baseline">
+						<input class="w-6 h-6 border-blue-500 ring-blue-500 rounded bg-transparent" id="trainingOrder" type="checkbox" bind:checked={trainingOrderPolicyUnderstood} />
+						<label for="trainingOrder">I have read and understood the training order</label>
+					</div>
+
+					<div class="flex flex-row justify-center gap-4 flex-grow">
+						<Button class="flex-1" variant="ghost" onclick={() => {step = 2;}}>
+							Back
+						</Button>
+						{#if twentyFourHourPolicyUnderstood && trainingOrderPolicyUnderstood}
+							<Button onclick={book} class="flex-1">
+								Schedule
+							</Button>
+						{/if}
+					</div>
+				{:else if step === 4}
+					{#if bookingState === 'loading'}
+						<p>Booking your session, please wait...</p>
+					{:else if bookingState === 'success'}
+						<p>Session booked 🥳 You'll receive a confirmation email shortly and you should see the session on your dashboard soon.</p>
+					{:else}
+						<p>Couldn't book the session :( There may have been a network error or someone else may have booked this slot.</p>
+						<Button class="flex-1" variant="ghost" onclick={() => {step = 1; timeslot = null; trainingOrderPolicyUnderstood = false; twentyFourHourPolicyUnderstood = false;}}>
+							Try again
+						</Button>
+					{/if}
 				{/if}
 			</div>
 
@@ -77,18 +195,13 @@
 		<div class="flex flex-col gap-2">
 			<div class="flex flex-row gap-3 justify-center">
 				{#if data.isTrainer}
-					<a href="/my" class="block hover:underline text-sm text-blue-500 font-semibold"
+					<a href="/dash/mentors/{data.user.id}" class="block hover:underline text-sm text-blue-500 font-semibold"
 						>My Schedule</a
 					>
 				{/if}
 				{#if data.isStaff}
 					<a href="/dash" class="block hover:underline text-sm text-blue-500 font-semibold"
 						>Administration</a
-					>
-				{/if}
-				{#if data.isDeveloper}
-					<a href="/admin" class="block hover:underline text-sm text-blue-500 font-semibold"
-						>Site Management</a
 					>
 				{/if}
 			</div>

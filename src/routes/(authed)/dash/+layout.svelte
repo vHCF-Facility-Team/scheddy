@@ -4,7 +4,7 @@
 	import {
 		CalendarClockIcon,
 		CalendarIcon,
-		CalendarPlusIcon,
+		CalendarPlusIcon, GraduationCapIcon, LayoutGridIcon,
 		LibraryIcon,
 		LogOutIcon,
 		UsersIcon
@@ -12,6 +12,7 @@
 	import type { Snippet } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto, invalidateAll } from '$app/navigation';
+	import { ROLE_MENTOR, ROLE_STAFF, ROLE_STUDENT } from '$lib/utils';
 
 	interface Props {
 		data: PageData;
@@ -20,11 +21,13 @@
 	let { data, children }: Props = $props();
 
 	let pages = [
-		{ path: '/dash', name: 'Facility Calendar', icon: CalendarIcon },
-		{ path: '/my', name: 'My Schedule', icon: CalendarClockIcon },
-		{ path: '/dash/types', name: 'Session Types', icon: LibraryIcon },
-		{ path: '/dash/users', name: 'User Management', icon: UsersIcon },
-		{ path: '/schedule', name: 'Book Session', icon: CalendarPlusIcon }
+		{ path: '/dash', name: "Dashboard", icon: LayoutGridIcon, visible: data.user.role! >= ROLE_MENTOR },
+		{ path: '/dash/cal', name: 'Facility Calendar', icon: CalendarIcon, visible: data.user.role! >= ROLE_STAFF },
+		{ path: `/dash/mentors/${data.user.id}`, name: 'My Schedule', icon: CalendarClockIcon, visible: data.user.role! >= ROLE_MENTOR },
+		{ path: '/dash/types', name: 'Session Types', icon: LibraryIcon, visible: data.user.role! >= ROLE_STAFF },
+		{ path: '/dash/users', name: 'User Management', icon: UsersIcon, visible: data.user.role! >= ROLE_STAFF },
+		{ path: '/dash/mentors', name: 'Mentors', icon: GraduationCapIcon, visible: data.user.role! >= ROLE_STAFF },
+		{ path: '/schedule', name: 'Book Session', icon: CalendarPlusIcon, visible: data.user.role! >= ROLE_STUDENT }
 	];
 
 	function logout() {

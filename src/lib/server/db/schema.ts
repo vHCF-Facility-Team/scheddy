@@ -8,7 +8,10 @@ export const users = mysqlTable('user', {
 	role: int(),
 	roleOverride: int(),
 	isVisitor: boolean(),
-	rating: int()
+	rating: int(),
+	mentorAvailability: text(),
+	allowedSessionTypes: text(),
+	timezone: text()
 });
 
 export const userTokens = mysqlTable('userToken', {
@@ -21,4 +24,13 @@ export const sessionTypes = mysqlTable('sessionType', {
 	name: text(),
 	category: text(),
 	length: int()
+});
+
+export const sessions = mysqlTable('session', {
+	id: varchar({ length: 21 }).primaryKey(),
+	mentor: int().references(() => users.id),
+	student: int().references(() => users.id),
+	type: varchar({ length: 21 }).references(() => sessionTypes.id),
+	start: text(),
+	end: text()
 });
