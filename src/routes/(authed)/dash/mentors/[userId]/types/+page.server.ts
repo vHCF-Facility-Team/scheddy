@@ -1,6 +1,6 @@
 import { loadUserData } from '$lib/userInfo';
 import { roleOf } from '$lib';
-import { ROLE_MENTOR, ROLE_STAFF } from '$lib/utils';
+import { ROLE_STAFF } from '$lib/utils';
 import { redirect } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { sessionTypes, users } from '$lib/server/db/schema';
@@ -9,8 +9,6 @@ import type { PageServerLoad, Actions } from './$types';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { typeSchema } from './typeSchema';
-import { createSchema } from '../../../types/createSchema';
-import { nanoid } from 'nanoid';
 
 export const load: PageServerLoad = async ({ cookies, params }) => {
 	const { user } = (await loadUserData(cookies))!;

@@ -20,10 +20,10 @@ export const load: PageServerLoad = async ({ cookies }) => {
 	let mentors = 0;
 	let upcoming = 0;
 
-	let now = DateTime.utc();
+	const now = DateTime.utc();
 
-	for (let sess of allSessions) {
-		let start = DateTime.fromISO(sess.start);
+	for (const sess of allSessions) {
+		const start = DateTime.fromISO(sess.start);
 
 		if (start < now) continue;
 

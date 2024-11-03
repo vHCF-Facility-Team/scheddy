@@ -1,12 +1,10 @@
 <script lang="ts">
 	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import type { CreateSchema } from './createSchema';
-	import { ROLE_STUDENT, ROLE_MENTOR, ROLE_STAFF, ROLE_DEVELOPER } from '$lib/utils';
 	import Button from '$lib/ui/Button.svelte';
 	import ModalFooter from '$lib/ui/modal/ModalFooter.svelte';
 	import { CogIcon } from 'lucide-svelte';
 	import Input from '$lib/ui/form/Input.svelte';
-	import Select from '$lib/ui/form/Select.svelte';
 
 	interface Props {
 		data: SuperValidated<Infer<CreateSchema>>;

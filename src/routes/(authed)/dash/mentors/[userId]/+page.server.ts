@@ -1,10 +1,10 @@
 import { loadUserData } from '$lib/userInfo';
 import { roleOf } from '$lib';
-import { ROLE_MENTOR, ROLE_STAFF } from '$lib/utils';
+import { ROLE_STAFF } from '$lib/utils';
 import { redirect } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { sessions, sessionTypes, users } from '$lib/server/db/schema';
-import { eq, gt, or } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 import type { MentorAvailability } from '$lib/availability';
 import { DateTime } from 'luxon';

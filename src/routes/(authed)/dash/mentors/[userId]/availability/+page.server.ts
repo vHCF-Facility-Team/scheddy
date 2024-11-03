@@ -1,14 +1,13 @@
 import { loadUserData } from '$lib/userInfo';
 import { roleOf } from '$lib';
-import { ROLE_MENTOR, ROLE_STAFF } from '$lib/utils';
+import { ROLE_STAFF } from '$lib/utils';
 import { redirect } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
-import { sessionTypes, users } from '$lib/server/db/schema';
+import { users } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import type { PageServerLoad, Actions } from './$types';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { nanoid } from 'nanoid';
 import type { MentorAvailability } from '$lib/availability';
 import { availSchema } from './availSchema';
 

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { roleString } from '$lib/utils';
 	import TableRoot from '$lib/ui/table/TableRoot.svelte';
 	import TableHead from '$lib/ui/table/TableHead.svelte';
 	import TableHeadColumn from '$lib/ui/table/TableHeadColumn.svelte';

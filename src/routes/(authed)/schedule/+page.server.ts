@@ -229,7 +229,7 @@ export const actions: Actions = {
 
 		let duration = 0;
 		let typename = '';
-		for (let typ of sTypes) {
+		for (const typ of sTypes) {
 			if (typ.id === requestedType) {
 				duration = typ.length;
 				typename = typ.name;

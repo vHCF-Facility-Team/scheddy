@@ -2,7 +2,7 @@
 	import type { PageData } from './$types';
 	import { DateTime } from 'luxon';
 	import TableHeadColumn from '$lib/ui/table/TableHeadColumn.svelte';
-	import { PencilIcon, PlusIcon, TrashIcon } from 'lucide-svelte';
+	import { PencilIcon } from 'lucide-svelte';
 	import TableBody from '$lib/ui/table/TableBody.svelte';
 	import Button from '$lib/ui/Button.svelte';
 	import TableRoot from '$lib/ui/table/TableRoot.svelte';
@@ -13,7 +13,7 @@
 	interface Props {
 		data: PageData;
 	}
-	let { data }: PageData = $props();
+	let { data }: Props = $props();
 </script>
 
 <div class="flex flex-col gap-4">

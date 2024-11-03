@@ -1,12 +1,10 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
-	import { ROLE_DEVELOPER, ROLE_MENTOR, ROLE_STAFF, ROLE_STUDENT } from '$lib/utils';
-	import { CogIcon, TrashIcon } from 'lucide-svelte';
+	import { TrashIcon } from 'lucide-svelte';
 	import Button from '$lib/ui/Button.svelte';
 	import Input from '$lib/ui/form/Input.svelte';
 	import Select from '$lib/ui/form/Select.svelte';
-	import ModalFooter from '$lib/ui/modal/ModalFooter.svelte';
 	import { goto } from '$app/navigation';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { availSchema } from './availSchema';
@@ -19,7 +17,7 @@
 
 	let addDateStr = $state('');
 
-	const { form, delayed, errors, constraints, enhance } = superForm(data.form, {
+	const { form, errors, constraints, enhance } = superForm(data.form, {
 		validators: zodClient(availSchema),
 		dataType: 'json',
 		async onUpdated({ form }) {

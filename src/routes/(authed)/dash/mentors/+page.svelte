@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { roleString } from '$lib/utils';
 	import TableRoot from '$lib/ui/table/TableRoot.svelte';
 	import TableHead from '$lib/ui/table/TableHead.svelte';
 	import TableHeadColumn from '$lib/ui/table/TableHeadColumn.svelte';
@@ -8,11 +7,7 @@
 	import TableRow from '$lib/ui/table/TableRow.svelte';
 	import TableColumn from '$lib/ui/table/TableColumn.svelte';
 	import Button from '$lib/ui/Button.svelte';
-	import { PencilIcon, PlusIcon, TrashIcon } from 'lucide-svelte';
-	import Modal from '$lib/ui/modal/Modal.svelte';
-	import ModalHeader from '$lib/ui/modal/ModalHeader.svelte';
-	import ModalBody from '$lib/ui/modal/ModalBody.svelte';
-	import ModalFooter from '$lib/ui/modal/ModalFooter.svelte';
+	import { PencilIcon } from 'lucide-svelte';
 	interface Props {
 		data: PageData;
 	}

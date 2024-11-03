@@ -1,12 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import SuperDebug, { superForm } from 'sveltekit-superforms';
-	import { ROLE_DEVELOPER, ROLE_MENTOR, ROLE_STAFF, ROLE_STUDENT } from '$lib/utils';
-	import { CogIcon } from 'lucide-svelte';
+	import { superForm } from 'sveltekit-superforms';
 	import Button from '$lib/ui/Button.svelte';
-	import Input from '$lib/ui/form/Input.svelte';
-	import Select from '$lib/ui/form/Select.svelte';
-	import ModalFooter from '$lib/ui/modal/ModalFooter.svelte';
 	import { goto } from '$app/navigation';
 
 	interface Props {
@@ -14,7 +9,7 @@
 	}
 	let { data }: Props = $props();
 
-	const { form, delayed, errors, constraints, enhance } = superForm(data.form, {
+	const { form, constraints, enhance } = superForm(data.form, {
 		dataType: 'json',
 		async onUpdated({ form }) {
 			if (form.valid) {
