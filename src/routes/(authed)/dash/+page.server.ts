@@ -1,4 +1,4 @@
-import type { PageServerLoad } from "./$types";
+import type { PageServerLoad } from './$types';
 import { loadUserData } from '$lib/userInfo';
 import { roleOf } from '$lib';
 import { ROLE_MENTOR } from '$lib/utils';
@@ -42,5 +42,5 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		yourSessions,
 		mentors,
 		upcoming
-	}
-}
+	};
+};

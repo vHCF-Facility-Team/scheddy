@@ -4,7 +4,9 @@
 	import {
 		CalendarClockIcon,
 		CalendarIcon,
-		CalendarPlusIcon, GraduationCapIcon, LayoutGridIcon,
+		CalendarPlusIcon,
+		GraduationCapIcon,
+		LayoutGridIcon,
 		LibraryIcon,
 		LogOutIcon,
 		UsersIcon
@@ -21,13 +23,48 @@
 	let { data, children }: Props = $props();
 
 	let pages = [
-		{ path: '/dash', name: "Dashboard", icon: LayoutGridIcon, visible: data.user.role! >= ROLE_MENTOR },
-		{ path: '/dash/cal', name: 'Facility Calendar', icon: CalendarIcon, visible: data.user.role! >= ROLE_STAFF },
-		{ path: `/dash/mentors/${data.user.id}`, name: 'My Schedule', icon: CalendarClockIcon, visible: data.user.role! >= ROLE_MENTOR },
-		{ path: '/dash/types', name: 'Session Types', icon: LibraryIcon, visible: data.user.role! >= ROLE_STAFF },
-		{ path: '/dash/users', name: 'User Management', icon: UsersIcon, visible: data.user.role! >= ROLE_STAFF },
-		{ path: '/dash/mentors', name: 'Mentors', icon: GraduationCapIcon, visible: data.user.role! >= ROLE_STAFF },
-		{ path: '/schedule', name: 'Book Session', icon: CalendarPlusIcon, visible: data.user.role! >= ROLE_STUDENT }
+		{
+			path: '/dash',
+			name: 'Dashboard',
+			icon: LayoutGridIcon,
+			visible: data.user.role! >= ROLE_MENTOR
+		},
+		{
+			path: '/dash/cal',
+			name: 'Facility Calendar',
+			icon: CalendarIcon,
+			visible: data.user.role! >= ROLE_STAFF
+		},
+		{
+			path: `/dash/mentors/${data.user.id}`,
+			name: 'My Schedule',
+			icon: CalendarClockIcon,
+			visible: data.user.role! >= ROLE_MENTOR
+		},
+		{
+			path: '/dash/types',
+			name: 'Session Types',
+			icon: LibraryIcon,
+			visible: data.user.role! >= ROLE_STAFF
+		},
+		{
+			path: '/dash/users',
+			name: 'User Management',
+			icon: UsersIcon,
+			visible: data.user.role! >= ROLE_STAFF
+		},
+		{
+			path: '/dash/mentors',
+			name: 'Mentors',
+			icon: GraduationCapIcon,
+			visible: data.user.role! >= ROLE_STAFF
+		},
+		{
+			path: '/schedule',
+			name: 'Book Session',
+			icon: CalendarPlusIcon,
+			visible: data.user.role! >= ROLE_STUDENT
+		}
 	];
 
 	function logout() {

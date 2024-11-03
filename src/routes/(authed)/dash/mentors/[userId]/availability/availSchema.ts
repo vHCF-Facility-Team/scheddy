@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const time = z.object({
 	hour: z.coerce.number(),
@@ -20,5 +20,5 @@ export const availSchema = z.object({
 	thursday: dayAvailability,
 	friday: dayAvailability,
 	saturday: dayAvailability,
-	exceptions: z.record(z.string(), dayAvailability),
+	exceptions: z.record(z.string(), dayAvailability)
 });

@@ -21,7 +21,9 @@
 
 <p class="ml-1">
 	Mentors and instructors are added automatically by their VATUSA role. You can also
-	<a class="text-blue-500 hover:text-blue-600 transition font-semibold" href="/dash/users">override a user's role &rarr;</a>
+	<a class="text-blue-500 hover:text-blue-600 transition font-semibold" href="/dash/users"
+		>override a user's role &rarr;</a
+	>
 </p>
 
 <div class="relative overflow-x-auto shadow-md rounded mt-2">

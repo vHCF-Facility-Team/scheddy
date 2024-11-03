@@ -178,7 +178,7 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
 			rating: vatusa_info.data.rating,
 			timezone: 'America/New_York',
 			mentorAvailability: 'null',
-			allowedSessionTypes: 'null',
+			allowedSessionTypes: 'null'
 		})
 		.onDuplicateKeyUpdate({
 			set: {

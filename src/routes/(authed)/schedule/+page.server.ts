@@ -7,20 +7,24 @@ import { sessions, sessionTypes, users } from '$lib/server/db/schema';
 import { eq, gt, or } from 'drizzle-orm';
 import type { DayAvailability, MentorAvailability } from '$lib/availability';
 import { DateTime, Duration, Interval } from 'luxon';
-import { fail } from "@sveltejs/kit";
-import { MAX_BOOKING_AHEAD_DAYS } from "$env/static/private";
+import { fail } from '@sveltejs/kit';
+import { MAX_BOOKING_AHEAD_DAYS } from '$env/static/private';
 import { nanoid } from 'nanoid';
 import { appointment_booked } from '$lib/emails/appointment_booked';
 import { sendEmail } from '$lib/email';
 
-function slottificate(sTypes: typeof sessionTypes.$inferSelect, mentors: typeof users.$inferSelect, allSessions: typeof sessions.$inferSelect): Record<string, { slot: Interval, mentor: number }[]> {
-	const slotData: Record<string, { slot: Interval, mentor: number }[]> = {};
+function slottificate(
+	sTypes: typeof sessionTypes.$inferSelect,
+	mentors: typeof users.$inferSelect,
+	allSessions: typeof sessions.$inferSelect
+): Record<string, { slot: Interval; mentor: number }[]> {
+	const slotData: Record<string, { slot: Interval; mentor: number }[]> = {};
 
 	const now = DateTime.utc();
 	const tomorrow = now.plus({ days: 1 });
 	const validDaysToBook: DateTime[] = [];
 	for (let i = 0; i < Number.parseInt(MAX_BOOKING_AHEAD_DAYS); i++) {
-		validDaysToBook.push(now.plus({days: i}));
+		validDaysToBook.push(now.plus({ days: i }));
 	}
 
 	const sessionsByMentor = {};
@@ -60,7 +64,7 @@ function slottificate(sTypes: typeof sessionTypes.$inferSelect, mentors: typeof 
 				let todaysAvail: DayAvailability | null = null;
 				// do they have a date exception set?
 
-				const exceptionDateKey = dayInMentorsTz.toFormat("yyyy-MM-dd");
+				const exceptionDateKey = dayInMentorsTz.toFormat('yyyy-MM-dd');
 				if (Object.keys(availability.exceptions).includes(exceptionDateKey)) {
 					todaysAvail = availability.exceptions[exceptionDateKey];
 				} else {
@@ -77,8 +81,18 @@ function slottificate(sTypes: typeof sessionTypes.$inferSelect, mentors: typeof 
 				// convert the availability back to a UTC interval
 				if (todaysAvail && todaysAvail.available) {
 					// we are available
-					const start = dayInMentorsTz.set({ hour: todaysAvail.start.hour, minute: todaysAvail.start.minute, second: 0, millisecond: 0 });
-					const end = dayInMentorsTz.set({ hour: todaysAvail.end.hour, minute: todaysAvail.end.minute, second: 0, millisecond: 0 });
+					const start = dayInMentorsTz.set({
+						hour: todaysAvail.start.hour,
+						minute: todaysAvail.start.minute,
+						second: 0,
+						millisecond: 0
+					});
+					const end = dayInMentorsTz.set({
+						hour: todaysAvail.end.hour,
+						minute: todaysAvail.end.minute,
+						second: 0,
+						millisecond: 0
+					});
 
 					const interval = Interval.fromDateTimes(start, end);
 
@@ -93,10 +107,14 @@ function slottificate(sTypes: typeof sessionTypes.$inferSelect, mentors: typeof 
 			const unavailablePeriods = [];
 
 			for (const period of availablePeriodsMentorsTime) {
-				availablePeriods.push(Interval.fromDateTimes(period.start.setZone('utc'), period.end.setZone('utc')));
+				availablePeriods.push(
+					Interval.fromDateTimes(period.start.setZone('utc'), period.end.setZone('utc'))
+				);
 			}
 			for (const period of unavailablePeriodsMentorsTime) {
-				unavailablePeriods.push(Interval.fromDateTimes(period.start.setZone('utc'), period.end.setZone('utc')));
+				unavailablePeriods.push(
+					Interval.fromDateTimes(period.start.setZone('utc'), period.end.setZone('utc'))
+				);
 			}
 
 			// calculate difference of each availablePeriod to get a list of o.k. slots
@@ -125,12 +143,14 @@ function slottificate(sTypes: typeof sessionTypes.$inferSelect, mentors: typeof 
 				}
 			}
 
-			slots.push(...validSlots.map((u) => {
-				return {
-					slot: u.toISO(),
-					mentor: mentor.id
-				}
-			}));
+			slots.push(
+				...validSlots.map((u) => {
+					return {
+						slot: u.toISO(),
+						mentor: mentor.id
+					};
+				})
+			);
 		}
 		slotData[typ.id] = slots;
 	}
@@ -142,7 +162,10 @@ export const load: PageServerLoad = async ({ cookies }) => {
 	const { user } = (await loadUserData(cookies))!;
 
 	const sTypes = await db.select().from(sessionTypes);
-	const mentors = await db.select().from(users).where(or(gt(users.role, ROLE_MENTOR), gt(users.roleOverride, ROLE_MENTOR)));
+	const mentors = await db
+		.select()
+		.from(users)
+		.where(or(gt(users.role, ROLE_MENTOR), gt(users.roleOverride, ROLE_MENTOR)));
 
 	const allSessions = await db.select().from(sessions);
 
@@ -164,12 +187,15 @@ export const actions: Actions = {
 		const { user } = (await loadUserData(cookies))!;
 
 		const formData = await request.formData();
-		const requestedSlotId = formData.get("timeslot")!;
-		const requestedType = formData.get("type")!;
-		const timezone = formData.get("timezone")!;
+		const requestedSlotId = formData.get('timeslot')!;
+		const requestedType = formData.get('type')!;
+		const timezone = formData.get('timezone')!;
 
 		const sTypes = await db.select().from(sessionTypes);
-		const mentors = await db.select().from(users).where(or(gt(users.role, ROLE_MENTOR), gt(users.roleOverride, ROLE_MENTOR)));
+		const mentors = await db
+			.select()
+			.from(users)
+			.where(or(gt(users.role, ROLE_MENTOR), gt(users.roleOverride, ROLE_MENTOR)));
 		const allSessions = await db.select().from(sessions);
 
 		const slotData = slottificate(sTypes, mentors, allSessions);
@@ -179,8 +205,8 @@ export const actions: Actions = {
 		}
 
 		const slotObj = {
-			slot: requestedSlotId.split("@")[0],
-			mentor: Number.parseInt(requestedSlotId.split("@")[1])
+			slot: requestedSlotId.split('@')[0],
+			mentor: Number.parseInt(requestedSlotId.split('@')[1])
 		};
 		const availableSlots = slotData[requestedType];
 
@@ -194,7 +220,7 @@ export const actions: Actions = {
 		if (!slotStillAvailable) {
 			return fail(400);
 		}
-		
+
 		const interval = Interval.fromISO(slotObj.slot);
 		const start = interval.start.setZone('utc');
 		const end = interval.end.setZone('utc');
@@ -202,7 +228,7 @@ export const actions: Actions = {
 		const mentor = (await db.select().from(users).where(eq(users.id, slotObj.mentor)))[0]!;
 
 		let duration = 0;
-		let typename = "";
+		let typename = '';
 		for (let typ of sTypes) {
 			if (typ.id === requestedType) {
 				duration = typ.length;
@@ -215,22 +241,21 @@ export const actions: Actions = {
 		const email_content = appointment_booked({
 			startTime: start.setZone(timezone.toString()),
 			timezone: timezone.toString(),
-			mentorName: mentor.firstName + " " + mentor.lastName,
+			mentorName: mentor.firstName + ' ' + mentor.lastName,
 			duration,
 			sessionId: id,
 			type: typename
 		});
-		
-		await db.insert(sessions)
-			.values({
-				id,
-				mentor: slotObj.mentor,
-				student: user.id,
-				start: start.toISO(),
-				end: end.toISO(),
-				type: requestedType
-			});
+
+		await db.insert(sessions).values({
+			id,
+			mentor: slotObj.mentor,
+			student: user.id,
+			start: start.toISO(),
+			end: end.toISO(),
+			type: requestedType
+		});
 
 		await sendEmail(user.email, 'Appointment booked', email_content.raw, email_content.html);
 	}
-}
+};

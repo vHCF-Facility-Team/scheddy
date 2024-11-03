@@ -5,7 +5,7 @@ import { redirect } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { sessions, sessionTypes, users } from '$lib/server/db/schema';
 import { eq, gt, or } from 'drizzle-orm';
-import type { PageServerLoad } from "./$types";
+import type { PageServerLoad } from './$types';
 import type { MentorAvailability } from '$lib/availability';
 import { DateTime } from 'luxon';
 
@@ -15,7 +15,8 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 		redirect(307, '/schedule');
 	}
 
-	const mentor = await db.select()
+	const mentor = await db
+		.select()
 		.from(users)
 		.where(eq(users.id, Number.parseInt(params.userId!)));
 
@@ -23,18 +24,22 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 		redirect(307, '/dash');
 	}
 
-	const validTypes = await db.select()
-		.from(sessionTypes);
+	const validTypes = await db.select().from(sessionTypes);
 
 	const typesMap: Record<string, string> = {};
 	for (const typ of validTypes) {
 		typesMap[typ.id] = typ.name;
 	}
 
-	const avail: MentorAvailability | null = mentor[0].mentorAvailability ? JSON.parse(mentor[0].mentorAvailability) : null;
-	const allowedTypes: string[] | null = mentor[0].allowedSessionTypes ? JSON.parse(mentor[0].allowedSessionTypes) : null;
+	const avail: MentorAvailability | null = mentor[0].mentorAvailability
+		? JSON.parse(mentor[0].mentorAvailability)
+		: null;
+	const allowedTypes: string[] | null = mentor[0].allowedSessionTypes
+		? JSON.parse(mentor[0].allowedSessionTypes)
+		: null;
 
-	const allSessions = await db.select()
+	const allSessions = await db
+		.select()
 		.from(sessions)
 		.leftJoin(users, eq(users.id, sessions.student))
 		.where(eq(sessions.mentor, mentor[0].id));

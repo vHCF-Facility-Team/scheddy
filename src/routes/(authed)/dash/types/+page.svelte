@@ -87,9 +87,9 @@
 						<TableColumn>
 							<Button
 								onclick={() => {
-								deleteId = type.id;
-								deleteOpen = true;
-							}}
+									deleteId = type.id;
+									deleteOpen = true;
+								}}
 								variant="danger"
 								size="icon"
 							>
@@ -142,7 +142,9 @@
 	/>
 	<ModalBody>
 		<div class="px-4">
-			<p class="text-red-500">** ALL SESSIONS booked under this session type will be removed! This cannot be undone! **</p>
+			<p class="text-red-500">
+				** ALL SESSIONS booked under this session type will be removed! This cannot be undone! **
+			</p>
 		</div>
 	</ModalBody>
 	<ModalFooter>
@@ -156,4 +158,3 @@
 		<Button onclick={del} variant="danger" size="sm">Remove</Button>
 	</ModalFooter>
 </Modal>
-

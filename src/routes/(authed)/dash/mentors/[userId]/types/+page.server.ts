@@ -5,7 +5,7 @@ import { redirect } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { sessionTypes, users } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
-import type { PageServerLoad, Actions } from "./$types";
+import type { PageServerLoad, Actions } from './$types';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { typeSchema } from './typeSchema';
@@ -18,7 +18,8 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 		redirect(307, '/schedule');
 	}
 
-	const mentor = await db.select()
+	const mentor = await db
+		.select()
 		.from(users)
 		.where(eq(users.id, Number.parseInt(params.userId!)));
 
@@ -26,10 +27,11 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 		redirect(307, '/dash');
 	}
 
-	const allowedTypes: string[] | null = mentor[0].allowedSessionTypes ? JSON.parse(mentor[0].allowedSessionTypes) : null;
+	const allowedTypes: string[] | null = mentor[0].allowedSessionTypes
+		? JSON.parse(mentor[0].allowedSessionTypes)
+		: null;
 
-	const validTypes = await db.select()
-		.from(sessionTypes);
+	const validTypes = await db.select().from(sessionTypes);
 
 	const allowed: Record<string, boolean> = {};
 	const typesMap: Record<string, string> = {};
@@ -60,11 +62,16 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 
-		const allowed = JSON.stringify(Object.entries(form.data.allowed).filter((v) => {
-			return v[1];
-		}).map((u) => u[0]));
+		const allowed = JSON.stringify(
+			Object.entries(form.data.allowed)
+				.filter((v) => {
+					return v[1];
+				})
+				.map((u) => u[0])
+		);
 
-		await db.update(users)
+		await db
+			.update(users)
 			.set({
 				allowedSessionTypes: allowed
 			})
@@ -72,4 +79,4 @@ export const actions: Actions = {
 
 		return { form };
 	}
-}
+};

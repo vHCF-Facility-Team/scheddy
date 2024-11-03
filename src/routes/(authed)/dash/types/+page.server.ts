@@ -36,14 +36,12 @@ export const actions: Actions = {
 			return fail(400, { createForm: form });
 		}
 
-		await db
-			.insert(sessionTypes)
-			.values({
-				id: nanoid(),
-				name: form.data.name,
-				length: form.data.duration,
-				category: form.data.category
-			});
+		await db.insert(sessionTypes).values({
+			id: nanoid(),
+			name: form.data.name,
+			length: form.data.duration,
+			category: form.data.category
+		});
 
 		return { createForm: form };
 	},
@@ -55,7 +53,6 @@ export const actions: Actions = {
 
 		const id = (await event.request.formData()).get('id')!.toString();
 
-		await db.delete(sessionTypes)
-			.where(eq(sessionTypes.id, id));
+		await db.delete(sessionTypes).where(eq(sessionTypes.id, id));
 	}
 };

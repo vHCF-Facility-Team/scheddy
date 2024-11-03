@@ -1,301 +1,277 @@
 {
-  "version": "5",
-  "dialect": "mysql",
-  "id": "ea3a468b-d472-44a8-a071-db7412508008",
-  "prevId": "50ea5c55-b95f-4050-8d9c-59a1dbd8cd31",
-  "tables": {
-    "sessionType": {
-      "name": "sessionType",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(21)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "category": {
-          "name": "category",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "length": {
-          "name": "length",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "sessionType_id": {
-          "name": "sessionType_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "session": {
-      "name": "session",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(21)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "mentor": {
-          "name": "mentor",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "student": {
-          "name": "student",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "type": {
-          "name": "type",
-          "type": "varchar(21)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "start": {
-          "name": "start",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "end": {
-          "name": "end",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "session_mentor_user_id_fk": {
-          "name": "session_mentor_user_id_fk",
-          "tableFrom": "session",
-          "tableTo": "user",
-          "columnsFrom": [
-            "mentor"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "session_student_user_id_fk": {
-          "name": "session_student_user_id_fk",
-          "tableFrom": "session",
-          "tableTo": "user",
-          "columnsFrom": [
-            "student"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "session_type_sessionType_id_fk": {
-          "name": "session_type_sessionType_id_fk",
-          "tableFrom": "session",
-          "tableTo": "sessionType",
-          "columnsFrom": [
-            "type"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "session_id": {
-          "name": "session_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "userToken": {
-      "name": "userToken",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(21)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "user": {
-          "name": "user",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "userToken_user_user_id_fk": {
-          "name": "userToken_user_user_id_fk",
-          "tableFrom": "userToken",
-          "tableTo": "user",
-          "columnsFrom": [
-            "user"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "userToken_id": {
-          "name": "userToken_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "user": {
-      "name": "user",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "firstName": {
-          "name": "firstName",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "lastName": {
-          "name": "lastName",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "email": {
-          "name": "email",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "role": {
-          "name": "role",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "roleOverride": {
-          "name": "roleOverride",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "isVisitor": {
-          "name": "isVisitor",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "rating": {
-          "name": "rating",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "mentorAvailability": {
-          "name": "mentorAvailability",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "allowedSessionTypes": {
-          "name": "allowedSessionTypes",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "timezone": {
-          "name": "timezone",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "user_id": {
-          "name": "user_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    }
-  },
-  "views": {},
-  "_meta": {
-    "schemas": {},
-    "tables": {},
-    "columns": {}
-  },
-  "internal": {
-    "tables": {},
-    "indexes": {}
-  }
+	"version": "5",
+	"dialect": "mysql",
+	"id": "ea3a468b-d472-44a8-a071-db7412508008",
+	"prevId": "50ea5c55-b95f-4050-8d9c-59a1dbd8cd31",
+	"tables": {
+		"sessionType": {
+			"name": "sessionType",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar(21)",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"name": {
+					"name": "name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"category": {
+					"name": "category",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"length": {
+					"name": "length",
+					"type": "int",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {
+				"sessionType_id": {
+					"name": "sessionType_id",
+					"columns": ["id"]
+				}
+			},
+			"uniqueConstraints": {},
+			"checkConstraint": {}
+		},
+		"session": {
+			"name": "session",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar(21)",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"mentor": {
+					"name": "mentor",
+					"type": "int",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"student": {
+					"name": "student",
+					"type": "int",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"type": {
+					"name": "type",
+					"type": "varchar(21)",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"start": {
+					"name": "start",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"end": {
+					"name": "end",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"session_mentor_user_id_fk": {
+					"name": "session_mentor_user_id_fk",
+					"tableFrom": "session",
+					"tableTo": "user",
+					"columnsFrom": ["mentor"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"session_student_user_id_fk": {
+					"name": "session_student_user_id_fk",
+					"tableFrom": "session",
+					"tableTo": "user",
+					"columnsFrom": ["student"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"session_type_sessionType_id_fk": {
+					"name": "session_type_sessionType_id_fk",
+					"tableFrom": "session",
+					"tableTo": "sessionType",
+					"columnsFrom": ["type"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {
+				"session_id": {
+					"name": "session_id",
+					"columns": ["id"]
+				}
+			},
+			"uniqueConstraints": {},
+			"checkConstraint": {}
+		},
+		"userToken": {
+			"name": "userToken",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar(21)",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"user": {
+					"name": "user",
+					"type": "int",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"userToken_user_user_id_fk": {
+					"name": "userToken_user_user_id_fk",
+					"tableFrom": "userToken",
+					"tableTo": "user",
+					"columnsFrom": ["user"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {
+				"userToken_id": {
+					"name": "userToken_id",
+					"columns": ["id"]
+				}
+			},
+			"uniqueConstraints": {},
+			"checkConstraint": {}
+		},
+		"user": {
+			"name": "user",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "int",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"firstName": {
+					"name": "firstName",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"lastName": {
+					"name": "lastName",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"email": {
+					"name": "email",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"role": {
+					"name": "role",
+					"type": "int",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"roleOverride": {
+					"name": "roleOverride",
+					"type": "int",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"isVisitor": {
+					"name": "isVisitor",
+					"type": "boolean",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"rating": {
+					"name": "rating",
+					"type": "int",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"mentorAvailability": {
+					"name": "mentorAvailability",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"allowedSessionTypes": {
+					"name": "allowedSessionTypes",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"timezone": {
+					"name": "timezone",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {
+				"user_id": {
+					"name": "user_id",
+					"columns": ["id"]
+				}
+			},
+			"uniqueConstraints": {},
+			"checkConstraint": {}
+		}
+	},
+	"views": {},
+	"_meta": {
+		"schemas": {},
+		"tables": {},
+		"columns": {}
+	},
+	"internal": {
+		"tables": {},
+		"indexes": {}
+	}
 }

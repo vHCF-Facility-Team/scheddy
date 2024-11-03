@@ -5,7 +5,7 @@ import { redirect } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { users } from '$lib/server/db/schema';
 import { gt, or } from 'drizzle-orm';
-import type { PageServerLoad } from "./$types";
+import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ cookies }) => {
 	const { user } = (await loadUserData(cookies))!;
@@ -15,8 +15,9 @@ export const load: PageServerLoad = async ({ cookies }) => {
 
 	return {
 		user,
-		users: await db.select()
+		users: await db
+			.select()
 			.from(users)
-			.where(or(gt(users.role, ROLE_MENTOR), gt(users.roleOverride, ROLE_MENTOR))),
+			.where(or(gt(users.role, ROLE_MENTOR), gt(users.roleOverride, ROLE_MENTOR)))
 	};
 };

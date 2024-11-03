@@ -5,7 +5,7 @@ import { redirect } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { sessionTypes, users } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
-import type { PageServerLoad, Actions } from "./$types";
+import type { PageServerLoad, Actions } from './$types';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { nanoid } from 'nanoid';
@@ -18,7 +18,8 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 		redirect(307, '/schedule');
 	}
 
-	const mentor = await db.select()
+	const mentor = await db
+		.select()
 		.from(users)
 		.where(eq(users.id, Number.parseInt(params.userId!)));
 
@@ -26,14 +27,19 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 		redirect(307, '/dash');
 	}
 
-	const availability: MentorAvailability | null = mentor[0].mentorAvailability ? JSON.parse(mentor[0].mentorAvailability) : null;
+	const availability: MentorAvailability | null = mentor[0].mentorAvailability
+		? JSON.parse(mentor[0].mentorAvailability)
+		: null;
 
-	const form = await superValidate({ timezone: mentor[0].timezone, ...availability }, zod(availSchema));
+	const form = await superValidate(
+		{ timezone: mentor[0].timezone, ...availability },
+		zod(availSchema)
+	);
 
 	return {
 		user,
 		mentor: mentor[0],
-		form,
+		form
 	};
 };
 
@@ -51,7 +57,8 @@ export const actions: Actions = {
 
 		const schedule = JSON.stringify(form.data);
 
-		await db.update(users)
+		await db
+			.update(users)
 			.set({
 				mentorAvailability: schedule,
 				timezone: form.data.timezone
@@ -60,4 +67,4 @@ export const actions: Actions = {
 
 		return { form };
 	}
-}
+};

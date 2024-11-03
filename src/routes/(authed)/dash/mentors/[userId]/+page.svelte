@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PageData } from "./$types";
+	import type { PageData } from './$types';
 	import { DateTime } from 'luxon';
 	import TableHeadColumn from '$lib/ui/table/TableHeadColumn.svelte';
 	import { PencilIcon, PlusIcon, TrashIcon } from 'lucide-svelte';
@@ -11,7 +11,7 @@
 	import TableRow from '$lib/ui/table/TableRow.svelte';
 
 	interface Props {
-		data: PageData
+		data: PageData;
 	}
 	let { data }: PageData = $props();
 </script>
@@ -46,7 +46,11 @@
 			<TableBody>
 				{#each data.mentorSessions as sess}
 					<TableRow>
-						<TableColumn>{DateTime.fromISO(sess.session.start).setZone(data.mentor.timezone).toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)}</TableColumn>
+						<TableColumn
+							>{DateTime.fromISO(sess.session.start)
+								.setZone(data.mentor.timezone)
+								.toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)}</TableColumn
+						>
 						<TableColumn>{data.typesMap[sess.session.type]}</TableColumn>
 						<TableColumn>{sess.user.firstName} {sess.user.lastName}</TableColumn>
 						<TableColumn>
@@ -60,12 +64,16 @@
 		</TableRoot>
 	</div>
 
-
 	<h2 class="font-semibold text-lg">
 		Availability
-		<a class="text-sm text-blue-500 hover:text-blue-600 transition font-semibold" href="/dash/mentors/{data.user.id}/availability">Update availability &rarr;</a>
+		<a
+			class="text-sm text-blue-500 hover:text-blue-600 transition font-semibold"
+			href="/dash/mentors/{data.user.id}/availability">Update availability &rarr;</a
+		>
 	</h2>
-	<p class="text-sm text-slate-500">Timezone: {data.mentor.timezone ? data.mentor.timezone : "Not set"}</p>
+	<p class="text-sm text-slate-500">
+		Timezone: {data.mentor.timezone ? data.mentor.timezone : 'Not set'}
+	</p>
 	{#if data.mentor.mentorAvailability}
 		<table>
 			<thead class="text-left">
@@ -75,15 +83,23 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as day}
+				{#each ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as day}
 					{@const key = day.toLowerCase()}
 					<tr>
 						<td>{day}</td>
 						{#if data.availability[key].available}
 							<td>
-								{data.availability[key].start.hour.toString().padStart(2, "0")}:{data.availability[key].start.minute.toString().padStart(2, "0")}
+								{data.availability[key].start.hour.toString().padStart(2, '0')}:{data.availability[
+									key
+								].start.minute
+									.toString()
+									.padStart(2, '0')}
 								&rarr;
-								{data.availability[key].end.hour.toString().padStart(2, "0")}:{data.availability[key].end.minute.toString().padStart(2, "0")}
+								{data.availability[key].end.hour.toString().padStart(2, '0')}:{data.availability[
+									key
+								].end.minute
+									.toString()
+									.padStart(2, '0')}
 							</td>
 						{:else}
 							<td>Unavailable</td>
@@ -98,7 +114,11 @@
 			<p>
 				<b>{date}:</b>
 				{#if exc && exc.available}
-					{exc.start.hour.toString().padStart(2, "0")}:{exc.start.minute.toString().padStart(2, "0")} -> {exc.end.hour.toString().padStart(2, "0")}:{exc.end.minute.toString().padStart(2, "0")}
+					{exc.start.hour.toString().padStart(2, '0')}:{exc.start.minute
+						.toString()
+						.padStart(2, '0')} -> {exc.end.hour.toString().padStart(2, '0')}:{exc.end.minute
+						.toString()
+						.padStart(2, '0')}
 				{:else}
 					Not available
 				{/if}
@@ -112,7 +132,10 @@
 
 	<h2 class="font-semibold text-lg">
 		Allowed Session Types
-		<a class="text-sm text-blue-500 hover:text-blue-600 transition font-semibold" href="/dash/mentors/{data.user.id}/types">Update allowed types &rarr;</a>
+		<a
+			class="text-sm text-blue-500 hover:text-blue-600 transition font-semibold"
+			href="/dash/mentors/{data.user.id}/types">Update allowed types &rarr;</a
+		>
 	</h2>
 	{#if data.allowedTypes}
 		<ul class="list-disc list-inside">
@@ -126,4 +149,3 @@
 		<i>This mentor is not able to teach any sessions.</i>
 	{/if}
 </div>
-

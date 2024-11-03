@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { AppointmentBookedProps } from '$lib/emails/appointment_booked';
 
-	let { startTime, duration, mentorName, sessionId, type, timezone }: AppointmentBookedProps = $props();
+	let { startTime, duration, mentorName, sessionId, type, timezone }: AppointmentBookedProps =
+		$props();
 </script>
 
 <h1>Appointment booked!</h1>
@@ -17,4 +18,7 @@
 <p>---</p>
 
 <i>Confirmation ID {sessionId}</i>
-<i>You are receiving this email because you have booked a session with the ZTL ARTCC. If you believe to have received this email in error, please contact wm@ztlartcc.org.</i>
+<i
+	>You are receiving this email because you have booked a session with the ZTL ARTCC. If you believe
+	to have received this email in error, please contact wm@ztlartcc.org.</i
+>
