@@ -12,6 +12,7 @@ import { MAX_BOOKING_AHEAD_DAYS } from '$env/static/private';
 import { nanoid } from 'nanoid';
 import { appointment_booked } from '$lib/emails/appointment_booked';
 import { sendEmail } from '$lib/email';
+import { new_session } from '$lib/emails/new_session';
 
 function slottificate(
 	sTypes: typeof sessionTypes.$inferSelect,
@@ -238,10 +239,18 @@ export const actions: Actions = {
 
 		const id = nanoid();
 
-		const email_content = appointment_booked({
+		const studentEmailContent = appointment_booked({
 			startTime: start.setZone(timezone.toString()),
 			timezone: timezone.toString(),
 			mentorName: mentor.firstName + ' ' + mentor.lastName,
+			duration,
+			sessionId: id,
+			type: typename
+		});
+		const mentorEmailContent = new_session({
+			startTime: start.setZone(timezone.toString()),
+			timezone: timezone.toString(),
+			studentName: user.firstName + ' ' + user.lastName,
 			duration,
 			sessionId: id,
 			type: typename
@@ -256,6 +265,7 @@ export const actions: Actions = {
 			type: requestedType
 		});
 
-		await sendEmail(user.email, 'Appointment booked', email_content.raw, email_content.html);
+		await sendEmail(user.email, 'Appointment booked', studentEmailContent.raw, studentEmailContent.html);
+		await sendEmail(mentor.email, 'New session booked', mentorEmailContent.raw, mentorEmailContent.html);
 	}
 };

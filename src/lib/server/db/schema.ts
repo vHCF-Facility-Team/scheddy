@@ -1,4 +1,5 @@
 import { mysqlTable, text, int, boolean, varchar } from 'drizzle-orm/mysql-core';
+import { aliasedTable } from 'drizzle-orm';
 
 export const users = mysqlTable('user', {
 	id: int().primaryKey(), // VATSIM CID
@@ -34,3 +35,5 @@ export const sessions = mysqlTable('session', {
 	start: text(),
 	end: text()
 });
+export const students = aliasedTable(users, 'student');
+export const mentors = aliasedTable(users, 'mentor');

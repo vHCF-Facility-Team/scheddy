@@ -12,9 +12,10 @@
 		// 4am-12: morning
 		// 12-5: afternoon
 		// 5+: evening
-		if (hours >= 4 || hours <= 12) {
+		console.log(hours);
+		if (hours >= 4 && hours <= 12) {
 			return 'morning';
-		} else if (hours >= 12 || hours <= 5) {
+		} else if (hours >= 12 && hours <= 17) {
 			return 'afternoon';
 		} else {
 			return 'evening';

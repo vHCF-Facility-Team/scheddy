@@ -68,7 +68,7 @@
 		Availability
 		<a
 			class="text-sm text-blue-500 hover:text-blue-600 transition font-semibold"
-			href="/dash/mentors/{data.user.id}/availability">Update availability &rarr;</a
+			href="/dash/mentors/{data.mentor.id}/availability">Update availability &rarr;</a
 		>
 	</h2>
 	<p class="text-sm text-slate-500">
@@ -134,7 +134,7 @@
 		Allowed Session Types
 		<a
 			class="text-sm text-blue-500 hover:text-blue-600 transition font-semibold"
-			href="/dash/mentors/{data.user.id}/types">Update allowed types &rarr;</a
+			href="/dash/mentors/{data.mentor.id}/types">Update allowed types &rarr;</a
 		>
 	</h2>
 	{#if data.allowedTypes}

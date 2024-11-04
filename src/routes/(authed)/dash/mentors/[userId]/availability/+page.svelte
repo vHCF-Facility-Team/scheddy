@@ -163,6 +163,7 @@
 								onclick={(e) => {
 									e.preventDefault();
 									delete $form.exceptions[key];
+									$form.exceptions = $form.exceptions;
 								}}
 								class="ml-4 w-6 h-6"
 								size="icon"
