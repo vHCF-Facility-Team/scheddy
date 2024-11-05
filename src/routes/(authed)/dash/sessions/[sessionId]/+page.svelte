@@ -7,6 +7,7 @@
 	import ModalBody from '$lib/ui/modal/ModalBody.svelte';
 	import ModalFooter from '$lib/ui/modal/ModalFooter.svelte';
 	import { goto, invalidateAll } from '$app/navigation';
+	import Input from '$lib/ui/form/Input.svelte';
 
 	interface Props {
 		data: PageData
@@ -15,6 +16,10 @@
 
 	let cancelOpen = $state(false);
 	let rescheduleOpen = $state(false);
+
+	let date: string = $state("");
+	let hour: number = 0;
+	let minute: number = 0;
 
 	async function cancel() {
 		await fetch("?/cancel", {
@@ -27,7 +32,36 @@
 		await invalidateAll();
 	}
 	async function reschedule() {
+		let udata = new URLSearchParams();
 
+		console.log(date);
+
+		let [ys, ms, ds] = date.split("-");
+		let y = Number.parseInt(ys);
+		let m = Number.parseInt(ms);
+		let d = Number.parseInt(ds);
+
+		let datetime = DateTime.now().setZone(data.sessionInfo.mentor.timezone).set({
+			year: y,
+			month: m,
+			day: d,
+			hour: hour,
+			minute: minute,
+			second: 0,
+			millisecond: 0
+		});
+
+		udata.set("date", datetime.toISO()!);
+		await fetch("?/reschedule", {
+			method: 'POST',
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded"
+			},
+			body: udata.toString()
+		});
+
+		await invalidateAll();
+		rescheduleOpen = false;
 	}
 </script>
 
@@ -90,12 +124,21 @@
 	>
 		<ModalHeader
 			rescheduleOpen={() => {
-			cancelOpen = false;
+			rescheduleOpen = false;
 		}}
 			title="Reschedule"
 		/>
 		<ModalBody>
 			<div class="px-4">
+				<p>Timezone: {data.sessionInfo.mentor.timezone}</p>
+				<div class="flex flex-col">
+					<Input bind:value={date} label="date" type="date" />
+					<div class="flex flex-row gap-4">
+						<Input bind:value={hour} type="number" label="HH" />
+						<Input bind:value={minute} type="number" label="MM" />
+					</div>
+				</div>
+
 				<p class="text-red-500">
 					It is your responsibility to inform the student of the rescheduling.
 				</p>

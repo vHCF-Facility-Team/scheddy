@@ -33,7 +33,6 @@ export const sessions = mysqlTable('session', {
 	student: int().references(() => users.id),
 	type: varchar({ length: 21 }).references(() => sessionTypes.id),
 	start: text(),
-	end: text()
 });
 export const students = aliasedTable(users, 'student');
 export const mentors = aliasedTable(users, 'mentor');

@@ -261,7 +261,6 @@ export const actions: Actions = {
 			mentor: slotObj.mentor,
 			student: user.id,
 			start: start.toISO(),
-			end: end.toISO(),
 			type: requestedType
 		});
 
