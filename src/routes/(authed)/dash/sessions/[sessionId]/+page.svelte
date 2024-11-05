@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { PageData } from "./$types";
-	import { DateTime } from "luxon";
+	import type { PageData } from './$types';
+	import { DateTime } from 'luxon';
 	import Button from '$lib/ui/Button.svelte';
 	import ModalHeader from '$lib/ui/modal/ModalHeader.svelte';
 	import Modal from '$lib/ui/modal/Modal.svelte';
@@ -10,25 +10,25 @@
 	import Input from '$lib/ui/form/Input.svelte';
 
 	interface Props {
-		data: PageData
+		data: PageData;
 	}
 	let { data }: Props = $props();
 
 	let cancelOpen = $state(false);
 	let rescheduleOpen = $state(false);
 
-	let date: string = $state("");
-	let hour: number = 0;
-	let minute: number = 0;
+	let date: string = $state('');
+	let hour: number = $state(0);
+	let minute: number = $state(0);
 
 	async function cancel() {
-		await fetch("?/cancel", {
+		await fetch('?/cancel', {
 			method: 'POST',
 			headers: {
-				"Content-Type": "application/x-www-form-urlencoded"
+				'Content-Type': 'application/x-www-form-urlencoded'
 			}
 		});
-		await goto("/dash");
+		await goto('/dash');
 		await invalidateAll();
 	}
 	async function reschedule() {
@@ -36,7 +36,7 @@
 
 		console.log(date);
 
-		let [ys, ms, ds] = date.split("-");
+		let [ys, ms, ds] = date.split('-');
 		let y = Number.parseInt(ys);
 		let m = Number.parseInt(ms);
 		let d = Number.parseInt(ds);
@@ -51,11 +51,11 @@
 			millisecond: 0
 		});
 
-		udata.set("date", datetime.toISO()!);
-		await fetch("?/reschedule", {
+		udata.set('date', datetime.toISO()!);
+		await fetch('?/reschedule', {
 			method: 'POST',
 			headers: {
-				"Content-Type": "application/x-www-form-urlencoded"
+				'Content-Type': 'application/x-www-form-urlencoded'
 			},
 			body: udata.toString()
 		});
@@ -66,19 +66,48 @@
 </script>
 
 <div class="flex flex-col gap-4">
-	<h1 class="text-2xl font-semibold">Session - {data.sessionInfo.sessionType.name} at {DateTime.fromISO(data.sessionInfo.session.start).toLocaleString(DateTime.DATETIME_HUGE)} for {data.sessionInfo.student.firstName} {data.sessionInfo.student.lastName}</h1>
-	<p><b>Student:</b> {data.sessionInfo.student.firstName} {data.sessionInfo.student.lastName} ({data.sessionInfo.student.id})</p>
-	<p><b>Mentor:</b> {data.sessionInfo.mentor.firstName} {data.sessionInfo.mentor.lastName} ({data.sessionInfo.mentor.id})</p>
-	<p><b>Date:</b> {DateTime.fromISO(data.sessionInfo.session.start).toLocaleString(DateTime.DATETIME_HUGE)}</p>
-	<p><b>Session Type:</b> {data.sessionInfo.sessionType.category} - {data.sessionInfo.sessionType.name}</p>
+	<h1 class="text-2xl font-semibold">
+		Session - {data.sessionInfo.sessionType.name} at {DateTime.fromISO(
+			data.sessionInfo.session.start
+		).toLocaleString(DateTime.DATETIME_HUGE)} for {data.sessionInfo.student.firstName}
+		{data.sessionInfo.student.lastName}
+	</h1>
+	<p>
+		<b>Student:</b>
+		{data.sessionInfo.student.firstName}
+		{data.sessionInfo.student.lastName} ({data.sessionInfo.student.id})
+	</p>
+	<p>
+		<b>Mentor:</b>
+		{data.sessionInfo.mentor.firstName}
+		{data.sessionInfo.mentor.lastName} ({data.sessionInfo.mentor.id})
+	</p>
+	<p>
+		<b>Date:</b>
+		{DateTime.fromISO(data.sessionInfo.session.start).toLocaleString(DateTime.DATETIME_HUGE)}
+	</p>
+	<p>
+		<b>Session Type:</b>
+		{data.sessionInfo.sessionType.category} - {data.sessionInfo.sessionType.name}
+	</p>
 	<p><b>Duration:</b> {data.sessionInfo.sessionType.length} minutes</p>
 	{#if data.isMentor}
 		<h2 class="font-bold text-lg">Mentor/Staff Actions</h2>
 		<div>
-			<Button onclick={() => {cancelOpen = true;}} variant="danger">
+			<Button
+				onclick={() => {
+					cancelOpen = true;
+				}}
+				variant="danger"
+			>
 				Cancel
 			</Button>
-			<Button onclick={() => {rescheduleOpen = true;}} variant="danger">
+			<Button
+				onclick={() => {
+					rescheduleOpen = true;
+				}}
+				variant="danger"
+			>
 				Reschedule
 			</Button>
 		</div>
@@ -88,14 +117,14 @@
 {#if data.isMentor}
 	<Modal
 		onclose={() => {
-		cancelOpen = false;
-	}}
+			cancelOpen = false;
+		}}
 		bind:open={cancelOpen}
 	>
 		<ModalHeader
 			onclose={() => {
-			cancelOpen = false;
-		}}
+				cancelOpen = false;
+			}}
 			title="Confirm cancellation"
 		/>
 		<ModalBody>
@@ -108,8 +137,8 @@
 		<ModalFooter>
 			<Button
 				onclick={() => {
-				cancelOpen = false;
-			}}
+					cancelOpen = false;
+				}}
 				variant="ghost"
 				size="sm">Nevermind</Button
 			>
@@ -118,14 +147,14 @@
 	</Modal>
 	<Modal
 		onclose={() => {
-		rescheduleOpen = false;
-	}}
+			rescheduleOpen = false;
+		}}
 		bind:open={rescheduleOpen}
 	>
 		<ModalHeader
 			rescheduleOpen={() => {
-			rescheduleOpen = false;
-		}}
+				rescheduleOpen = false;
+			}}
 			title="Reschedule"
 		/>
 		<ModalBody>
@@ -147,8 +176,8 @@
 		<ModalFooter>
 			<Button
 				onclick={() => {
-				rescheduleOpen = false;
-			}}
+					rescheduleOpen = false;
+				}}
 				variant="ghost"
 				size="sm">Nevermind</Button
 			>

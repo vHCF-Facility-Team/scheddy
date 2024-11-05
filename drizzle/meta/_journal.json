@@ -1,55 +1,55 @@
 {
-  "version": "7",
-  "dialect": "mysql",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "5",
-      "when": 1729553447031,
-      "tag": "0000_add_user_tables",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1730121387899,
-      "tag": "0001_add_session_types",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1730300708652,
-      "tag": "0002_add_mentor_availability",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1730301096228,
-      "tag": "0003_add_mentor_timezone",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1730301527980,
-      "tag": "0004_add_mentor_allowed_types",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1730559398775,
-      "tag": "0005_create_sessions",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "5",
-      "when": 1730819833614,
-      "tag": "0006_remove_end_from_sess",
-      "breakpoints": true
-    }
-  ]
+	"version": "7",
+	"dialect": "mysql",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "5",
+			"when": 1729553447031,
+			"tag": "0000_add_user_tables",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "5",
+			"when": 1730121387899,
+			"tag": "0001_add_session_types",
+			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "5",
+			"when": 1730300708652,
+			"tag": "0002_add_mentor_availability",
+			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "5",
+			"when": 1730301096228,
+			"tag": "0003_add_mentor_timezone",
+			"breakpoints": true
+		},
+		{
+			"idx": 4,
+			"version": "5",
+			"when": 1730301527980,
+			"tag": "0004_add_mentor_allowed_types",
+			"breakpoints": true
+		},
+		{
+			"idx": 5,
+			"version": "5",
+			"when": 1730559398775,
+			"tag": "0005_create_sessions",
+			"breakpoints": true
+		},
+		{
+			"idx": 6,
+			"version": "5",
+			"when": 1730819833614,
+			"tag": "0006_remove_end_from_sess",
+			"breakpoints": true
+		}
+	]
 }

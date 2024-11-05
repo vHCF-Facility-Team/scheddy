@@ -224,7 +224,6 @@ export const actions: Actions = {
 
 		const interval = Interval.fromISO(slotObj.slot);
 		const start = interval.start.setZone('utc');
-		const end = interval.end.setZone('utc');
 
 		const mentor = (await db.select().from(users).where(eq(users.id, slotObj.mentor)))[0]!;
 
@@ -264,7 +263,17 @@ export const actions: Actions = {
 			type: requestedType
 		});
 
-		await sendEmail(user.email, 'Appointment booked', studentEmailContent.raw, studentEmailContent.html);
-		await sendEmail(mentor.email, 'New session booked', mentorEmailContent.raw, mentorEmailContent.html);
+		await sendEmail(
+			user.email,
+			'Appointment booked',
+			studentEmailContent.raw,
+			studentEmailContent.html
+		);
+		await sendEmail(
+			mentor.email,
+			'New session booked',
+			mentorEmailContent.raw,
+			mentorEmailContent.html
+		);
 	}
 };

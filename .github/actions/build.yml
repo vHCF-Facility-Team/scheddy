@@ -1,0 +1,14 @@
+name: build
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install build dependencies
+        run: bun install --frozen-lockfile
+      - name: Build production bundle
+        run: bun --bun run build
