@@ -32,3 +32,6 @@ jobs:
           echo SMTP_EMAIL_FROM="${{ secrets.SMTP_EMAIL_FROM }}" >> .env
       - name: Build production bundle
         run: bun --bun run build
+      - name: Pack production bundle
+        run: cp -r build scheddy && tar -czvf scheddy.tar.gz scheddy
+      # todo: upload
