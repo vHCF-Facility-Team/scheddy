@@ -34,4 +34,9 @@ jobs:
         run: bun --bun run build
       - name: Pack production bundle
         run: cp -r build scheddy && tar -czvf scheddy.tar.gz scheddy
+      - name: Upload production bundle as temporary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: scheddy.tar.gz
+          path: scheddy.tar.gz
       # todo: upload
