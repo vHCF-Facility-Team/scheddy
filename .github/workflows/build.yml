@@ -32,6 +32,10 @@ jobs:
           echo SMTP_EMAIL_FROM="${{ secrets.SMTP_EMAIL_FROM }}" >> .env
       - name: Build production bundle
         run: bun --bun run build
+      - name: Copy package manager tools
+        run: cp package.json build/ && cp bun.lockb build/
+      - name: Install production dependencies
+        run: cd build && bun i --frozen-lockfile --production
       - name: Pack production bundle
         run: cp -r build scheddy && tar -czvf scheddy.tar.gz scheddy
       - name: Upload production bundle as temporary artifact
