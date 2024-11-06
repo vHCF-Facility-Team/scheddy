@@ -14,7 +14,7 @@ jobs:
       VATSIM_OAUTH_CLIENT_SECRET: ${{ secrets.VATSIM_OAUTH_CLIENT_SECRET }}
       VATUSA_API_BASE: ${{ vars.VATUSA_API_BASE }}
       VATUSA_API_KEY: ${{ secrets.VATUSA_API_KEY }}
-      MAX_BOOKING_AHEAD_DATS: ${{ vars.MAX_BOOKING_AHEAD_DAYS }}
+      MAX_BOOKING_AHEAD_DAYS: ${{ vars.MAX_BOOKING_AHEAD_DAYS }}
       SMTP_HOST: ${{ secrets.SMTP_HOST }}
       SMTP_PORT: ${{ secrets.SMTP_PORT }}
       SMTP_SECURE: ${{ secrets.SMTP_SECURE }}
