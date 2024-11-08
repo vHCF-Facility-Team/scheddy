@@ -67,7 +67,7 @@ jobs:
           remote_user: ${{ secrets.SERVER_USERNAME }}
           remote_key: ${{ secrets.SERVER_PRIVATE_KEY }}
       - name: Run database migrations
-        command: bun drizzle-kit migrate
+        run: bun drizzle-kit migrate
       - name: Start main server
         uses: garygrossgarten/github-action-ssh@release
         with:
