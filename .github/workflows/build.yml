@@ -49,6 +49,14 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           username: ${{ secrets.SERVER_USERNAME }}
           privateKey: ${{ secrets.SERVER_PRIVATE_KEY }}
+      - name: Stop main server
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: sudo systemctl stop scheddy
+          host: ${{ secrets.SERVER_HOST }}
+          port: ${{ secrets.SERVER_PORT }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          privateKey: ${{ secrets.SERVER_PRIVATE_KEY }}
       - name: Upload bundle files to server
         uses: burnett01/rsync-deployments@5.2
         with:
@@ -58,6 +66,14 @@ jobs:
           remote_host: ${{ secrets.SERVER_HOST }}
           remote_user: ${{ secrets.SERVER_USERNAME }}
           remote_key: ${{ secrets.SERVER_PRIVATE_KEY }}
+      - name: Start main server
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: sudo systemctl start scheddy
+          host: ${{ secrets.SERVER_HOST }}
+          port: ${{ secrets.SERVER_PORT }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          privateKey: ${{ secrets.SERVER_PRIVATE_KEY }}
       - name: Put server in production mode
         uses: garygrossgarten/github-action-ssh@release
         with:
