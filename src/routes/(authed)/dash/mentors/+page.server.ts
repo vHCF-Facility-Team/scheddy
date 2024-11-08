@@ -4,7 +4,7 @@ import { ROLE_MENTOR, ROLE_STAFF } from '$lib/utils';
 import { redirect } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { users } from '$lib/server/db/schema';
-import { gt, or } from 'drizzle-orm';
+import { gte, or } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ cookies }) => {
@@ -18,6 +18,6 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		users: await db
 			.select()
 			.from(users)
-			.where(or(gt(users.role, ROLE_MENTOR), gt(users.roleOverride, ROLE_MENTOR)))
+			.where(or(gte(users.role, ROLE_MENTOR), gte(users.roleOverride, ROLE_MENTOR)))
 	};
 };
