@@ -74,7 +74,7 @@
 	<p class="text-sm text-slate-500">
 		Timezone: {data.mentor.timezone ? data.mentor.timezone : 'Not set'}
 	</p>
-	{#if data.mentor.mentorAvailability}
+	{#if data.mentor.mentorAvailability && data.availability}
 		<table>
 			<thead class="text-left">
 				<tr>
