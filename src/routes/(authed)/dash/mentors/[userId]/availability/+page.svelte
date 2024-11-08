@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import { superForm } from 'sveltekit-superforms';
 	import { TrashIcon } from 'lucide-svelte';
 	import Button from '$lib/ui/Button.svelte';
 	import Input from '$lib/ui/form/Input.svelte';
@@ -202,7 +202,6 @@
 				</div>
 			</div>
 
-			<SuperDebug data={$form} />
 			<Button>Set</Button>
 		</div>
 	</form>
