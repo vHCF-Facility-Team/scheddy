@@ -110,22 +110,26 @@
 		</table>
 
 		<p>Exceptions:</p>
-		{#each Object.entries(data.availability.exceptions) as [date, exc]}
-			<p>
-				<b>{date}:</b>
-				{#if exc && exc.available}
-					{exc.start.hour.toString().padStart(2, '0')}:{exc.start.minute
-						.toString()
-						.padStart(2, '0')} -> {exc.end.hour.toString().padStart(2, '0')}:{exc.end.minute
-						.toString()
-						.padStart(2, '0')}
-				{:else}
-					Not available
-				{/if}
-			</p>
+		{#if data.availability && data.availability.exceptions}
+			{#each Object.entries(data.availability.exceptions) as [date, exc]}
+				<p>
+					<b>{date}:</b>
+					{#if exc && exc.available}
+						{exc.start.hour.toString().padStart(2, '0')}:{exc.start.minute
+							.toString()
+							.padStart(2, '0')} -> {exc.end.hour.toString().padStart(2, '0')}:{exc.end.minute
+							.toString()
+							.padStart(2, '0')}
+					{:else}
+						Not available
+					{/if}
+				</p>
+			{:else}
+				<p>None</p>
+			{/each}
 		{:else}
 			<p>None</p>
-		{/each}
+		{/if}
 	{:else}
 		<p>No availability set at this time</p>
 	{/if}
