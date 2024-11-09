@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { NewSessionProps } from '$lib/emails/new_session';
+	import { DateTime } from 'luxon';
 
 	let { startTime, duration, studentName, sessionId, type, timezone }: NewSessionProps = $props();
 </script>
@@ -8,7 +9,7 @@
 
 <p>A student has booked an appointment. Here are the details:</p>
 <p><b>Session type:</b> {type}</p>
-<p><b>Date/time:</b> {startTime}</p>
+<p><b>Date/time:</b> {startTime.toLocaleString(DateTime.DATETIME_HUGE)}</p>
 <p><b>Timezone:</b> {timezone}</p>
 <p><b>Duration:</b> {duration} minutes</p>
 <p><b>Student:</b> {studentName}</p>

@@ -16,7 +16,7 @@ export interface AppointmentBookedProps {
 export function appointment_booked(props: AppointmentBookedProps): EmailContent {
 	return {
 		raw: templateOut(plaintextTemplate, {
-			startTime: props.startTime.setZone(props.timezone).toLocaleString(DateTime.DATETIME_FULL),
+			startTime: props.startTime.setZone(props.timezone).toLocaleString(DateTime.DATETIME_HUGE),
 			type: props.type,
 			duration: props.duration.toString(),
 			mentorName: props.mentorName,

@@ -16,7 +16,7 @@ export interface NewSessionProps {
 export function new_session(props: NewSessionProps): EmailContent {
 	return {
 		raw: templateOut(plaintextTemplate, {
-			startTime: props.startTime.setZone(props.timezone).toLocaleString(DateTime.DATETIME_FULL),
+			startTime: props.startTime.setZone(props.timezone).toLocaleString(DateTime.DATETIME_HUGE),
 			type: props.type,
 			duration: props.duration.toString(),
 			studentName: props.mentorName,
