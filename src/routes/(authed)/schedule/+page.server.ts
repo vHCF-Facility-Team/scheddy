@@ -255,8 +255,8 @@ export const actions: Actions = {
 			type: typename
 		});
 		const mentorEmailContent = new_session({
-			startTime: start.setZone(timezone.toString()),
-			timezone: timezone.toString(),
+			startTime: start.setZone(mentor.timezone),
+			timezone: mentor.timezone,
 			studentName: user.firstName + ' ' + user.lastName,
 			duration,
 			sessionId: id,
