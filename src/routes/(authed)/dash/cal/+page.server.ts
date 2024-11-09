@@ -36,6 +36,8 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 		mentorSessions.push(sess);
 	}
 
+	console.log(mentorSessions);
+
 	return {
 		user,
 		mentorSessions
