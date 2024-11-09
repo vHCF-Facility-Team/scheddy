@@ -47,7 +47,7 @@ export const actions: Actions = {
 		const form = await superValidate(event, zod(availSchema));
 
 		const { user } = (await loadUserData(event.cookies))!;
-		if (roleOf(user) < ROLE_STAFF) {
+		if (roleOf(user) < ROLE_STAFF && user.id != event.params.userId) {
 			return fail(403, { form });
 		}
 		if (!form.valid) {
