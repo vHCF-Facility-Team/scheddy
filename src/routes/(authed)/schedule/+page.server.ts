@@ -88,12 +88,14 @@ function slottificate(
 						second: 0,
 						millisecond: 0
 					});
+					console.log(start, todaysAvail);
 					const end = dayInMentorsTz.set({
 						hour: todaysAvail.end.hour,
 						minute: todaysAvail.end.minute,
 						second: 0,
 						millisecond: 0
 					});
+					console.log(end, todaysAvail);
 
 					const interval = Interval.fromDateTimes(start, end);
 
