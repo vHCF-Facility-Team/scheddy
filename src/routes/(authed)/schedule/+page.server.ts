@@ -100,6 +100,11 @@ function slottificate(
 					const interval = Interval.fromDateTimes(start, end);
 
 					console.log(interval);
+					if (interval.start == null) {
+						console.log("-- INVALID INTERVAL --");
+						console.log(start);
+						console.log(end);
+					}
 
 					availablePeriodsMentorsTime.push(interval);
 				}
