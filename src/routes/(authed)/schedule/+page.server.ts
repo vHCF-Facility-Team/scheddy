@@ -88,23 +88,14 @@ function slottificate(
 						second: 0,
 						millisecond: 0
 					});
-					console.log(start, todaysAvail);
 					const end = dayInMentorsTz.set({
 						hour: todaysAvail.end.hour,
 						minute: todaysAvail.end.minute,
 						second: 0,
 						millisecond: 0
 					});
-					console.log(end, todaysAvail);
 
 					const interval = Interval.fromDateTimes(start, end);
-
-					console.log(interval);
-					if (interval.start == null) {
-						console.log("-- INVALID INTERVAL --");
-						console.log(start);
-						console.log(end);
-					}
 
 					availablePeriodsMentorsTime.push(interval);
 				}
@@ -119,7 +110,7 @@ function slottificate(
 			for (const period of availablePeriodsMentorsTime) {
 				if (!period.start || !period.end) {
 					console.log(period);
-					return;
+					continue; // invalid... ignore
 				}
 				availablePeriods.push(
 					Interval.fromDateTimes(period.start.setZone('utc'), period.end.setZone('utc'))
@@ -128,7 +119,7 @@ function slottificate(
 			for (const period of unavailablePeriodsMentorsTime) {
 				if (!period.start || !period.end) {
 					console.log(period);
-					return;
+					continue; // invalid... ignore
 				}
 				unavailablePeriods.push(
 					Interval.fromDateTimes(period.start.setZone('utc'), period.end.setZone('utc'))

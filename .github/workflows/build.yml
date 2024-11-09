@@ -21,6 +21,8 @@ jobs:
       SMTP_AUTH_USER: ${{ secrets.SMTP_AUTH_USER }}
       SMTP_AUTH_PASS: ${{ secrets.SMTP_AUTH_PASS }}
       SMTP_EMAIL_FROM: ${{ secrets.SMTP_EMAIL_FROM }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      PUBLIC_SENTRY_DSN: ${{ secrets.PUBLIC_SENTRY_DSN }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
