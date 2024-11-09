@@ -97,6 +97,8 @@ function slottificate(
 
 					const interval = Interval.fromDateTimes(start, end);
 
+					console.log(interval);
+
 					availablePeriodsMentorsTime.push(interval);
 				}
 			}
@@ -108,11 +110,19 @@ function slottificate(
 			const unavailablePeriods = [];
 
 			for (const period of availablePeriodsMentorsTime) {
+				if (!period.start || !period.end) {
+					console.log(period);
+					return;
+				}
 				availablePeriods.push(
 					Interval.fromDateTimes(period.start.setZone('utc'), period.end.setZone('utc'))
 				);
 			}
 			for (const period of unavailablePeriodsMentorsTime) {
+				if (!period.start || !period.end) {
+					console.log(period);
+					return;
+				}
 				unavailablePeriods.push(
 					Interval.fromDateTimes(period.start.setZone('utc'), period.end.setZone('utc'))
 				);
