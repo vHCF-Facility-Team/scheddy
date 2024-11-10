@@ -4,7 +4,7 @@ import { ROLE_DEVELOPER, ROLE_MENTOR, ROLE_STAFF, roleString } from '$lib/utils'
 import { roleOf } from '$lib';
 import { db } from '$lib/server/db';
 import { sessions, sessionTypes, users } from '$lib/server/db/schema';
-import { eq, gt, or } from 'drizzle-orm';
+import { eq, gte, or } from 'drizzle-orm';
 import type { DayAvailability, MentorAvailability } from '$lib/availability';
 import { DateTime, Duration, Interval } from 'luxon';
 import { fail } from '@sveltejs/kit';
@@ -15,9 +15,9 @@ import { sendEmail } from '$lib/email';
 import { new_session } from '$lib/emails/new_session';
 
 function slottificate(
-	sTypes: typeof sessionTypes.$inferSelect[],
-	mentors: typeof users.$inferSelect[],
-	allSessions: typeof sessions.$inferSelect[]
+	sTypes: (typeof sessionTypes.$inferSelect)[],
+	mentors: (typeof users.$inferSelect)[],
+	allSessions: (typeof sessions.$inferSelect)[]
 ): Record<string, { slot: Interval; mentor: number }[]> {
 	const slotData: Record<string, { slot: Interval; mentor: number }[]> = {};
 
@@ -30,7 +30,7 @@ function slottificate(
 
 	const sessionsByMentor = {};
 	for (const sess of allSessions) {
-		if (sess.mentor == true) continue;
+		if (sess.mentor == null) continue;
 
 		if (!sessionsByMentor[sess.mentor]) {
 			sessionsByMentor[sess.mentor] = [];
@@ -38,14 +38,9 @@ function slottificate(
 		sessionsByMentor[sess.mentor].push(sess);
 	}
 
-	console.log("sessionsByMentor", sessionsByMentor);
-
 	for (const typ of sTypes) {
-		console.log("for typ", typ);
 		const slots = [];
 		for (const mentor of mentors) {
-			console.log("for mentor", mentor);
-
 			const allowedTypes = JSON.parse(mentor.allowedSessionTypes);
 			if (!allowedTypes) continue;
 			if (!allowedTypes.includes(typ.id)) continue;
@@ -54,8 +49,6 @@ function slottificate(
 			if (!availability) continue;
 
 			const mentorsOtherSessions = sessionsByMentor[mentor.id] || [];
-
-			console.log("otherSessions", mentorsOtherSessions);
 
 			const availablePeriodsMentorsTime: Interval[] = [];
 			const unavailablePeriodsMentorsTime: Interval[] = [];
@@ -68,15 +61,9 @@ function slottificate(
 				unavailablePeriodsMentorsTime.push(Interval.fromDateTimes(start, end));
 			}
 
-			console.log("unavailable", unavailablePeriodsMentorsTime);
-
 			// figure out their availability for each day
 			for (const validDay of validDaysToBook) {
-				console.log("validDay", validDay);
-
 				const dayInMentorsTz = validDay.setZone(mentor.timezone);
-
-				console.log("validDayMentorsTz", dayInMentorsTz);
 
 				let todaysAvail: DayAvailability | null = null;
 				// do they have a date exception set?
@@ -95,8 +82,6 @@ function slottificate(
 					else if (dayInMentorsTz.weekday == 7) todaysAvail = availability.sunday;
 				}
 
-				console.log("todaysAvail", todaysAvail);
-
 				// convert the availability back to an interval
 				if (todaysAvail && todaysAvail.available) {
 					// we are available
@@ -112,7 +97,6 @@ function slottificate(
 						second: 0,
 						millisecond: 0
 					});
-					console.log("start", start, "end", end);
 
 					const interval = Interval.fromDateTimes(start, end);
 
@@ -145,17 +129,12 @@ function slottificate(
 				);
 			}
 
-			console.log("availablePeriods", availablePeriods);
-			console.log("unavailablePeriods", unavailablePeriods);
-
 			// calculate difference of each availablePeriod to get a list of o.k. slots
 			const thisMentorAvailability: Interval[] = [];
 
 			for (const period of availablePeriods) {
 				thisMentorAvailability.push(...period.difference(...unavailablePeriods));
 			}
-
-			console.log("thisMentorAvailability", thisMentorAvailability);
 
 			// split each available period into individual session slots
 			const individualSlots: Interval[] = [];
@@ -165,8 +144,6 @@ function slottificate(
 			for (const period of thisMentorAvailability) {
 				individualSlots.push(...period.splitBy(Duration.fromObject({ minutes: minimumLength })));
 			}
-
-			console.log("individualSlots", individualSlots);
 
 			// finally, drop any that are too short or <24h
 
@@ -178,8 +155,6 @@ function slottificate(
 					validSlots.push(potentialSlot);
 				}
 			}
-
-			console.log("validSlots", validSlots);
 
 			slots.push(
 				...validSlots.map((u) => {
@@ -193,8 +168,6 @@ function slottificate(
 		slotData[typ.id] = slots;
 	}
 
-	console.log("slotData", slotData);
-
 	return slotData;
 }
 
@@ -205,7 +178,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
 	const mentors = await db
 		.select()
 		.from(users)
-		.where(or(gt(users.role, ROLE_MENTOR), gt(users.roleOverride, ROLE_MENTOR)));
+		.where(or(gte(users.role, ROLE_MENTOR), gte(users.roleOverride, ROLE_MENTOR)));
 
 	const allSessions = await db.select().from(sessions);
 
@@ -235,7 +208,7 @@ export const actions: Actions = {
 		const mentors = await db
 			.select()
 			.from(users)
-			.where(or(gt(users.role, ROLE_MENTOR), gt(users.roleOverride, ROLE_MENTOR)));
+			.where(or(gte(users.role, ROLE_MENTOR), gte(users.roleOverride, ROLE_MENTOR)));
 		const allSessions = await db.select().from(sessions);
 
 		const slotData = slottificate(sTypes, mentors, allSessions);

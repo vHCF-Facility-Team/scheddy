@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 export const time = z.object({
-	hour: z.coerce.number(),
-	minute: z.coerce.number()
+	hour: z.coerce.number().min(0).max(48),
+	minute: z.coerce.number().min(0).max(59)
 });
 
 export const dayAvailability = z.object({

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PageData } from "./$types";
+	import type { PageData } from './$types';
 	import { DateTime } from 'luxon';
 	import TableRoot from '$lib/ui/table/TableRoot.svelte';
 	import TableHead from '$lib/ui/table/TableHead.svelte';
@@ -11,7 +11,7 @@
 	import { PencilIcon } from 'lucide-svelte';
 
 	interface Props {
-		data: PageData
+		data: PageData;
 	}
 	let { data }: Props = $props();
 </script>
@@ -33,8 +33,9 @@
 			{#each data.mentorSessions as sess}
 				<TableRow>
 					<TableColumn
-					>{DateTime.fromISO(sess.session.start)
-						.toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)}</TableColumn
+						>{DateTime.fromISO(sess.session.start).toLocaleString(
+							DateTime.DATETIME_MED_WITH_WEEKDAY
+						)}</TableColumn
 					>
 					<TableColumn>{data.typesMap[sess.session.type]}</TableColumn>
 					<TableColumn>{sess.student.firstName} {sess.student.lastName}</TableColumn>

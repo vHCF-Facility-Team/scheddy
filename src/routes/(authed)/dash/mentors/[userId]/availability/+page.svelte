@@ -65,7 +65,7 @@
 			</Select>
 			<span
 				>Select the city closest to your location, to ensure that times are displayed correctly for
-				you. Times below are entered <i>in this timezone</i></span
+				you. Times below are entered <i>in this timezone.</i></span
 			>
 			<div class="flex flex-col md:flex-row gap-4">
 				<div class="flex-1 flex flex-col gap-2">
@@ -90,11 +90,13 @@
 											label="Start Time Hour"
 											bind:value={$form[key].start.hour}
 											name="{key}.start.hour"
+											error={$errors[key]?.start.hour}
 										/>
 										<Input
 											label="Minute"
 											bind:value={$form[key].start.minute}
 											name="{key}.start.minute"
+											error={$errors[key]?.start.minute}
 										/>
 									</div>
 									<div class="flex flex-row gap-4">
@@ -102,11 +104,13 @@
 											label="End Time Hour"
 											bind:value={$form[key].end.hour}
 											name="{key}.end.hour"
+											error={$errors[key]?.end.hour}
 										/>
 										<Input
 											label="Minute"
 											bind:value={$form[key].end.minute}
 											name="{key}.end.minute"
+											error={$errors[key]?.end.minute}
 										/>
 									</div>
 								{/if}
@@ -118,11 +122,8 @@
 				<div class="flex-1 flex flex-col gap-2">
 					<h2 class="text-lg font-semibold">Date exceptions</h2>
 					<i
-						>Use this if you need to have a change to the schedule above for a single day. You can
-						also leave all above boxes unchecked and put your entire schedule in as date exceptions,
-						if you have a volatile schedule.</i
+						><b>First,</b> enter a date of interest, then press Add Exception. You can edit it afterwards.</i
 					>
-					<i>Enter a date of interest, then press Add Exception. You can edit it afterwards.</i>
 
 					<input
 						class="bg-slate-950 border-blue-500 ring-blue-500 rounded"
@@ -131,6 +132,7 @@
 					/>
 					<Button
 						action="none"
+						disabled={!addDateStr}
 						onclick={(e) => {
 							e.preventDefault();
 							$form.exceptions[addDateStr] = {
@@ -178,11 +180,13 @@
 									label="Start Time Hour"
 									bind:value={$form.exceptions[key].start.hour}
 									name="exceptions.{key}.start.hour"
+									error={$errors.exceptions[key]?.start.hour}
 								/>
 								<Input
 									label="Minute"
 									bind:value={$form.exceptions[key].start.minute}
 									name="exceptions.{key}.start.minute"
+									error={$errors.exceptions[key]?.start.minute}
 								/>
 							</div>
 							<div class="flex flex-row gap-4">
@@ -190,11 +194,13 @@
 									label="End Time Hour"
 									bind:value={$form.exceptions[key].end.hour}
 									name="exceptions.{key}.end.hour"
+									error={$errors.exceptions[key]?.end.hour}
 								/>
 								<Input
 									label="Minute"
 									bind:value={$form.exceptions[key].end.minute}
 									name="exceptions.{key}.end.minute"
+									error={$errors.exceptions[key]?.end.minute}
 								/>
 							</div>
 						{/if}

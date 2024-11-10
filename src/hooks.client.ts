@@ -1,6 +1,6 @@
 import { handleErrorWithSentry, replayIntegration } from '@sentry/sveltekit';
 import * as Sentry from '@sentry/sveltekit';
-import { PUBLIC_SENTRY_DSN } from "$env/static/public";
+import { PUBLIC_SENTRY_DSN } from '$env/static/public';
 
 Sentry.init({
 	dsn: PUBLIC_SENTRY_DSN,
@@ -14,11 +14,13 @@ Sentry.init({
 	replaysOnErrorSampleRate: 1.0,
 
 	// If you don't want to use Session Replay, just remove the line below:
-	integrations: [replayIntegration({
-		networkDetailAllowUrls: [window.location.origin],
-		maskAllText: false,
-		blockAllMedia: false
-	})]
+	integrations: [
+		replayIntegration({
+			networkDetailAllowUrls: [window.location.origin],
+			maskAllText: false,
+			blockAllMedia: false
+		})
+	]
 });
 
 // If you have a custom error handler, pass it to `handleErrorWithSentry`
