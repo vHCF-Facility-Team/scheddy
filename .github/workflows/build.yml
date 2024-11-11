@@ -23,6 +23,7 @@ jobs:
       SMTP_EMAIL_FROM: ${{ secrets.SMTP_EMAIL_FROM }}
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       PUBLIC_SENTRY_DSN: ${{ secrets.PUBLIC_SENTRY_DSN }}
+      API_MASTER_KEY: ${{ secrets.API_MASTER_KEY }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
