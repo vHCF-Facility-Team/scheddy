@@ -1,13 +1,14 @@
 import type { RequestHandler } from "./$types";
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
-import { sessions } from '$lib/server/db/schema';
+import { mentors, sessions, sessionTypes } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { API_MASTER_KEY } from "$env/static/private";
 import { DateTime } from 'luxon';
 
 export const GET: RequestHandler = async ({ request, params }) => {
-	let token = request.headers.get("Authorization");
+	console.log(request.headers);
+	const token = request.headers.get("Authorization");
 	if (!token) {
 		error(403, JSON.stringify({
 			ok: false,
@@ -40,12 +41,16 @@ export const GET: RequestHandler = async ({ request, params }) => {
 
 	let sess = await db.select()
 		.from(sessions)
-		.where(eq(sessions.student, params.id));
+		.leftJoin(mentors, eq(sessions.mentor, mentors.id))
+		.leftJoin(sessionTypes, eq(sessions.type, sessionTypes.id))
+		.where(eq(sessions.student, params.userId));
 
 
 	// return all sessions with the start date up to 24h in the past
-	let filtered = sess.filter((u) => {
-		return DateTime.fromISO(u.start) >= DateTime.now().minus({ hours: 24 });
+	const filtered = sess.filter((u) => {
+		console.log(u);
+		console.log(DateTime.fromISO(u.session.start), DateTime.now().minus({ hours: 24}));
+		return DateTime.fromISO(u.session.start) >= DateTime.now().minus({ hours: 24 });
 	});
 
 	return new Response(JSON.stringify(filtered));

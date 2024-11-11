@@ -1,0 +1,1 @@
+ALTER TABLE `session` ADD `timezone` text NOT NULL;

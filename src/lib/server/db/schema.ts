@@ -2,37 +2,39 @@ import { mysqlTable, text, int, boolean, varchar } from 'drizzle-orm/mysql-core'
 import { aliasedTable } from 'drizzle-orm';
 
 export const users = mysqlTable('user', {
-	id: int().primaryKey(), // VATSIM CID
-	firstName: text(),
-	lastName: text(),
-	email: text(),
-	role: int(),
-	roleOverride: int(),
-	isVisitor: boolean(),
-	rating: int(),
+	id: int().primaryKey().notNull(), // VATSIM CID
+	firstName: text().notNull(),
+	lastName: text().notNull(),
+	email: text().notNull(),
+	role: int().notNull(),
+	roleOverride: int().notNull(),
+	isVisitor: boolean().notNull(),
+	rating: int().notNull(),
 	mentorAvailability: text(),
 	allowedSessionTypes: text(),
 	timezone: text()
 });
 
 export const userTokens = mysqlTable('userToken', {
-	id: varchar({ length: 21 }).primaryKey(),
-	user: int().references(() => users.id)
+	id: varchar({ length: 21 }).primaryKey().notNull(),
+	user: int().references(() => users.id).notNull()
 });
 
 export const sessionTypes = mysqlTable('sessionType', {
-	id: varchar({ length: 21 }).primaryKey(),
-	name: text(),
-	category: text(),
-	length: int()
+	id: varchar({ length: 21 }).primaryKey().notNull(),
+	name: text().notNull(),
+	category: text().notNull(),
+	length: int().notNull()
 });
 
 export const sessions = mysqlTable('session', {
-	id: varchar({ length: 21 }).primaryKey(),
-	mentor: int().references(() => users.id),
-	student: int().references(() => users.id),
-	type: varchar({ length: 21 }).references(() => sessionTypes.id),
-	start: text()
+	id: varchar({ length: 21 }).primaryKey().notNull(),
+	mentor: int().references(() => users.id).notNull(),
+	student: int().references(() => users.id).notNull(),
+	type: varchar({ length: 21 }).references(() => sessionTypes.id).notNull(),
+	start: text().notNull(),
+	reminded: boolean().default(false).notNull(),
+	timezone: text().notNull()
 });
 export const students = aliasedTable(users, 'student');
 export const mentors = aliasedTable(users, 'mentor');

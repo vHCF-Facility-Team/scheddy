@@ -264,7 +264,8 @@ export const actions: Actions = {
 			studentName: user.firstName + ' ' + user.lastName,
 			duration,
 			sessionId: id,
-			type: typename
+			type: typename,
+			timezone: timezone.toString()
 		});
 
 		await db.insert(sessions).values({
@@ -277,13 +278,13 @@ export const actions: Actions = {
 
 		await sendEmail(
 			user.email,
-			'Appointment booked',
+			'Appointment booked - ' + start.setZone(timezone).toLocaleString(DateTime.DATETIME_HUGE),
 			studentEmailContent.raw,
 			studentEmailContent.html
 		);
 		await sendEmail(
 			mentor.email,
-			'New session booked',
+			'New session booked - ' + start.setZone(mentor.timezone).toLocaleString(DateTime.DATETIME_HUGE),
 			mentorEmailContent.raw,
 			mentorEmailContent.html
 		);
