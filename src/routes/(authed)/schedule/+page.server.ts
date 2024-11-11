@@ -265,7 +265,6 @@ export const actions: Actions = {
 			duration,
 			sessionId: id,
 			type: typename,
-			timezone: timezone.toString()
 		});
 
 		await db.insert(sessions).values({
