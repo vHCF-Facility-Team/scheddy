@@ -28,11 +28,13 @@ If applicable, add screenshots to help explain your problem.
  - Browser [e.g. chrome, safari]
  - Version [e.g. 22]
 
-
 **Additional context**
 Add any other context about the problem here.
 
+**Your CID:** 1234567
+
 **Checkboxes**
+_Put an `x` between the brackets, like `[x]`, to check the box!_
 - [ ] I have checked to make sure this issue has not already been reported
 - [ ] I am reporting a bug, and not requesting a feature
 - [ ] I read these checkboxes instead of just checking them all, and will not check this one
