@@ -12,7 +12,6 @@
 </script>
 
 <div class="min-w-screen min-h-screen flex flex-col align-middle justify-center items-center">
-	<p class="font-bold text-red-500">INTERNAL DEVELOPMENT RELEASE - DO NOT DISTRIBUTE</p>
 	<Card>
 		<h1 class="font-bold text-2xl text-center">{PUBLIC_FACILITY_NAME} - Scheddy</h1>
 
@@ -29,5 +28,4 @@
 			>scheddy v{version} - built with <HeartIcon class="inline w-5 h-5 align-top" /> by the ZTL ARTCC</a
 		>
 	</Card>
-	<p class="font-bold text-red-500">INTERNAL DEVELOPMENT RELEASE - DO NOT DISTRIBUTE</p>
 </div>

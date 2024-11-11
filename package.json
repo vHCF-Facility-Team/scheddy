@@ -1,6 +1,6 @@
 {
 	"name": "scheddy",
-	"version": "0.0.13",
+	"version": "1.0.0-rc1",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",

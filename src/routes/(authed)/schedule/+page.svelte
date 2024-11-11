@@ -97,7 +97,6 @@
 </script>
 
 <div class="min-w-screen min-h-screen flex flex-col align-middle justify-center items-center">
-	<p class="font-bold text-red-500">INTERNAL DEVELOPMENT RELEASE - DO NOT DISTRIBUTE</p>
 	<Card class="pt-2">
 		<div>
 			<p class="text-sm text-right text-slate-500">
@@ -267,5 +266,4 @@
 			>
 		</div>
 	</Card>
-	<p class="font-bold text-red-500">INTERNAL DEVELOPMENT RELEASE - DO NOT DISTRIBUTE</p>
 </div>

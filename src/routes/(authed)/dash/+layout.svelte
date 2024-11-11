@@ -80,8 +80,6 @@
 		class="bg-slate-800 min-h-14 h-14 min-w-screen flex flex-row items-center px-6 pt-3 pb-4 justify-between border-b border-slate-900"
 	>
 		<h2 class="font-bold">{PUBLIC_FACILITY_NAME}</h2>
-		<p class="font-bold text-red-500">INTERNAL DEVELOPMENT RELEASE</p>
-		<p class="font-bold text-red-500">DO NOT DISTRIBUTE</p>
 		<p class="font-semibold">Hello, {data.user.firstName} {data.user.lastName} ({data.role})</p>
 	</div>
 
