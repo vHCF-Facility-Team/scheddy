@@ -272,7 +272,8 @@ export const actions: Actions = {
 			mentor: slotObj.mentor,
 			student: user.id,
 			start: start.toISO(),
-			type: requestedType
+			type: requestedType,
+			timezone
 		});
 
 		await sendEmail(
