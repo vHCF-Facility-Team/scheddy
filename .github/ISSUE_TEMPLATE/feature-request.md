@@ -2,7 +2,7 @@
 name: Feature Request
 about: Suggest an idea for this project
 title: ''
-labels: C-feature-request, needs-triage
+labels: C-feature-request, needs-triage, not approved
 assignees: ''
 
 ---
