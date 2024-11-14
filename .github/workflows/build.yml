@@ -39,11 +39,6 @@ jobs:
         run: cd build && bun i --frozen-lockfile --production
       - name: Pack production bundle
         run: cp -r build scheddy && tar -czvf scheddy.tar.gz scheddy
-      - name: Upload production bundle as temporary artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: scheddy.tar.gz
-          path: scheddy.tar.gz
       - name: Put server in maintenance mode
         uses: garygrossgarten/github-action-ssh@release
         with:
