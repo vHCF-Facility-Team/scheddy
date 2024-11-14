@@ -1,10 +1,9 @@
 ---
-name: "[ZTL STAFF ONLY] RFC"
-about: "[ZTL STAFF ONLY] Request for Comments"
+name: '[ZTL STAFF ONLY] RFC'
+about: '[ZTL STAFF ONLY] Request for Comments'
 title: 'Request for Comments: Your Thing'
 labels: C-rfc, needs-triage
 assignees: ''
-
 ---
 
 **Request for Comments**

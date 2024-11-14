@@ -41,8 +41,6 @@
 		// names must be equal
 		return 0;
 	});
-
-	$inspect(errors);
 </script>
 
 <div class="flex flex-col gap-2">
@@ -135,6 +133,12 @@
 						disabled={!addDateStr}
 						onclick={(e) => {
 							e.preventDefault();
+							if (!$form.exceptions) {
+								$form.exceptions = {};
+							}
+							if (!$errors.exceptions) {
+								$errors.exceptions = {};
+							}
 							$form.exceptions[addDateStr] = {
 								available: false,
 								start: {
@@ -146,63 +150,70 @@
 									minute: 0
 								}
 							};
+							$form = $form; // weird svelte bug
 							addDateStr = '';
 						}}>Add Exception</Button
 					>
 
 					{#each Object.keys($form.exceptions) as key}
-						<h3 class="text-lg font-semibold">{key}</h3>
-						<div class="flex flex-row gap-2 align-baseline">
-							<label for="av-s">Available?</label>
-							<input
-								class="w-6 h-6 border-blue-500 ring-blue-500 rounded bg-transparent"
-								id="av-s"
-								type="checkbox"
-								bind:checked={$form.exceptions[key].available}
-							/>
-							<Button
-								action="none"
-								onclick={(e) => {
-									e.preventDefault();
-									delete $form.exceptions[key];
-									$form.exceptions = $form.exceptions;
-								}}
-								class="ml-4 w-6 h-6"
-								size="icon"
-								variant="danger"
-							>
-								<TrashIcon class="w-2 h-2" />
-							</Button>
-						</div>
-						{#if $form.exceptions[key].available}
-							<div class="flex flex-row gap-4">
-								<Input
-									label="Start Time Hour"
-									bind:value={$form.exceptions[key].start.hour}
-									name="exceptions.{key}.start.hour"
-									error={$errors.exceptions[key]?.start.hour}
+						{#if $form.exceptions[key] === undefined}
+							<p>Uh oh! Something has broken...</p>
+							<p>
+								Please click this button 5 times as quickly as you can, then ping Tyler in Discord:
+							</p>
+							<Button>Click me</Button>
+							<p>Thanks.</p>
+							<p>**DO NOT PRESS SET, YOUR AVAILABILITY WILL BREAK**</p>
+						{:else}
+							<h3 class="text-lg font-semibold">{key}</h3>
+							<div class="flex flex-row gap-2 align-baseline">
+								<label for="av-s">Available?</label>
+								<input
+									class="w-6 h-6 border-blue-500 ring-blue-500 rounded bg-transparent"
+									id="av-s"
+									type="checkbox"
+									bind:checked={$form.exceptions[key].available}
 								/>
-								<Input
-									label="Minute"
-									bind:value={$form.exceptions[key].start.minute}
-									name="exceptions.{key}.start.minute"
-									error={$errors.exceptions[key]?.start.minute}
-								/>
+								<Button
+									action="none"
+									onclick={(e) => {
+										e.preventDefault();
+										delete $form.exceptions[key];
+										$form.exceptions = $form.exceptions;
+									}}
+									class="ml-4 w-6 h-6"
+									size="icon"
+									variant="danger"
+								>
+									<TrashIcon class="w-2 h-2" />
+								</Button>
 							</div>
-							<div class="flex flex-row gap-4">
-								<Input
-									label="End Time Hour"
-									bind:value={$form.exceptions[key].end.hour}
-									name="exceptions.{key}.end.hour"
-									error={$errors.exceptions[key]?.end.hour}
-								/>
-								<Input
-									label="Minute"
-									bind:value={$form.exceptions[key].end.minute}
-									name="exceptions.{key}.end.minute"
-									error={$errors.exceptions[key]?.end.minute}
-								/>
-							</div>
+							{#if $form.exceptions[key].available}
+								<div class="flex flex-row gap-4">
+									<Input
+										label="Start Time Hour"
+										bind:value={$form.exceptions[key].start.hour}
+										name="exceptions.{key}.start.hour"
+									/>
+									<Input
+										label="Minute"
+										bind:value={$form.exceptions[key].start.minute}
+										name="exceptions.{key}.start.minute"
+									/>
+								</div>
+								<div class="flex flex-row gap-4">
+									<Input
+										label="End Time Hour"
+										bind:value={$form.exceptions[key].end.hour}
+										name="exceptions.{key}.end.hour"
+									/>
+									<Input
+										label="Minute"
+										bind:value={$form.exceptions[key].end.minute}
+										name="exceptions.{key}.end.minute"
+									/>
+								</div>
+							{/if}
 						{/if}
 					{/each}
 				</div>

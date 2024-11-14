@@ -17,7 +17,9 @@ export const users = mysqlTable('user', {
 
 export const userTokens = mysqlTable('userToken', {
 	id: varchar({ length: 21 }).primaryKey().notNull(),
-	user: int().references(() => users.id).notNull()
+	user: int()
+		.references(() => users.id)
+		.notNull()
 });
 
 export const sessionTypes = mysqlTable('sessionType', {
@@ -29,9 +31,15 @@ export const sessionTypes = mysqlTable('sessionType', {
 
 export const sessions = mysqlTable('session', {
 	id: varchar({ length: 21 }).primaryKey().notNull(),
-	mentor: int().references(() => users.id).notNull(),
-	student: int().references(() => users.id).notNull(),
-	type: varchar({ length: 21 }).references(() => sessionTypes.id).notNull(),
+	mentor: int()
+		.references(() => users.id)
+		.notNull(),
+	student: int()
+		.references(() => users.id)
+		.notNull(),
+	type: varchar({ length: 21 })
+		.references(() => sessionTypes.id)
+		.notNull(),
 	start: text().notNull(),
 	reminded: boolean().default(false).notNull(),
 	timezone: text().notNull()

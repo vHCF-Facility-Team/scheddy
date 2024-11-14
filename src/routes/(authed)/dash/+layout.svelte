@@ -9,12 +9,14 @@
 		LayoutGridIcon,
 		LibraryIcon,
 		LogOutIcon,
+		MenuIcon,
 		UsersIcon
 	} from 'lucide-svelte';
 	import type { Snippet } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { ROLE_MENTOR, ROLE_STAFF, ROLE_STUDENT } from '$lib/utils';
+	import Button from '$lib/ui/Button.svelte';
 
 	interface Props {
 		data: PageData;
@@ -67,6 +69,8 @@
 		}
 	];
 
+	let menuSidebarOpen = $state(false);
+
 	function logout() {
 		document.cookie = 'scheddy_token=; expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/;';
 		invalidateAll();
@@ -79,13 +83,32 @@
 	<div
 		class="bg-slate-800 min-h-14 h-14 min-w-screen flex flex-row items-center px-6 pt-3 pb-4 justify-between border-b border-slate-900"
 	>
-		<h2 class="font-bold">{PUBLIC_FACILITY_NAME}</h2>
+		<Button
+			class="md:hidden"
+			onclick={() => {
+				menuSidebarOpen = !menuSidebarOpen;
+			}}
+			variant="icon"
+			size="icon"
+		>
+			<MenuIcon />
+		</Button>
+		<h2 class="hidden md:block font-bold">{PUBLIC_FACILITY_NAME}</h2>
 		<p class="font-semibold">Hello, {data.user.firstName} {data.user.lastName} ({data.role})</p>
 	</div>
 
 	<!-- sidebar & main layout -->
 	<div class="flex min-h-[calc(100vh-3.5rem)] h-[calc(100vh-3.5rem)] flex-row flex-1">
-		<div class="flex flex-col bg-slate-700 px-3 py-4 text-md">
+		<div
+			class="{menuSidebarOpen
+				? 'absolute z-10 min-h-screen shadow-2xl'
+				: 'hidden'} md:flex flex-col bg-slate-700 px-3 py-4 text-md"
+		>
+			<span
+				class="md:hidden text-xl font-bold flex flex-row min-w-64 px-4 py-3 rounded hover:text-slate-300 transition justify-start items-start text-left hover:cursor-pointer"
+			>
+				{PUBLIC_FACILITY_NAME}
+			</span>
 			{#each pages as p}
 				<a
 					href={p.path}
@@ -104,7 +127,14 @@
 				<span>Log out</span>
 			</button>
 		</div>
-		<div class="flex-1 px-8 py-4">
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div
+			class="flex-1 px-8 py-4 {menuSidebarOpen ? 'blur-sm' : ''}"
+			onclick={() => {
+				menuSidebarOpen = false;
+			}}
+		>
 			{@render children()}
 		</div>
 	</div>
