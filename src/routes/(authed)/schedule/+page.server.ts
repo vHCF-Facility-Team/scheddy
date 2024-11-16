@@ -56,7 +56,7 @@ function slottificate(
 			// create a list of blocked off periods
 			for (const otherSess of mentorsOtherSessions) {
 				const start = DateTime.fromISO(otherSess.start);
-				const end = DateTime.fromISO(otherSess.end);
+				const end = start.plus({ minutes: typ.length });
 
 				unavailablePeriodsMentorsTime.push(Interval.fromDateTimes(start, end));
 			}
