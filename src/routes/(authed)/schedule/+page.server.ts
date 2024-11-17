@@ -9,7 +9,7 @@ import type { DayAvailability, MentorAvailability } from '$lib/availability';
 import { DateTime, Duration, Interval } from 'luxon';
 import { fail } from '@sveltejs/kit';
 import { MAX_BOOKING_AHEAD_DAYS } from '$env/static/private';
-import { nanoid } from 'nanoid';
+import { ulid } from 'ulid';
 import { appointment_booked } from '$lib/emails/appointment_booked';
 import { sendEmail } from '$lib/email';
 import { new_session } from '$lib/emails/new_session';
@@ -248,7 +248,7 @@ export const actions: Actions = {
 			}
 		}
 
-		const id = nanoid();
+		const id = ulid();
 
 		const studentEmailContent = appointment_booked({
 			startTime: start.setZone(timezone.toString()),

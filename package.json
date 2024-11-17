@@ -1,6 +1,6 @@
 {
 	"name": "scheddy",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
@@ -51,6 +51,7 @@
 		"nanoid": "^5.0.8",
 		"nodemailer": "^6.9.16",
 		"sveltekit-superforms": "^2.20.0",
-		"tailwind-merge": "^2.5.4"
+		"tailwind-merge": "^2.5.4",
+		"ulid": "^2.3.0"
 	}
 }
