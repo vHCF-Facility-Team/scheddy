@@ -165,6 +165,20 @@ function slottificate(
 				})
 			);
 		}
+
+		// sort chronologically
+		slots.sort((a, b) => {
+			const a_dt = Interval.fromISO(a.slot);
+			const b_dt = Interval.fromISO(b.slot);
+			if (a_dt.start < b_dt.start) {
+				return -1;
+			} else if (a_dt.start > b_dt.start) {
+				return 1;
+			} else {
+				return 0;
+			}
+		})
+
 		slotData[typ.id] = slots;
 	}
 
