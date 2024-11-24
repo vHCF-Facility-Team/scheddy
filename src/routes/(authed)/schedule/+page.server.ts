@@ -177,7 +177,7 @@ function slottificate(
 			} else {
 				return 0;
 			}
-		})
+		});
 
 		slotData[typ.id] = slots;
 	}
