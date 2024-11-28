@@ -28,7 +28,7 @@ function slottificate(
 		validDaysToBook.push(now.plus({ days: i }));
 	}
 
-	const sessionsByMentor = {};
+	const sessionsByMentor: Record<number, (typeof sessions.$inferSelect)[]> = {};
 	for (const sess of allSessions) {
 		if (sess.mentor == null) continue;
 
@@ -38,9 +38,17 @@ function slottificate(
 		sessionsByMentor[sess.mentor].push(sess);
 	}
 
+	const typelengths: Record<string, number> = {};
+	for (const typ of sTypes) {
+		typelengths[typ.id] = typ.length;
+	}
+
 	for (const typ of sTypes) {
 		const slots = [];
 		for (const mentor of mentors) {
+			if (!mentor.allowedSessionTypes) continue;
+			if (!mentor.mentorAvailability) continue;
+
 			const allowedTypes = JSON.parse(mentor.allowedSessionTypes);
 			if (!allowedTypes) continue;
 			if (!allowedTypes.includes(typ.id)) continue;
@@ -48,7 +56,7 @@ function slottificate(
 			const availability: MentorAvailability | null = JSON.parse(mentor.mentorAvailability);
 			if (!availability) continue;
 
-			const mentorsOtherSessions = sessionsByMentor[mentor.id] || [];
+			const mentorsOtherSessions: (typeof sessions.$inferSelect)[] = sessionsByMentor[mentor.id] || [];
 
 			const availablePeriodsMentorsTime: Interval[] = [];
 			const unavailablePeriodsMentorsTime: Interval[] = [];
@@ -56,7 +64,7 @@ function slottificate(
 			// create a list of blocked off periods
 			for (const otherSess of mentorsOtherSessions) {
 				const start = DateTime.fromISO(otherSess.start);
-				const end = start.plus({ minutes: typ.length });
+				const end = start.plus({ minutes: typelengths[otherSess.type]! });
 
 				unavailablePeriodsMentorsTime.push(Interval.fromDateTimes(start, end));
 			}
