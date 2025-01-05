@@ -3,11 +3,11 @@ import { loadUserData } from '$lib/userInfo';
 import { ROLE_DEVELOPER, ROLE_MENTOR, ROLE_STAFF, roleString } from '$lib/utils';
 import { roleOf } from '$lib';
 import { db } from '$lib/server/db';
-import { sessions, sessionTypes, users } from '$lib/server/db/schema';
+import { mentors, sessions, sessionTypes, students, users } from '$lib/server/db/schema';
 import { eq, gte, or } from 'drizzle-orm';
 import type { DayAvailability, MentorAvailability } from '$lib/availability';
 import { DateTime, Duration, Interval } from 'luxon';
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { MAX_BOOKING_AHEAD_DAYS } from '$env/static/private';
 import { ulid } from 'ulid';
 import { appointment_booked } from '$lib/emails/appointment_booked';
@@ -28,7 +28,7 @@ function slottificate(
 		validDaysToBook.push(now.plus({ days: i }));
 	}
 
-	const sessionsByMentor = {};
+	const sessionsByMentor: Record<number, (typeof sessions.$inferSelect)[]> = {};
 	for (const sess of allSessions) {
 		if (sess.mentor == null) continue;
 
@@ -38,9 +38,17 @@ function slottificate(
 		sessionsByMentor[sess.mentor].push(sess);
 	}
 
+	const typelengths: Record<string, number> = {};
+	for (const typ of sTypes) {
+		typelengths[typ.id] = typ.length;
+	}
+
 	for (const typ of sTypes) {
 		const slots = [];
 		for (const mentor of mentors) {
+			if (!mentor.allowedSessionTypes) continue;
+			if (!mentor.mentorAvailability) continue;
+
 			const allowedTypes = JSON.parse(mentor.allowedSessionTypes);
 			if (!allowedTypes) continue;
 			if (!allowedTypes.includes(typ.id)) continue;
@@ -48,7 +56,8 @@ function slottificate(
 			const availability: MentorAvailability | null = JSON.parse(mentor.mentorAvailability);
 			if (!availability) continue;
 
-			const mentorsOtherSessions = sessionsByMentor[mentor.id] || [];
+			const mentorsOtherSessions: (typeof sessions.$inferSelect)[] =
+				sessionsByMentor[mentor.id] || [];
 
 			const availablePeriodsMentorsTime: Interval[] = [];
 			const unavailablePeriodsMentorsTime: Interval[] = [];
@@ -56,7 +65,7 @@ function slottificate(
 			// create a list of blocked off periods
 			for (const otherSess of mentorsOtherSessions) {
 				const start = DateTime.fromISO(otherSess.start);
-				const end = start.plus({ minutes: typ.length });
+				const end = start.plus({ minutes: typelengths[otherSess.type]! });
 
 				unavailablePeriodsMentorsTime.push(Interval.fromDateTimes(start, end));
 			}
@@ -185,7 +194,7 @@ function slottificate(
 	return slotData;
 }
 
-export const load: PageServerLoad = async ({ cookies }) => {
+export const load: PageServerLoad = async ({ cookies, url }) => {
 	const { user } = (await loadUserData(cookies))!;
 
 	const sTypes = await db.select().from(sessionTypes);
@@ -198,6 +207,13 @@ export const load: PageServerLoad = async ({ cookies }) => {
 
 	const slotData = slottificate(sTypes, mentors, allSessions);
 
+	const originalSessionType = url.searchParams.has('reschedule')
+		? url.searchParams.get('type')
+		: null;
+
+	const originalSessionId = url.searchParams.get('sessionId')!;
+	const ogSession = await db.select().from(sessions).where(eq(sessions.id, originalSessionId));
+
 	return {
 		user,
 		role: roleString(roleOf(user)),
@@ -205,18 +221,25 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		isStaff: roleOf(user) >= ROLE_STAFF,
 		isDeveloper: roleOf(user) >= ROLE_DEVELOPER,
 		sessionTypes: sTypes,
-		slotData
+		slotData,
+		originalSessionType,
+		originalSessionId,
+		ogSession
 	};
 };
 
 export const actions: Actions = {
-	default: async ({ cookies, request }) => {
+	book: async ({ cookies, request }) => {
 		const { user } = (await loadUserData(cookies))!;
 
 		const formData = await request.formData();
 		const requestedSlotId = formData.get('timeslot')!;
 		const requestedType = formData.get('type')!;
 		const timezone = formData.get('timezone')!;
+		const orginalSessionId = formData.get('sessionId');
+		const reschedule = formData.has('reschedule') || false;
+
+		console.log(formData);
 
 		const sTypes = await db.select().from(sessionTypes);
 		const mentors = await db
@@ -270,7 +293,9 @@ export const actions: Actions = {
 			mentorName: mentor.firstName + ' ' + mentor.lastName,
 			duration,
 			sessionId: id,
-			type: typename
+			type: typename,
+			link_params: `?sessionId=${id}&reschedule=true&type=${requestedType}`,
+			reschedule
 		});
 		const mentorEmailContent = new_session({
 			startTime: start.setZone(mentor.timezone),
@@ -290,12 +315,21 @@ export const actions: Actions = {
 			timezone
 		});
 
+		if (reschedule) {
+			await db.delete(sessions).where(eq(sessions.id, orginalSessionId));
+		}
+
 		await sendEmail(
 			user.email,
-			'Appointment booked - ' + start.setZone(timezone).toLocaleString(DateTime.DATETIME_HUGE),
+			reschedule
+				? 'Appointment updated'
+				: 'Appointment booked' +
+						' - ' +
+						start.setZone(timezone).toLocaleString(DateTime.DATETIME_HUGE),
 			studentEmailContent.raw,
 			studentEmailContent.html
 		);
+
 		await sendEmail(
 			mentor.email,
 			'New session booked - ' +
@@ -303,5 +337,26 @@ export const actions: Actions = {
 			mentorEmailContent.raw,
 			mentorEmailContent.html
 		);
+	},
+	cancel: async ({ cookies, request }) => {
+		const { user } = (await loadUserData(cookies))!;
+		const formData = await request.formData();
+		const sessionList = await db
+			.select()
+			.from(sessions)
+			.leftJoin(sessionTypes, eq(sessionTypes.id, sessions.type))
+			.leftJoin(mentors, eq(mentors.id, sessions.mentor))
+			.leftJoin(students, eq(students.id, sessions.student))
+			.where(eq(sessions.id, formData.get('sessionId')!.toString()));
+		const sessionAndFriends = sessionList[0];
+
+		if (
+			roleOf(user) < ROLE_STAFF &&
+			!(user.id == sessionAndFriends.session.student || user.id == sessionAndFriends.session.mentor)
+		) {
+			redirect(307, '/schedule');
+		}
+
+		await db.delete(sessions).where(eq(sessions.id, formData.get('sessionId')!.toString()));
 	}
 };
