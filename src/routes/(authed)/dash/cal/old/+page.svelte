@@ -16,6 +16,12 @@
 	let { data }: Props = $props();
 </script>
 
+<h1 class="text-2xl font-semibold">All Sessions (newest to oldest)</h1>
+<a
+	class="text-sm text-blue-500 hover:text-blue-600 transition font-semibold"
+	href="/dash/cal">Only upcoming sessions &rarr;</a
+>
+
 <div class="relative overflow-x-auto shadow-md rounded mt-2">
 	<TableRoot>
 		<TableHead>
@@ -53,7 +59,3 @@
 		</TableBody>
 	</TableRoot>
 </div>
-<a
-	class="text-sm text-blue-500 hover:text-blue-600 transition font-semibold"
-	href="/dash/cal/old">View historical sessions &rarr;</a
->
