@@ -129,12 +129,14 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
 
 	// If they're a home controller, give them student perms
 	if (vatusa_info.data.facility == VATUSA_FACILITY_ID) {
-		highest_role = ROLE_STUDENT;
+		if (ROLE_STUDENT > highest_role) {
+			highest_role = ROLE_STUDENT;
+		}
 	}
 
 	// If they're a visiting controller, give them student perms
 	for (const visiting_facility of vatusa_info.data.visiting_facilities) {
-		if (visiting_facility.facility == VATUSA_FACILITY_ID) {
+		if (visiting_facility.facility == VATUSA_FACILITY_ID && ROLE_STUDENT > highest_role) {
 			highest_role = ROLE_STUDENT;
 		}
 	}
@@ -145,12 +147,13 @@ export const load: PageServerLoad = async ({ cookies, url, fetch }) => {
 	// INS, MTR: 				ROLE_MENTOR
 	for (const role of vatusa_info.data.roles) {
 		if (role.facility == VATUSA_FACILITY_ID) {
-			if (role.role == 'WM') {
-				highest_role = ROLE_DEVELOPER;
-			} else if (role.role == 'ATM' || role.role == 'DATM' || role.role == 'TA') {
-				highest_role = ROLE_STAFF;
-			} else if (role.role == 'INS' || role.role == 'MTR') {
-				highest_role = ROLE_MENTOR;
+			let this_role = 0;
+			if (role.role == 'WM') { this_role = ROLE_DEVELOPER; }
+			else if (role.role == 'ATM' || role.role == 'DATM' || role.role == 'TA') { this_role = ROLE_STAFF; }
+			else if (role.role == 'INS' || role.role == 'MTR') { this_role = ROLE_MENTOR; }
+
+			if (this_role > highest_role) {
+				highest_role = this_role;
 			}
 		}
 	}
