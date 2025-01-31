@@ -23,9 +23,9 @@
 
 		<a
 			target="_blank"
-			href="https://github.com/ZTL-ARTCC/scheddy"
+			href="https://github.com/vHCF-Facility-Team/scheddy"
 			class="block hover:underline text-sm text-slate-500"
-			>scheddy v{version} - built with <HeartIcon class="inline w-5 h-5 align-top" /> by the ZTL ARTCC</a
+			>scheddy v{version} - built with <HeartIcon class="inline w-5 h-5 align-top" /> by the HCF ARTCC following the ZTL template.</a
 		>
 	</Card>
 </div>

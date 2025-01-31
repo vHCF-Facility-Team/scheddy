@@ -40,4 +40,4 @@ _Put an `x` between the brackets, like `[x]`, to check the box!_
 - [ ] I have checked to make sure this issue has not already been reported
 - [ ] I am reporting a bug, and not requesting a feature
 - [ ] I read these checkboxes instead of just checking them all, and will not check this one
-- [ ] This issue does not contain any private information (if it does, please email wm@ztlartcc.org instead!)
+- [ ] This issue does not contain any private information (if it does, please email hcf-wm@vatusa.net instead!)
