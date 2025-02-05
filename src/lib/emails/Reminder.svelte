@@ -20,6 +20,6 @@
 
 <i>Confirmation ID {sessionId}</i>
 <i
-	>You are receiving this email because you have booked a session with the HCF ARTCC. If you believe
-	to have received this email in error, please contact hcf-wm@vatusa.net.</i
+	>You are receiving this email because you have booked a session with the ZTL ARTCC. If you believe
+	to have received this email in error, please contact wm@ztlartcc.org.</i
 >

@@ -191,7 +191,11 @@
 										.length} minutes</option
 								>
 							{:else}
-								<option disabled>No slots available :( Check back another time</option>
+								{#if data.atMaxSessions}
+									<option disabled>You already have the max number of sessions booked</option>
+								{:else}
+									<option disabled>No slots available :( Check back another time</option>
+								{/if}
 							{/each}
 						</Select>
 					{/if}
@@ -316,9 +320,9 @@
 			</div>
 			<a
 				target="_blank"
-				href="https://github.com/vHCF-Facility-Team/scheddy"
+				href="https://github.com/ZTL-ARTCC/scheddy"
 				class="block hover:underline text-sm text-slate-500"
-				>scheddy v{version} - built with <HeartIcon class="inline w-5 h-5 align-top" /> by the HCF ARTCC following the ZTL template.</a
+				>scheddy v{version} - built with <HeartIcon class="inline w-5 h-5 align-top" /> by the ZTL ARTCC</a
 			>
 		</div>
 	</Card>
