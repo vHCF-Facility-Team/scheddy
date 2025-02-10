@@ -25,13 +25,14 @@
 	}
 
 	let categories = $derived.by(() => {
-		let c = {};
-		for (let t of data.sessionTypes) {
+		const c = new Map(); // using `Map` to respect the insert order
+		const sessionsOrdered = [...data.sessionTypes].sort((a, b) => a.order - b.order);
+		for (const t of sessionsOrdered) {
 			if (t && t.category) {
-				if (!Object.keys(c).includes(t.category)) {
-					c[t.category] = [];
+				if (![...c.keys()].includes(t.category)) {
+					c.set(t.category, []);
 				}
-				c[t.category].push(t);
+				c.set(t.category, [...c.get(t.category), t]);
 			}
 		}
 		return c;
@@ -80,7 +81,6 @@
 	}
 
 	let canCancelReschedule = $derived.by(() => {
-		console.log(data.originalSessionType, data.ogSession);
 		if (data.originalSessionType && data.ogSession.length !== 0) {
 			return check_time(data.ogSession[0].start);
 		} else {
@@ -154,7 +154,7 @@
 					</p>
 				{:else if step === 1}
 					<Select bind:value={sessionType} label="Session Type">
-						{#each Object.entries(categories) as [k, v]}
+						{#each categories.entries() as [k, v]}
 							<optgroup label={k}>
 								{#each v as typ}
 									<option value={typ.id}>{typ.name} ({typ.length} minutes)</option>

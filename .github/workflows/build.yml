@@ -1,11 +1,12 @@
 name: build
 on:
   push:
-    branches: main
+    tags:
+      - '*'
   workflow_dispatch:
 jobs:
   build:
-    name: Build
+    name: Build and deploy
     runs-on: ubuntu-latest
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -44,14 +45,7 @@ jobs:
         run: cd build && bun i --frozen-lockfile --production
       - name: Pack production bundle
         run: cp -r build scheddy && tar -czvf scheddy.tar.gz scheddy
-      - name: Put server in maintenance mode
-        uses: garygrossgarten/github-action-ssh@release
-        with:
-          command: sudo touch /etc/caddy/maintenance.on
-          host: ${{ secrets.SERVER_HOST }}
-          port: ${{ secrets.SERVER_PORT }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          privateKey: ${{ secrets.SERVER_PRIVATE_KEY }}
+
       - name: Stop main server
         uses: garygrossgarten/github-action-ssh@release
         with:
@@ -75,14 +69,6 @@ jobs:
         uses: garygrossgarten/github-action-ssh@release
         with:
           command: sudo systemctl start scheddy
-          host: ${{ secrets.SERVER_HOST }}
-          port: ${{ secrets.SERVER_PORT }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          privateKey: ${{ secrets.SERVER_PRIVATE_KEY }}
-      - name: Put server in production mode
-        uses: garygrossgarten/github-action-ssh@release
-        with:
-          command: sudo rm /etc/caddy/maintenance.on
           host: ${{ secrets.SERVER_HOST }}
           port: ${{ secrets.SERVER_PORT }}
           username: ${{ secrets.SERVER_USERNAME }}
