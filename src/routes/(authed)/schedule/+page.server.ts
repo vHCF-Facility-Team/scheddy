@@ -126,7 +126,6 @@ function slottificate(
 
 			for (const period of availablePeriodsMentorsTime) {
 				if (!period.start || !period.end) {
-					console.log(period);
 					continue; // invalid... ignore
 				}
 				availablePeriods.push(
@@ -135,7 +134,6 @@ function slottificate(
 			}
 			for (const period of unavailablePeriodsMentorsTime) {
 				if (!period.start || !period.end) {
-					console.log(period);
 					continue; // invalid... ignore
 				}
 				unavailablePeriods.push(
@@ -258,8 +256,6 @@ export const actions: Actions = {
 		const timezone = formData.get('timezone')!;
 		const orginalSessionId = formData.get('sessionId');
 		const reschedule = formData.has('reschedule') || false;
-
-		console.log(formData);
 
 		const sTypes = await db.select().from(sessionTypes);
 		const mentors = await db
