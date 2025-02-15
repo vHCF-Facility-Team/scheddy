@@ -18,6 +18,6 @@
 
 <i>Confirmation ID {sessionId}</i>
 <i
-	>You are receiving this email because you are a mentor with the {artccShort} ARTCC. If you believe to have
-	received this email in error, please contact wm@{artccEmailDomain}.</i
+	>You are receiving this email because you are a mentor with {facilityName} ARTCC. If you believe to have
+	received this email in error, please contact wm@{emailDomain}.</i
 >

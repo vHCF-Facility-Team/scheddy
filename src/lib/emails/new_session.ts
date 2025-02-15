@@ -11,8 +11,8 @@ export interface NewSessionProps {
 	studentName: string;
 	sessionId: string;
 	timezone: string;
-	artccShort: string;
-	artccEmailDomain: string;
+	facilityName: string;
+	emailDomain: string;
 }
 
 export function new_session(props: NewSessionProps): EmailContent {
@@ -24,8 +24,8 @@ export function new_session(props: NewSessionProps): EmailContent {
 			studentName: props.mentorName,
 			sessionId: props.sessionId,
 			timezone: props.timezone,
-			artccShort: props.artccShort,
-			artccEmailDomain: props.artccEmailDomain
+			facilityName: props.facilityName,
+			emailDomain: props.emailDomain
 		}),
 		html: render(NewSession, {
 			props: props
