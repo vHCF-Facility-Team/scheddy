@@ -282,6 +282,9 @@
 							Session booked 🥳 You'll receive a confirmation email shortly and you should see the
 							session on your dashboard soon.
 						</p>
+						<p>
+							The Mentor/Instructor will reach out to you to properly confirm if the session will happen or not.
+						</p>
 					{:else}
 						<p>
 							Couldn't book the session :( There may have been a network error or someone else may
