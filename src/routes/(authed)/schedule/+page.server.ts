@@ -24,7 +24,7 @@ function slottificate(
 	const now = DateTime.utc();
 	const tomorrow = now.plus({ days: 1 });
 	const validDaysToBook: DateTime[] = [];
-	for (let i = 0; i < Number.parseInt(MAX_BOOKING_AHEAD_DAYS); i++) {
+	for (let i = 0; i <= Number.parseInt(MAX_BOOKING_AHEAD_DAYS); i++) {
 		validDaysToBook.push(now.plus({ days: i }));
 	}
 
