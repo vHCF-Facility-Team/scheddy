@@ -44,6 +44,7 @@ export const actions: Actions = {
 				name: form.data.name,
 				length: form.data.duration,
 				category: form.data.category,
+    order: form.data.order,
 				rating: form.data.rating
 			})
 			.where(eq(sessionTypes.id, event.params.typeId as string));
