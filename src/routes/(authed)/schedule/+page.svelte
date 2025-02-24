@@ -1,18 +1,16 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { PUBLIC_FACILITY_NAME } from '$env/static/public';
-	import Card from '$lib/ui/Card.svelte';
+	import * as Card from "$lib/components/ui/card";
+	import * as Form from "$lib/components/ui/form";
+	import * as Select from "$lib/components/ui/select";
 	import { version } from '$app/environment';
-	import { HeartIcon } from 'lucide-svelte';
+	import { HeartIcon, LoaderCircle } from 'lucide-svelte';
 	import { goto, invalidateAll } from '$app/navigation';
-	import Select from '$lib/ui/form/Select.svelte';
-	import Button from '$lib/ui/Button.svelte';
+	import { superForm } from 'sveltekit-superforms';
 	import { DateTime, Interval } from 'luxon';
-	import { getTimeZones } from '@vvo/tzdb';
-	import Modal from '$lib/ui/modal/Modal.svelte';
-	import ModalHeader from '$lib/ui/modal/ModalHeader.svelte';
-	import ModalFooter from '$lib/ui/modal/ModalFooter.svelte';
-	import { page } from '$app/stores';
+	import { roleOf } from '$lib';
+	import { ROLE_MENTOR, ROLE_STAFF } from '$lib/utils';
 
 	interface Props {
 		data: PageData;
@@ -25,119 +23,161 @@
 		goto('/');
 	}
 
-	let categories = $derived.by(() => {
-		const c = new Map(); // using `Map` to respect the insert order
-		const sessionsOrdered = [...data.sessionTypes].sort((a, b) => a.order - b.order);
-		for (const t of sessionsOrdered) {
-			if (t && t.category) {
-				if (![...c.keys()].includes(t.category)) {
-					c.set(t.category, []);
-				}
-				c.set(t.category, [...c.get(t.category), t]);
+	let done = $state(false);
+
+	const form = superForm(data.form, {
+		onUpdated({ form }) {
+			if (form.valid) {
+				done = true;
 			}
 		}
-		return c;
 	});
-	let sTyps = $derived.by(() => {
-		let c = {};
-		for (let t of data.sessionTypes) {
-			c[t.id] = t;
-		}
-		return c;
+	const { form: formData, enhance, delayed, message } = form;
+
+	$effect(() => {
+		$formData.timezone = DateTime.local().zoneName;
 	});
-
-	let sessionType: string | null = $state(data.originalSessionType);
-
-	let timezones = $state(getTimeZones());
-	timezones.sort((a, b) => {
-		const nameA = a.name.toUpperCase(); // ignore upper and lowercase
-		const nameB = b.name.toUpperCase(); // ignore upper and lowercase
-		if (nameA < nameB) {
-			return -1;
-		}
-		if (nameA > nameB) {
-			return 1;
-		}
-
-		// names must be equal
-		return 0;
-	});
-
-	let step = $state(data.originalSessionType ? 2 : 1);
-	let timezone = $state(DateTime.local().zoneName);
-	let timeslot: string | null = $state(null);
-	let interval = $derived(timeslot ? Interval.fromISO(timeslot.split('@')[0]) : null);
-	let start = $derived(interval ? interval.start : null);
-
-	let twentyFourHourPolicyUnderstood = $state(false);
-	let trainingOrderPolicyUnderstood = $state(false);
-
-	let bookingState: 'success' | 'fail' | 'loading' = $state('loading');
-
-	function check_time(t: string): boolean {
-		const start_time = DateTime.fromISO(t);
-		const now = DateTime.now();
-		const interval = start_time.diff(now, 'hours');
-		return interval.hours >= 24;
-	}
-
-	let isValidSession = $derived(
-		(data.originalSessionId && data.ogSession.length) || !data.originalSessionId
-	);
-
-	let canCancelReschedule = $derived.by(() => {
-		if (data.originalSessionType && data.ogSession.length !== 0) {
-			return check_time(data.ogSession[0].start);
-		} else {
-			return true;
-		}
-	});
-	let cancelOpen = $state(false);
-
-	async function cancel() {
-		let udata = new URLSearchParams();
-		udata.set('sessionId', data.originalSessionId);
-
-		await fetch('?/cancel', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded'
-			},
-			body: udata.toString()
-		});
-		await invalidateAll();
-		await goto('/');
-	}
-
-	async function book() {
-		if (!timeslot) return;
-
-		step = 4;
-		bookingState = 'loading';
-
-		let rdata = new URLSearchParams();
-		rdata.set('timeslot', timeslot);
-		rdata.set('type', sessionType!);
-		rdata.set('timezone', timezone);
-		rdata.set('sessionId', data.originalSessionId);
-		rdata.set('reschedule', $page.url.searchParams.has('reschedule') ? 'true' : 'false');
-
-		let r = await fetch('?/book', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded'
-			},
-			body: rdata.toString()
-		});
-		if (r.ok) {
-			bookingState = 'success';
-		} else {
-			await invalidateAll();
-			bookingState = 'fail';
-		}
-	}
 </script>
 
+<div class="min-w-screen min-h-screen flex flex-col align-middle justify-center items-center">
+	<Card.Root class="w-[95%] md:w-2/3 xl:w-1/3 text-center">
+		<Card.Header>
+			<p class="text-sm text-right text-slate-500">
+				Logged in as {data.user.firstName}
+				{data.user.lastName} ({data.role}) -
+				<button onclick={logout} class="hover:underline">Log out</button>
+			</p>
+			<Card.Title>Schedule appointment at {PUBLIC_FACILITY_NAME}</Card.Title>
+		</Card.Header>
+		<Card.Content>
+
+				{#if done}
+					<p>{$message}</p>
+				{:else}
+					{#if !data.atMaxSessions}
+					<form class="text-left flex flex-col gap-4" method="POST" use:enhance>
+						<!-- Step 1: Always shown - session type -->
+						<Form.Field {form} name="sessionType">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Session Type</Form.Label>
+									<Select.Root type="single" bind:value={$formData.sessionType} name={props.name}>
+										<Select.Trigger {...props}>
+											{$formData.sessionType ? `${data.sessionMap[$formData.sessionType].name} (${data.sessionMap[$formData.sessionType].length} minutes)` : "Select a session type"}
+										</Select.Trigger>
+										<Select.Content>
+											{#each data.categories as category}
+												<Select.Group>
+													<Select.GroupHeading>{category.category}</Select.GroupHeading>
+													{#each category.items as item}
+														{@const label = `${item.name} (${item.length} minutes)`}
+														<Select.Item value={item.id} {label}>{label}</Select.Item>
+													{/each}
+												</Select.Group>
+											{/each}
+										</Select.Content>
+									</Select.Root>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+						<!-- Step 2: Shown after specifying type - select slot -->
+						{#if $formData.sessionType && $formData.sessionType !== ''}
+							<Form.Field {form} name="timezone">
+								<Form.Control>
+									{#snippet children({ props })}
+									<Form.Label>Timezone</Form.Label>
+									<Select.Root type="single" bind:value={$formData.timezone} name={props.name}>
+										<Select.Trigger {...props}>
+											{$formData.timezone ? $formData.timezone : 'Select a timezone'}
+										</Select.Trigger>
+										<Select.Content>
+											{#each data.timezones as timezone}
+												{@const label = timezone.name}
+												<Select.Item value={timezone.name} {label}>{label}</Select.Item>
+											{/each}
+										</Select.Content>
+									</Select.Root>
+									{/snippet}
+								</Form.Control>
+								<Form.FieldErrors />
+							</Form.Field>
+
+							{@const slots = data.slotData[$formData.sessionType]}
+							<Form.Field {form} name="slot">
+								<Form.Control>
+									{#snippet children({ props })}
+									<Form.Label>Date & time</Form.Label>
+									<Select.Root type="single" bind:value={$formData.slot} name={props.name}>
+										<Select.Trigger {...props}>
+											{#if $formData.slot}
+												{#each slots as slot}
+													{#if `${slot.slot}@${slot.mentor}` === $formData.slot}
+														{@const interval = Interval.fromISO(slot.slot)}
+															{#if interval.start}
+																{interval.start.setZone($formData.timezone).toLocaleString(DateTime.DATETIME_FULL)}
+															{/if}
+													{/if}
+												{/each}
+											{:else}
+												Select a time and date
+											{/if}
+										</Select.Trigger>
+										<Select.Content>
+											{#each slots as slot}
+												{@const interval = Interval.fromISO(slot.slot)}
+												{#if interval.start}
+													{@const label = interval.start.setZone($formData.timezone).toLocaleString(DateTime.DATETIME_FULL)}
+													<Select.Item value="{slot.slot}@{slot.mentor}" {label}>{label}</Select.Item>
+												{/if}
+											{:else}
+												<Select.Item value="__invalid__" disabled label="No slots available :(">No slots available :(</Select.Item>
+											{/each}
+										</Select.Content>
+									</Select.Root>
+									{/snippet}
+								</Form.Control>
+								<Form.FieldErrors />
+							</Form.Field>
+						{/if}
+
+						<!-- Step 3: Submit button -->
+						{#if $formData.slot && $formData.slot !== ''}
+							<Form.Button>
+								{#if $delayed}
+									<LoaderCircle class="w-4 h-4 animate-spin" />
+								{:else}
+									Schedule &rarr;
+								{/if}
+							</Form.Button>
+						{/if}
+					</form>
+					{:else}
+						<p>You have reached your facility's limit for maximum booked sessions. Contact your training staff if you believe this to be in error.</p>
+					{/if}
+				{/if}
+
+		</Card.Content>
+		<Card.Footer class="text-sm text-muted-foreground justify-center flex flex-col gap-2">
+			<div class="flex flex-row gap-4 text-primary font-semibold">
+				{#if roleOf(data.user) >= ROLE_MENTOR}
+					<a class="hover:underline underline-offset-4" href="/dash/mentors/{data.user.id}">My Schedule</a>
+				{/if}
+				{#if roleOf(data.user) >= ROLE_STAFF}
+					<a class="hover:underline underline-offset-4" href="/dash">Administration</a>
+				{/if}
+			</div>
+			<a
+				target="_blank"
+				href="https://github.com/ZTL-ARTCC/scheddy"
+				class="hover:underline underline-offset-4"
+			>scheddy v{version} - built with <HeartIcon class="inline w-5 h-5 align-top" /> by the ZTL ARTCC</a
+			>
+		</Card.Footer>
+	</Card.Root>
+</div>
+
+<!--
 <div class="min-w-screen min-h-screen flex flex-col align-middle justify-center items-center">
 	<Card class="pt-2">
 		<div>
@@ -360,3 +400,4 @@
 		</Modal>
 	{/if}
 </div>
+-->
