@@ -28,7 +28,7 @@ export const sessionTypes = mysqlTable('sessionType', {
 	category: text().notNull(),
 	length: int().notNull(),
 	order: int().notNull().default(0),
-	rating: int().notNull().default(0)
+	rating: int().notNull().default(2)
 });
 
 export const sessions = mysqlTable('session', {
