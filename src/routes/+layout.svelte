@@ -2,6 +2,7 @@
 	import '../app.css';
 	import type { PageData } from './$types';
 	import type { Snippet } from 'svelte';
+	import { ModeWatcher } from 'mode-watcher';
 
 	interface Props {
 		children: Snippet;
@@ -14,6 +15,8 @@
 	<title>{data.title}</title>
 </svelte:head>
 
-<div class="min-w-screen min-h-screen bg-slate-900 text-slate-100">
+<ModeWatcher />
+
+<div class="min-w-screen min-h-screen">
 	{@render children()}
 </div>
