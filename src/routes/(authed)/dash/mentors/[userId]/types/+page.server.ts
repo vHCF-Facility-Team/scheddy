@@ -45,16 +45,22 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 		mentor: mentor[0],
 		form,
 		typesMap,
-		breadcrumbs: user.id === mentor[0].id ? [
-			{ title: 'Dashboard', url: '/dash' },
-			{ title: 'My Schedule', url: '/dash/mentors/' + mentor[0].id },
-			{ title: 'Session Types' }
-		] : [
-			{ title: 'Dashboard', url: '/dash' },
-			{ title: 'Mentors', url: '/dash/mentors' },
-			{ title: mentor[0].firstName + ' ' + mentor[0].lastName, url: '/dash/mentors/' + mentor[0].id },
-			{ title: 'Session Types' }
-		]
+		breadcrumbs:
+			user.id === mentor[0].id
+				? [
+						{ title: 'Dashboard', url: '/dash' },
+						{ title: 'My Schedule', url: '/dash/mentors/' + mentor[0].id },
+						{ title: 'Session Types' }
+					]
+				: [
+						{ title: 'Dashboard', url: '/dash' },
+						{ title: 'Mentors', url: '/dash/mentors' },
+						{
+							title: mentor[0].firstName + ' ' + mentor[0].lastName,
+							url: '/dash/mentors/' + mentor[0].id
+						},
+						{ title: 'Session Types' }
+					]
 	};
 };
 

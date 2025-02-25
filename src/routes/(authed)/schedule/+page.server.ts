@@ -12,8 +12,8 @@ import { sendEmail } from '$lib/email';
 import { new_session } from '$lib/emails/new_session';
 import { slottificate } from '$lib/slottificate';
 import { DateTime, Interval } from 'luxon';
-import { MAX_PENDING_SESSIONS } from "$env/static/private";
-import { z } from "zod";
+import { MAX_PENDING_SESSIONS } from '$env/static/private';
+import { z } from 'zod';
 import { superValidate, message, setError } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { getTimeZones } from '@vvo/tzdb';
@@ -63,21 +63,22 @@ export const load: PageServerLoad = async ({ cookies }) => {
 
 	const schema = z.object({
 		sessionType: z
-			.enum(['', ...sTypes.map(u => u.id)])
+			.enum(['', ...sTypes.map((u) => u.id)])
 			.refine((typ) => typ != '', 'No type specified'),
 		slot: z.string(),
-		timezone: z.enum(timezones.map(u => u.name))
+		timezone: z.enum(timezones.map((u) => u.name))
 	});
 
 	const form = await superValidate(zod(schema));
 
-	const categories: { category: string, items: { id: string, name: string, order: number }[]}[] = [];
+	const categories: { category: string; items: { id: string; name: string; order: number }[] }[] =
+		[];
 
 	sTypes.sort((a, b) => {
 		return a.order - b.order;
 	});
 
-	const sessionMap: Record<string, { name: string, length: number }> = {};
+	const sessionMap: Record<string, { name: string; length: number }> = {};
 
 	for (const sessionType of sTypes) {
 		sessionMap[sessionType.id] = sessionType;
@@ -99,8 +100,6 @@ export const load: PageServerLoad = async ({ cookies }) => {
 			}
 		}
 	}
-
-
 
 	return {
 		user,
@@ -132,10 +131,10 @@ export const actions: Actions = {
 
 		const schema = z.object({
 			sessionType: z
-				.enum(['', ...sTypes.map(u => u.id)])
+				.enum(['', ...sTypes.map((u) => u.id)])
 				.refine((typ) => typ != '', 'No type specified'),
 			slot: z.string(),
-			timezone: z.enum(timezones.map(u => u.name))
+			timezone: z.enum(timezones.map((u) => u.name))
 		});
 
 		const form = await superValidate(event, zod(schema));
@@ -215,7 +214,7 @@ export const actions: Actions = {
 			await sendEmail(
 				user.email,
 				'Appointment booked - ' +
-				start.setZone(form.data.timezone).toLocaleString(DateTime.DATETIME_HUGE),
+					start.setZone(form.data.timezone).toLocaleString(DateTime.DATETIME_HUGE),
 				studentEmailContent.raw,
 				studentEmailContent.html
 			);
@@ -223,7 +222,7 @@ export const actions: Actions = {
 			await sendEmail(
 				mentor.email,
 				'New session booked - ' +
-				start.setZone(mentor.timezone).toLocaleString(DateTime.DATETIME_HUGE),
+					start.setZone(mentor.timezone).toLocaleString(DateTime.DATETIME_HUGE),
 				mentorEmailContent.raw,
 				mentorEmailContent.html
 			);
@@ -231,6 +230,9 @@ export const actions: Actions = {
 			console.error(e); // TODO: requeue these for later
 		}
 
-		return message(form, 'Session booked 🥳 You\'ll receive a confirmation email shortly and you should see the session on your dashboard soon.');
+		return message(
+			form,
+			"Session booked 🥳 You'll receive a confirmation email shortly and you should see the session on your dashboard soon."
+		);
 	}
 };

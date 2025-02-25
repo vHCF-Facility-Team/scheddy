@@ -7,7 +7,7 @@
 	} from '$env/static/public';
 	import { version } from '$app/environment';
 	import { HeartIcon } from 'lucide-svelte';
-	import * as Card from "$lib/components/ui/card";
+	import * as Card from '$lib/components/ui/card';
 	import { Button } from '$lib/components/ui/button';
 </script>
 
@@ -17,7 +17,9 @@
 			<Card.Title>{PUBLIC_FACILITY_NAME} - Scheddy</Card.Title>
 		</Card.Header>
 		<Card.Content>
-			<Button href="{PUBLIC_VATSIM_OAUTH_BASE}/oauth/authorize?response_type=code&client_id={PUBLIC_VATSIM_OAUTH_CLIENT_ID}&redirect_uri={PUBLIC_VATSIM_OAUTH_REDIRECT_URL}">
+			<Button
+				href="{PUBLIC_VATSIM_OAUTH_BASE}/oauth/authorize?response_type=code&client_id={PUBLIC_VATSIM_OAUTH_CLIENT_ID}&redirect_uri={PUBLIC_VATSIM_OAUTH_REDIRECT_URL}"
+			>
 				Login with VATSIM
 			</Button>
 		</Card.Content>
@@ -26,7 +28,7 @@
 				target="_blank"
 				href="https://github.com/ZTL-ARTCC/scheddy"
 				class="hover:underline underline-offset-4"
-			>scheddy v{version} - built with <HeartIcon class="inline w-5 h-5 align-top" /> by the ZTL ARTCC</a
+				>scheddy v{version} - built with <HeartIcon class="inline w-5 h-5 align-top" /> by the ZTL ARTCC</a
 			>
 		</Card.Footer>
 	</Card.Root>

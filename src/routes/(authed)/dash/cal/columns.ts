@@ -7,65 +7,69 @@ import DataTableDateButton from './DataTableDateButton.svelte';
 
 export type CalendarItem = {
 	session: {
-		id: string,
-		start: string,
-	},
+		id: string;
+		start: string;
+	};
 	sessionType: {
-		name: string,
-		category: string,
-	},
+		name: string;
+		category: string;
+	};
 	student: {
-		id: number,
-		firstName: string,
-		lastName: string,
-	},
+		id: number;
+		firstName: string;
+		lastName: string;
+	};
 	mentor: {
-		id: number,
-		firstName: string,
-		lastName: string,
-	},
-}
+		id: number;
+		firstName: string;
+		lastName: string;
+	};
+};
 
 export const columns: ColumnDef<CalendarItem>[] = [
 	{
 		accessorKey: 'session.start',
-		header: ({ column }) => renderComponent(DataTableDateButton, {
-			onclick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-			isSorted: column.getIsSorted()
-		}),
+		header: ({ column }) =>
+			renderComponent(DataTableDateButton, {
+				onclick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+				isSorted: column.getIsSorted()
+			}),
 		cell: ({ row }) => {
 			return DateTime.fromISO(row.original.session.start).toLocaleString({
-				year: "numeric",
-				month: "numeric",
-				day: "numeric",
-				hour: "numeric",
-				minute: "numeric",
-				timeZoneName: "short"
-			})
+				year: 'numeric',
+				month: 'numeric',
+				day: 'numeric',
+				hour: 'numeric',
+				minute: 'numeric',
+				timeZoneName: 'short'
+			});
 		}
 	},
 	{
 		accessorKey: 'sessionType.name',
-		header: 'Session type',
+		header: 'Session type'
 	},
 	{
 		id: 'student',
 		header: 'Student',
 		cell: ({ row }) => {
-			return `${row.original.student.firstName} ${row.original.student.lastName}`
+			return `${row.original.student.firstName} ${row.original.student.lastName}`;
 		}
 	},
 	{
 		id: 'mentor',
 		header: 'Mentor',
 		cell: ({ row }) => {
-			return renderComponent(DataTableMentor, row.original.mentor)
+			return renderComponent(DataTableMentor, row.original.mentor);
 		}
 	},
 	{
 		id: 'actions',
 		cell: ({ row }) => {
-			return renderComponent(DataTableActions, { id: row.original.session.id, mentorId: row.original.mentor.id })
+			return renderComponent(DataTableActions, {
+				id: row.original.session.id,
+				mentorId: row.original.mentor.id
+			});
 		}
 	}
-]
+];

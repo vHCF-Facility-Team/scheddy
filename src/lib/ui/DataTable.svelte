@@ -2,15 +2,13 @@
 	import {
 		type ColumnDef,
 		getCoreRowModel,
-		getPaginationRowModel, getSortedRowModel,
+		getPaginationRowModel,
+		getSortedRowModel,
 		type PaginationState,
 		type SortingState
 	} from '@tanstack/table-core';
-	import {
-		createSvelteTable,
-		FlexRender,
-	} from "$lib/components/ui/data-table/index.js";
-	import * as Table from "$lib/components/ui/table/index.js";
+	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
+	import * as Table from '$lib/components/ui/table/index.js';
 	import { cn } from '$lib/utils';
 	import { Button } from '$lib/components/ui/button';
 
@@ -33,14 +31,14 @@
 		getPaginationRowModel: getPaginationRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		onSortingChange: (updater) => {
-			if (typeof updater === "function") {
+			if (typeof updater === 'function') {
 				sorting = updater(sorting);
 			} else {
 				sorting = updater;
 			}
 		},
 		onPaginationChange: (updater) => {
-			if (typeof updater === "function") {
+			if (typeof updater === 'function') {
 				pagination = updater(pagination);
 			} else {
 				pagination = updater;
@@ -52,8 +50,8 @@
 			},
 			get sorting() {
 				return sorting;
-			},
-		},
+			}
+		}
 	});
 </script>
 
@@ -78,21 +76,16 @@
 			</Table.Header>
 			<Table.Body>
 				{#each table.getRowModel().rows as row (row.id)}
-					<Table.Row data-state={row.getIsSelected() && "selected"}>
+					<Table.Row data-state={row.getIsSelected() && 'selected'}>
 						{#each row.getVisibleCells() as cell (cell.id)}
 							<Table.Cell>
-								<FlexRender
-									content={cell.column.columnDef.cell}
-									context={cell.getContext()}
-								/>
+								<FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
 							</Table.Cell>
 						{/each}
 					</Table.Row>
 				{:else}
 					<Table.Row>
-						<Table.Cell colspan={columns.length} class="h-24 text-center">
-							No results.
-						</Table.Cell>
+						<Table.Cell colspan={columns.length} class="h-24 text-center">No results.</Table.Cell>
 					</Table.Row>
 				{/each}
 			</Table.Body>

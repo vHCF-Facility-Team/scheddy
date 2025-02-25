@@ -21,10 +21,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		user,
 		types: await db.select().from(sessionTypes),
 		createForm: await superValidate(zod(createSchema)),
-		breadcrumbs: [
-			{ title: 'Dashboard', url: '/dash' },
-			{ title: 'Session Types' }
-		]
+		breadcrumbs: [{ title: 'Dashboard', url: '/dash' }, { title: 'Session Types' }]
 	};
 };
 
