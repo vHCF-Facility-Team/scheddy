@@ -9,6 +9,8 @@
 	import TableColumn from '$lib/ui/table/TableColumn.svelte';
 	import TableHead from '$lib/ui/table/TableHead.svelte';
 	import TableRow from '$lib/ui/table/TableRow.svelte';
+	import DataTable from '$lib/ui/DataTable.svelte';
+	import { columns } from '../../cal/columns';
 
 	interface Props {
 		data: PageData;
@@ -31,38 +33,7 @@
 
 	-->
 
-	<div class="relative overflow-x-auto shadow-md rounded mt-2">
-		<TableRoot>
-			<TableHead>
-				<TableHeadColumn>Date</TableHeadColumn>
-				<TableHeadColumn>Session Type</TableHeadColumn>
-				<TableHeadColumn>Student</TableHeadColumn>
-				<TableHeadColumn>
-					<div class="flex flex-row align-middle justify-between items-center">
-						<span>Actions</span>
-					</div>
-				</TableHeadColumn>
-			</TableHead>
-			<TableBody>
-				{#each data.mentorSessions as sess}
-					<TableRow>
-						<TableColumn
-							>{DateTime.fromISO(sess.session.start)
-								.setZone(data.mentor.timezone)
-								.toLocaleString(DateTime.DATETIME_FULL)}</TableColumn
-						>
-						<TableColumn>{data.typesMap[sess.session.type]}</TableColumn>
-						<TableColumn>{sess.user.firstName} {sess.user.lastName}</TableColumn>
-						<TableColumn>
-							<Button size="icon" href="/dash/sessions/{sess.session.id}">
-								<PencilIcon class="w-4 h-4" />
-							</Button>
-						</TableColumn>
-					</TableRow>
-				{/each}
-			</TableBody>
-		</TableRoot>
-	</div>
+	<DataTable class="w-full" data={data.mentorSessions} {columns} />
 
 	<h2 class="font-semibold text-lg">
 		Availability

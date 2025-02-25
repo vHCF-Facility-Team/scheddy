@@ -20,10 +20,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		user,
 		users: await db.select().from(users).where(ne(users.roleOverride, 0)),
 		createForm: await superValidate(zod(createSchema)),
-		breadcrumbs: [
-			{ title: 'Dashboard', url: '/dash' },
-			{ title: 'User Management' }
-		]
+		breadcrumbs: [{ title: 'Dashboard', url: '/dash' }, { title: 'User Management' }]
 	};
 };
 

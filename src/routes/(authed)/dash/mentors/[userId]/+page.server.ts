@@ -3,7 +3,7 @@ import { roleOf } from '$lib';
 import { ROLE_STAFF } from '$lib/utils';
 import { redirect } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
-import { sessions, sessionTypes, users } from '$lib/server/db/schema';
+import { sessions, sessionTypes, students, mentors, users } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 import type { MentorAvailability } from '$lib/availability';
@@ -41,8 +41,11 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 	const allSessions = await db
 		.select()
 		.from(sessions)
-		.leftJoin(users, eq(users.id, sessions.student))
-		.where(eq(sessions.mentor, mentor[0].id));
+		.where(eq(sessions.mentor, mentor[0].id))
+		.leftJoin(students, eq(students.id, sessions.student))
+		.leftJoin(mentors, eq(mentors.id, sessions.mentor))
+		.leftJoin(sessionTypes, eq(sessionTypes.id, sessions.type));
+
 	const mentorSessions = [];
 	const now = DateTime.utc();
 	for (const sess of allSessions) {
@@ -70,13 +73,13 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 		allowedTypes,
 		typesMap,
 		mentorSessions,
-		breadcrumbs: user.id === mentor[0].id ? [
-			{ title: 'Dashboard', url: '/dash' },
-			{ title: 'My Schedule' }
-		] : [
-			{ title: 'Dashboard', url: '/dash' },
-			{ title: 'Mentors', url: '/dash/mentors' },
-			{ title: mentor[0].firstName + ' ' + mentor[0].lastName }
-		]
+		breadcrumbs:
+			user.id === mentor[0].id
+				? [{ title: 'Dashboard', url: '/dash' }, { title: 'My Schedule' }]
+				: [
+						{ title: 'Dashboard', url: '/dash' },
+						{ title: 'Mentors', url: '/dash/mentors' },
+						{ title: mentor[0].firstName + ' ' + mentor[0].lastName }
+					]
 	};
 };

@@ -1,15 +1,15 @@
 <script lang="ts">
 	import type { NestedMenuItem } from './nav';
-	import * as Collapsible from "$lib/components/ui/collapsible";
-	import * as Sidebar from "$lib/components/ui/sidebar";
+	import * as Collapsible from '$lib/components/ui/collapsible';
+	import * as Sidebar from '$lib/components/ui/sidebar';
 	import { ChevronRightIcon } from 'lucide-svelte';
 	// yes, this imports itself
-	import NavItem from "./NavItem.svelte";
+	import NavItem from './NavItem.svelte';
 	import { page } from '$app/state';
 
 	interface Props {
-		data: NestedMenuItem[],
-		isSub: boolean
+		data: NestedMenuItem[];
+		isSub: boolean;
 	}
 	let { data, isSub }: Props = $props();
 
@@ -36,18 +36,20 @@
 			{#snippet child({ props })}
 				<components.item {...props}>
 					<Collapsible.Trigger class={isActive ? 'bg-sidebar-accent' : ''}>
-						{#snippet child({props})}
+						{#snippet child({ props })}
 							<components.button {...props}>
 								{#snippet tooltipContent()}
 									{item.title}
 								{/snippet}
-								{#snippet child({props})}
+								{#snippet child({ props })}
 									<a href={item.url} {...props}>
 										{#if item.icon}
 											<item.icon />
 										{/if}
 										<span>{item.title}</span>
-										<ChevronRightIcon class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+										<ChevronRightIcon
+											class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
+										/>
 									</a>
 								{/snippet}
 							</components.button>
@@ -64,7 +66,7 @@
 	{:else}
 		<components.item>
 			<components.button class={isActive ? 'bg-sidebar-accent' : ''}>
-				{#snippet child({props})}
+				{#snippet child({ props })}
 					<a href={item.url} {...props}>
 						<item.icon />
 						<span>{item.title}</span>
