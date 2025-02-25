@@ -42,8 +42,6 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		yourSessions,
 		mentors,
 		upcoming,
-		breadcrumbs: [
-			{ title: 'Dashboard' }
-		]
+		breadcrumbs: [{ title: 'Dashboard' }]
 	};
 };

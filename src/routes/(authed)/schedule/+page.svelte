@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { PUBLIC_FACILITY_NAME } from '$env/static/public';
-	import * as Card from "$lib/components/ui/card";
-	import * as Form from "$lib/components/ui/form";
-	import * as Select from "$lib/components/ui/select";
+	import * as Card from '$lib/components/ui/card';
+	import * as Form from '$lib/components/ui/form';
+	import * as Select from '$lib/components/ui/select';
 	import { version } from '$app/environment';
 	import { HeartIcon, LoaderCircle } from 'lucide-svelte';
 	import { goto, invalidateAll } from '$app/navigation';
@@ -50,42 +50,42 @@
 			<Card.Title>Schedule appointment at {PUBLIC_FACILITY_NAME}</Card.Title>
 		</Card.Header>
 		<Card.Content>
-
-				{#if done}
-					<p>{$message}</p>
-				{:else}
-					{#if !data.atMaxSessions}
-					<form class="text-left flex flex-col gap-4" method="POST" use:enhance>
-						<!-- Step 1: Always shown - session type -->
-						<Form.Field {form} name="sessionType">
+			{#if done}
+				<p>{$message}</p>
+			{:else if !data.atMaxSessions}
+				<form class="text-left flex flex-col gap-4" method="POST" use:enhance>
+					<!-- Step 1: Always shown - session type -->
+					<Form.Field {form} name="sessionType">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label>Session Type</Form.Label>
+								<Select.Root type="single" bind:value={$formData.sessionType} name={props.name}>
+									<Select.Trigger {...props}>
+										{$formData.sessionType
+											? `${data.sessionMap[$formData.sessionType].name} (${data.sessionMap[$formData.sessionType].length} minutes)`
+											: 'Select a session type'}
+									</Select.Trigger>
+									<Select.Content>
+										{#each data.categories as category}
+											<Select.Group>
+												<Select.GroupHeading>{category.category}</Select.GroupHeading>
+												{#each category.items as item}
+													{@const label = `${item.name} (${item.length} minutes)`}
+													<Select.Item value={item.id} {label}>{label}</Select.Item>
+												{/each}
+											</Select.Group>
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<!-- Step 2: Shown after specifying type - select slot -->
+					{#if $formData.sessionType && $formData.sessionType !== ''}
+						<Form.Field {form} name="timezone">
 							<Form.Control>
 								{#snippet children({ props })}
-									<Form.Label>Session Type</Form.Label>
-									<Select.Root type="single" bind:value={$formData.sessionType} name={props.name}>
-										<Select.Trigger {...props}>
-											{$formData.sessionType ? `${data.sessionMap[$formData.sessionType].name} (${data.sessionMap[$formData.sessionType].length} minutes)` : "Select a session type"}
-										</Select.Trigger>
-										<Select.Content>
-											{#each data.categories as category}
-												<Select.Group>
-													<Select.GroupHeading>{category.category}</Select.GroupHeading>
-													{#each category.items as item}
-														{@const label = `${item.name} (${item.length} minutes)`}
-														<Select.Item value={item.id} {label}>{label}</Select.Item>
-													{/each}
-												</Select.Group>
-											{/each}
-										</Select.Content>
-									</Select.Root>
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors />
-						</Form.Field>
-						<!-- Step 2: Shown after specifying type - select slot -->
-						{#if $formData.sessionType && $formData.sessionType !== ''}
-							<Form.Field {form} name="timezone">
-								<Form.Control>
-									{#snippet children({ props })}
 									<Form.Label>Timezone</Form.Label>
 									<Select.Root type="single" bind:value={$formData.timezone} name={props.name}>
 										<Select.Trigger {...props}>
@@ -98,15 +98,15 @@
 											{/each}
 										</Select.Content>
 									</Select.Root>
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
 
-							{@const slots = data.slotData[$formData.sessionType]}
-							<Form.Field {form} name="slot">
-								<Form.Control>
-									{#snippet children({ props })}
+						{@const slots = data.slotData[$formData.sessionType]}
+						<Form.Field {form} name="slot">
+							<Form.Control>
+								{#snippet children({ props })}
 									<Form.Label>Date & time</Form.Label>
 									<Select.Root type="single" bind:value={$formData.slot} name={props.name}>
 										<Select.Trigger {...props}>
@@ -114,9 +114,11 @@
 												{#each slots as slot}
 													{#if `${slot.slot}@${slot.mentor}` === $formData.slot}
 														{@const interval = Interval.fromISO(slot.slot)}
-															{#if interval.start}
-																{interval.start.setZone($formData.timezone).toLocaleString(DateTime.DATETIME_FULL)}
-															{/if}
+														{#if interval.start}
+															{interval.start
+																.setZone($formData.timezone)
+																.toLocaleString(DateTime.DATETIME_FULL)}
+														{/if}
 													{/if}
 												{/each}
 											{:else}
@@ -127,41 +129,50 @@
 											{#each slots as slot}
 												{@const interval = Interval.fromISO(slot.slot)}
 												{#if interval.start}
-													{@const label = interval.start.setZone($formData.timezone).toLocaleString(DateTime.DATETIME_FULL)}
-													<Select.Item value="{slot.slot}@{slot.mentor}" {label}>{label}</Select.Item>
+													{@const label = interval.start
+														.setZone($formData.timezone)
+														.toLocaleString(DateTime.DATETIME_FULL)}
+													<Select.Item value="{slot.slot}@{slot.mentor}" {label}
+														>{label}</Select.Item
+													>
 												{/if}
 											{:else}
-												<Select.Item value="__invalid__" disabled label="No slots available :(">No slots available :(</Select.Item>
+												<Select.Item value="__invalid__" disabled label="No slots available :("
+													>No slots available :(</Select.Item
+												>
 											{/each}
 										</Select.Content>
 									</Select.Root>
-									{/snippet}
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-						{/if}
-
-						<!-- Step 3: Submit button -->
-						{#if $formData.slot && $formData.slot !== ''}
-							<Form.Button>
-								{#if $delayed}
-									<LoaderCircle class="w-4 h-4 animate-spin" />
-								{:else}
-									Schedule &rarr;
-								{/if}
-							</Form.Button>
-						{/if}
-					</form>
-					{:else}
-						<p>You have reached your facility's limit for maximum booked sessions. Contact your training staff if you believe this to be in error.</p>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
 					{/if}
-				{/if}
 
+					<!-- Step 3: Submit button -->
+					{#if $formData.slot && $formData.slot !== ''}
+						<Form.Button>
+							{#if $delayed}
+								<LoaderCircle class="w-4 h-4 animate-spin" />
+							{:else}
+								Schedule &rarr;
+							{/if}
+						</Form.Button>
+					{/if}
+				</form>
+			{:else}
+				<p>
+					You have reached your facility's limit for maximum booked sessions. Contact your training
+					staff if you believe this to be in error.
+				</p>
+			{/if}
 		</Card.Content>
 		<Card.Footer class="text-sm text-muted-foreground justify-center flex flex-col gap-2">
 			<div class="flex flex-row gap-4 text-primary font-semibold">
 				{#if roleOf(data.user) >= ROLE_MENTOR}
-					<a class="hover:underline underline-offset-4" href="/dash/mentors/{data.user.id}">My Schedule</a>
+					<a class="hover:underline underline-offset-4" href="/dash/mentors/{data.user.id}"
+						>My Schedule</a
+					>
 				{/if}
 				{#if roleOf(data.user) >= ROLE_STAFF}
 					<a class="hover:underline underline-offset-4" href="/dash">Administration</a>
@@ -171,7 +182,7 @@
 				target="_blank"
 				href="https://github.com/ZTL-ARTCC/scheddy"
 				class="hover:underline underline-offset-4"
-			>scheddy v{version} - built with <HeartIcon class="inline w-5 h-5 align-top" /> by the ZTL ARTCC</a
+				>scheddy v{version} - built with <HeartIcon class="inline w-5 h-5 align-top" /> by the ZTL ARTCC</a
 			>
 		</Card.Footer>
 	</Card.Root>

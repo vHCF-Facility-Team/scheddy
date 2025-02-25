@@ -28,7 +28,6 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		.leftJoin(mentors, eq(mentors.id, sessions.mentor))
 		.leftJoin(sessionTypes, eq(sessionTypes.id, sessions.type));
 
-
 	const mentorSessions = allSessions;
 
 	mentorSessions.sort((a, b) => {

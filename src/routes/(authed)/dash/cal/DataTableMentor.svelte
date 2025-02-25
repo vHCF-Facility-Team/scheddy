@@ -4,9 +4,9 @@
 	import { ROLE_STAFF } from '$lib/utils';
 
 	interface Props {
-		firstName: string,
-		lastName: string,
-		id: number
+		firstName: string;
+		lastName: string;
+		id: number;
 	}
 	let { firstName, lastName, id }: Props = $props();
 </script>

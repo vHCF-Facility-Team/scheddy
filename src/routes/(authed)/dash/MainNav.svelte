@@ -1,9 +1,11 @@
 <script lang="ts">
-	import * as Sidebar from "$lib/components/ui/sidebar";
+	import * as Sidebar from '$lib/components/ui/sidebar';
 	import {
 		CalendarClockIcon,
-		CalendarIcon, CalendarPlusIcon,
-		GraduationCapIcon, HistoryIcon,
+		CalendarIcon,
+		CalendarPlusIcon,
+		GraduationCapIcon,
+		HistoryIcon,
 		LayoutGridIcon,
 		LibraryIcon,
 		UsersIcon
@@ -13,8 +15,8 @@
 	import NavSection from './NavSection.svelte';
 
 	interface Props {
-		role: number,
-		userId: number
+		role: number;
+		userId: number;
 	}
 	let { role, userId }: Props = $props();
 
@@ -53,7 +55,7 @@
 			title: 'My Schedule',
 			icon: CalendarClockIcon,
 			visible: role >= ROLE_MENTOR
-		},
+		}
 	];
 	let facilityAdministrationPages: NestedMenuItem[] = [
 		{
@@ -67,7 +69,7 @@
 			title: 'Mentors',
 			icon: GraduationCapIcon,
 			visible: role >= ROLE_STAFF
-		},
+		}
 	];
 	let siteAdministrationPages: NestedMenuItem[] = [
 		{
@@ -75,10 +77,10 @@
 			title: 'User Management',
 			icon: UsersIcon,
 			visible: role >= ROLE_STAFF
-		},
+		}
 	];
 
-	let sections: { data: NestedMenuItem[], title?: string }[] = [
+	let sections: { data: NestedMenuItem[]; title?: string }[] = [
 		{ data: commonPages },
 		{ title: 'Scheduling', data: schedulingPages },
 		{ title: 'Facility Administration', data: facilityAdministrationPages },
