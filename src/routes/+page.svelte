@@ -12,7 +12,7 @@
 </script>
 
 <div class="min-w-screen min-h-screen flex flex-col align-middle justify-center items-center">
-	<Card.Root class="w-[95%] md:w-1/2 xl:w-1/3 text-center">
+	<Card.Root class="max-w-xl mx-4 text-center">
 		<Card.Header>
 			<Card.Title>{PUBLIC_FACILITY_NAME} - Scheddy</Card.Title>
 		</Card.Header>
