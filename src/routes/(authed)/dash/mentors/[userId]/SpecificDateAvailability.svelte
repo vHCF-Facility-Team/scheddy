@@ -4,10 +4,9 @@
 	import { ScanSearchIcon } from 'lucide-svelte';
 
 	interface Props {
-		data: MentorAvailability
+		data: MentorAvailability;
 	}
 	let { data }: Props = $props();
-
 </script>
 
 <div class="flex-1 flex flex-col gap-2">

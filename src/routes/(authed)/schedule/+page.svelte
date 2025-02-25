@@ -257,7 +257,7 @@
 							{/each}
 						</Select>
 					{/if}
-					<div class="flex flex-row justify-center gap-4 flex-grow">
+					<div class="flex flex-row justify-center gap-4 grow">
 						{#if data.originalSessionType}
 							<Button
 								class="flex-1"
@@ -318,7 +318,7 @@
 						<label for="trainingOrder">I have read and understood the training order</label>
 					</div>
 
-					<div class="flex flex-row justify-center gap-4 flex-grow">
+					<div class="flex flex-row justify-center gap-4 grow">
 						<Button
 							class="flex-1"
 							variant="ghost"
