@@ -9,34 +9,34 @@
 
 	interface Props {
 		id: string;
-		mentorId: number;
+		roleOverride: number;
 	}
-	let { id, mentorId }: Props = $props();
+	let { id, roleOverride }: Props = $props();
 </script>
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		{#snippet child({ props })}
-			<Button {...props} variant="ghost" size="icon" class="relative size-8 p-0">
-				<span class="sr-only">Open menu</span>
-				<Ellipsis />
-			</Button>
+		<Button {...props} variant="ghost" size="icon" class="relative size-8 p-0">
+			<span class="sr-only">Open menu</span>
+			<Ellipsis />
+		</Button>
 		{/snippet}
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content>
 		<DropdownMenu.Group>
 			<DropdownMenu.GroupHeading>Actions</DropdownMenu.GroupHeading>
-			<DropdownMenu.Item onclick={() => {navigator.clipboard.writeText(id); toast.success('Copied session ID to clipboard.')}}>
-				Copy session ID
+			<DropdownMenu.Item onclick={() => {navigator.clipboard.writeText(id); toast.success('Copied CID to clipboard!')}}>
+				Copy CID
 			</DropdownMenu.Item>
-			{#if roleOf(page.data.user) >= ROLE_STAFF || mentorId === page.data.user.id}
-				<DropdownMenu.Separator />
-				<DropdownMenu.Item>
-					{#snippet child({ props })}
-						<a href="/dash/sessions/{id}" {...props}> Edit </a>
-					{/snippet}
-				</DropdownMenu.Item>
-			{/if}
+			<DropdownMenu.Item>
+				{#snippet child({ props })}
+					<a href="/dash/users/set?id={id}&roleOverride={roleOverride}" {...props}> Edit </a>
+				{/snippet}
+			</DropdownMenu.Item>
+			<DropdownMenu.Item>
+				Remove
+			</DropdownMenu.Item>
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

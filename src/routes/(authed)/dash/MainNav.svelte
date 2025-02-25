@@ -5,7 +5,7 @@
 		CalendarIcon,
 		CalendarPlusIcon,
 		GraduationCapIcon,
-		HistoryIcon,
+		HistoryIcon, Layers2Icon,
 		LayoutGridIcon,
 		LibraryIcon,
 		UsersIcon
@@ -76,7 +76,15 @@
 			url: '/dash/users',
 			title: 'User Management',
 			icon: UsersIcon,
-			visible: role >= ROLE_STAFF
+			visible: role >= ROLE_STAFF,
+			children: [
+				{
+					url: '/dash/users/set',
+					title: 'Add/Update Override',
+					icon: Layers2Icon,
+					visible: role >= ROLE_STAFF
+				}
+			]
 		}
 	];
 
