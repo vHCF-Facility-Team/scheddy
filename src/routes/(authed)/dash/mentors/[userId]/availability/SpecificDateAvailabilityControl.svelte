@@ -10,7 +10,7 @@
 		dayId: string;
 		form: SuperForm<Infer<AvailSchema>>;
 	}
-	let { dayId, dayName, form }: Props = $props();
+	let { dayId, form }: Props = $props();
 	const { form: formData } = form;
 
 	function pad() {

@@ -11,6 +11,7 @@
 	import WeekdayAvailability from './WeekdayAvailability.svelte';
 	import SpecificDateAvailability from './SpecificDateAvailability.svelte';
 	import { Separator } from '$lib/components/ui/separator';
+	import { toast } from 'svelte-sonner';
 
 	interface Props {
 		data: PageData;
@@ -23,6 +24,7 @@
 		async onUpdated({ form }) {
 			if (form.valid) {
 				await goto(`/dash/mentors/${data.mentor.id}`);
+				toast.success("Availability updated!");
 			}
 		}
 	});
@@ -79,6 +81,7 @@
 		<Separator orientation="vertical" />
 		<SpecificDateAvailability {form} />
 	</div>
+	<Form.Button class="mt-2 w-full">Set Availability</Form.Button>
 </form>
 
 <!--
