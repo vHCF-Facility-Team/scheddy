@@ -9,7 +9,7 @@
 	import TableColumn from '$lib/ui/table/TableColumn.svelte';
 	import TableHead from '$lib/ui/table/TableHead.svelte';
 	import TableRow from '$lib/ui/table/TableRow.svelte';
-	import * as Tabs from "$lib/components/ui/tabs";
+	import * as Tabs from '$lib/components/ui/tabs';
 	import DataTable from '$lib/ui/DataTable.svelte';
 	import { columns } from './columns';
 	import WeekdayAvailability from './WeekdayAvailability.svelte';

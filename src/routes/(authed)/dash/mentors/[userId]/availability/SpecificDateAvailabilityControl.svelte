@@ -14,10 +14,19 @@
 	const { form: formData } = form;
 
 	function pad() {
-		$formData.exceptions[dayId].start.hour = String($formData.exceptions[dayId].start.hour).padStart(2, '0');
-		$formData.exceptions[dayId].start.minute = String($formData.exceptions[dayId].start.minute).padStart(2, '0');
-		$formData.exceptions[dayId].end.hour = String($formData.exceptions[dayId].end.hour).padStart(2, '0');
-		$formData.exceptions[dayId].end.minute = String($formData.exceptions[dayId].end.minute).padStart(2, '0');
+		$formData.exceptions[dayId].start.hour = String(
+			$formData.exceptions[dayId].start.hour
+		).padStart(2, '0');
+		$formData.exceptions[dayId].start.minute = String(
+			$formData.exceptions[dayId].start.minute
+		).padStart(2, '0');
+		$formData.exceptions[dayId].end.hour = String($formData.exceptions[dayId].end.hour).padStart(
+			2,
+			'0'
+		);
+		$formData.exceptions[dayId].end.minute = String(
+			$formData.exceptions[dayId].end.minute
+		).padStart(2, '0');
 	}
 </script>
 
@@ -45,7 +54,12 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>From</Form.Label>
-							<Input onblur={pad} {...props} type="number" bind:value={$formData.exceptions[dayId].start.hour} />
+							<Input
+								onblur={pad}
+								{...props}
+								type="number"
+								bind:value={$formData.exceptions[dayId].start.hour}
+							/>
 						{/snippet}
 					</Form.Control>
 					<Form.Description>Hours (MM)</Form.Description>
@@ -74,7 +88,12 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>To</Form.Label>
-							<Input onblur={pad} {...props} type="number" bind:value={$formData.exceptions[dayId].end.hour} />
+							<Input
+								onblur={pad}
+								{...props}
+								type="number"
+								bind:value={$formData.exceptions[dayId].end.hour}
+							/>
 						{/snippet}
 					</Form.Control>
 					<Form.Description>Hours (HH)</Form.Description>
@@ -85,7 +104,12 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>​</Form.Label>
-							<Input onblur={pad} {...props} type="number" bind:value={$formData.exceptions[dayId].end.minute} />
+							<Input
+								onblur={pad}
+								{...props}
+								type="number"
+								bind:value={$formData.exceptions[dayId].end.minute}
+							/>
 						{/snippet}
 					</Form.Control>
 					<Form.Description>Minutes (MM)</Form.Description>

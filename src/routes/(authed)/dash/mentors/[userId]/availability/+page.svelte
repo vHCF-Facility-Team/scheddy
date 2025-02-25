@@ -24,7 +24,7 @@
 		async onUpdated({ form }) {
 			if (form.valid) {
 				await goto(`/dash/mentors/${data.mentor.id}`);
-				toast.success("Availability updated!");
+				toast.success('Availability updated!');
 			}
 		}
 	});
