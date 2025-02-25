@@ -40,9 +40,9 @@
 </script>
 
 <div class="min-w-screen min-h-screen flex flex-col align-middle justify-center items-center">
-	<Card.Root class="w-[95%] md:w-2/3 xl:w-1/3 text-center">
+	<Card.Root class="max-w-xl mx-4 text-center px-4 py-2">
 		<Card.Header>
-			<p class="text-sm text-right text-slate-500">
+			<p class="text-sm text-right text-slate-500 mb-1">
 				Logged in as {data.user.firstName}
 				{data.user.lastName} ({data.role}) -
 				<button onclick={logout} class="hover:underline">Log out</button>
