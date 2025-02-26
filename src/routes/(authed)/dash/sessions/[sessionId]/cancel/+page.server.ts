@@ -39,8 +39,7 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 };
 
 export const actions: Actions = {
-
-	reschedule: async ({ cookies, params, request }) => {
+	cancel: async ({ cookies, params }) => {
 		const { user } = (await loadUserData(cookies))!;
 		const sessionList = await db
 			.select()
@@ -58,15 +57,6 @@ export const actions: Actions = {
 			redirect(307, '/schedule');
 		}
 
-		const formData = await request.formData();
-		const newDate = formData.get('date')!.toString();
-		const newDateObj = DateTime.fromISO(newDate);
-
-		await db
-			.update(sessions)
-			.set({
-				start: newDateObj.setZone('utc').toString()
-			})
-			.where(eq(sessions.id, params.sessionId));
-	}
+		await db.delete(sessions).where(eq(sessions.id, params.sessionId));
+	},
 };

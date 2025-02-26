@@ -88,6 +88,6 @@
 </table>
 
 <div class="flex flex-row flex-wrap gap-2">
-	<Button variant="destructive">Cancel</Button>
+	<Button href="/dash/sessions/{data.sessionInfo.session.id}/cancel" variant="destructive">Cancel</Button>
 	<Button>Reschedule</Button>
 </div>
