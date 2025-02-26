@@ -88,6 +88,13 @@
 		}
 	];
 
+	function isAnythingVisible(data: NestedMenuItem[]): boolean {
+		for (let page of data) {
+			if (page.visible) return true;
+		}
+		return false;
+	}
+
 	let sections: { data: NestedMenuItem[]; title?: string }[] = [
 		{ data: commonPages },
 		{ title: 'Scheduling', data: schedulingPages },
@@ -97,5 +104,7 @@
 </script>
 
 {#each sections as section}
-	<NavSection data={section.data} title={section.title} />
+	{#if isAnythingVisible(section.data)}
+		<NavSection data={section.data} title={section.title} />
+	{/if}
 {/each}

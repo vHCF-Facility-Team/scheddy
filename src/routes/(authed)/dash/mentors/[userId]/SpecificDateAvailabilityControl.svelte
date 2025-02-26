@@ -12,7 +12,7 @@
 
 <div class="rounded-md border p-4">
 	<div class="flex flex-row items-start space-x-3 space-y-0">
-		<Checkbox checked={data.exceptions[dayId].available} />
+		<Checkbox disabled checked={data.exceptions[dayId].available} />
 		<div class="space-y-1 leading-none">
 			<Label>
 				{dayId}

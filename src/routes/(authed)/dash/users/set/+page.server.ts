@@ -56,16 +56,11 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 
-		console.log(form.data);
-
-		console.log(
-			await db
-				.update(users)
-				.set({
-					roleOverride: form.data.roleOverride
-				})
-				.where(eq(users.id, form.data.id))
-		);
+		await db.update(users)
+			.set({
+				roleOverride: form.data.roleOverride
+			})
+			.where(eq(users.id, form.data.id));
 
 		return {
 			form

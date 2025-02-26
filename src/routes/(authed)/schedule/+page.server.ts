@@ -12,7 +12,8 @@ import { sendEmail } from '$lib/email';
 import { new_session } from '$lib/emails/new_session';
 import { slottificate } from '$lib/slottificate';
 import { DateTime, Interval } from 'luxon';
-import { MAX_PENDING_SESSIONS } from '$env/static/private';
+import { MAX_PENDING_SESSIONS, ARTCC_EMAIL_DOMAIN } from '$env/static/private';
+import { PUBLIC_FACILITY_NAME } from "$env/static/public";
 import { z } from 'zod';
 import { superValidate, message, setError } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -190,7 +191,9 @@ export const actions: Actions = {
 			sessionId: id,
 			type: typename,
 			link_params: `?sessionId=${id}&reschedule=true&type=${form.data.sessionType}`,
-			reschedule: false
+			reschedule: false,
+			facilityName: PUBLIC_FACILITY_NAME,
+			emailDomain: ARTCC_EMAIL_DOMAIN
 		});
 		const mentorEmailContent = new_session({
 			startTime: start.setZone(mentor.timezone),
@@ -198,7 +201,9 @@ export const actions: Actions = {
 			studentName: user.firstName + ' ' + user.lastName,
 			duration,
 			sessionId: id,
-			type: typename
+			type: typename,
+			facilityName: PUBLIC_FACILITY_NAME,
+			emailDomain: ARTCC_EMAIL_DOMAIN
 		});
 
 		await db.insert(sessions).values({

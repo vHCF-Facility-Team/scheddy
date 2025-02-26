@@ -19,7 +19,6 @@ export async function loadUserData(
 ): Promise<UserData | null> {
 	const token = cookies.get('scheddy_token');
 	if (!token) {
-		console.log('condFail !token');
 		return condFail(allowLoggedOut);
 	}
 
@@ -30,18 +29,15 @@ export async function loadUserData(
 		.where(eq(userTokens.id, token));
 
 	if (returnedUsers.length == 0) {
-		console.log('condFail missing user');
 		return condFail(allowLoggedOut);
 	}
 
 	const userAndToken = returnedUsers[0];
 
 	if (!userAndToken) {
-		console.log('condFail user null');
 		return condFail(allowLoggedOut);
 	}
 	if (!userAndToken.user) {
-		console.log('confFail userpair missing user');
 		return condFail(allowLoggedOut);
 	}
 
