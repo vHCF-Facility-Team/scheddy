@@ -1,7 +1,6 @@
 <script lang="ts">
 	import SpecificDateAvailabilityControl from './SpecificDateAvailabilityControl.svelte';
 	import type { MentorAvailability } from '$lib/availability';
-	import { ScanSearchIcon } from 'lucide-svelte';
 
 	interface Props {
 		data: MentorAvailability;

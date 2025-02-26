@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import type { MentorAvailability } from '$lib/availability';
-	import * as Form from '$lib/components/ui/form';
 	import { Label } from '$lib/components/ui/label';
 
 	interface Props {

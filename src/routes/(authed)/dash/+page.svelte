@@ -48,10 +48,8 @@
 		</Card.Header>
 		<Card.Content class="px-6 pb-6 pt-4">
 			<div class="text-2xl font-bold">{data.upcoming}</div>
-			<a
-				href="/dash/cal"
-				class="text-muted-foreground text-xs hover:underline underline-offset-4"
-			>Facility calendar &rarr;</a
+			<a href="/dash/cal" class="text-muted-foreground text-xs hover:underline underline-offset-4"
+				>Facility calendar &rarr;</a
 			>
 		</Card.Content>
 	</Card.Root>

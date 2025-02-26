@@ -4,7 +4,6 @@
 </script>
 
 <Button class="float-right" size="sm" href="/dash/users/set">
-			<PlusIcon class="size-4 mr-2" />
-			Set Override
-
+	<PlusIcon class="size-4 mr-2" />
+	Set Override
 </Button>

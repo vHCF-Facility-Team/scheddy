@@ -1,8 +1,6 @@
 <script lang="ts">
 	import type { Infer, SuperForm } from 'sveltekit-superforms';
 	import type { AvailSchema } from './availSchema';
-	import * as Form from '$lib/components/ui/form';
-	import { Checkbox } from '$lib/components/ui/checkbox';
 	import WeekdayAvailabiltyControl from './WeekdayAvailabiltyControl.svelte';
 
 	interface Props {

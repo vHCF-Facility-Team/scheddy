@@ -1,11 +1,11 @@
 <script lang="ts">
-	import * as Sidebar from '$lib/components/ui/sidebar';
 	import {
 		CalendarClockIcon,
 		CalendarIcon,
 		CalendarPlusIcon,
 		GraduationCapIcon,
-		HistoryIcon, Layers2Icon,
+		HistoryIcon,
+		Layers2Icon,
 		LayoutGridIcon,
 		LibraryIcon,
 		UsersIcon

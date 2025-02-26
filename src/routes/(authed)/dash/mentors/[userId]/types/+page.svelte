@@ -1,9 +1,8 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { superForm } from 'sveltekit-superforms';
-	import Button from '$lib/ui/Button.svelte';
 	import { goto } from '$app/navigation';
-	import * as Form from "$lib/components/ui/form";
+	import * as Form from '$lib/components/ui/form';
 	import { toast } from 'svelte-sonner';
 	import { Switch } from '$lib/components/ui/switch';
 	import { LoaderCircleIcon } from 'lucide-svelte';
@@ -34,16 +33,13 @@
 	<form method="POST" use:enhance>
 		<div class="flex flex-col gap-3">
 			{#each Object.entries(data.typesMap) as [id, name]}
-				<Form.Field
-					{form}
-					name={id}
-				>
+				<Form.Field {form} name={id}>
 					<Form.Control>
 						{#snippet children({ props })}
-						<div class="flex items-center space-x-2">
-							<Switch {...props} bind:checked={$formData.allowed[id]} />
-							<Form.Label>{name}</Form.Label>
-						</div>
+							<div class="flex items-center space-x-2">
+								<Switch {...props} bind:checked={$formData.allowed[id]} />
+								<Form.Label>{name}</Form.Label>
+							</div>
 						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />

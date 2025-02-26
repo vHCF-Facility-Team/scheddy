@@ -1,16 +1,16 @@
 <script lang="ts">
-	import type { PageData } from "./$types";
-	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import type { PageData } from './$types';
+	import { superForm } from 'sveltekit-superforms';
 	import UserSelector from '$lib/ui/UserSelector.svelte';
-	import * as Form from "$lib/components/ui/form";
-	import * as Select from "$lib/components/ui/select";
+	import * as Form from '$lib/components/ui/form';
+	import * as Select from '$lib/components/ui/select';
 	import { ROLE_DEVELOPER, ROLE_MENTOR, ROLE_STAFF, ROLE_STUDENT, roleString } from '$lib/utils.js';
 	import { LoaderCircleIcon } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 
 	interface Props {
-		data: PageData
+		data: PageData;
 	}
 	let { data }: Props = $props();
 
@@ -31,23 +31,19 @@
 	<Form.Field {form} name="roleOverride">
 		<Form.Control>
 			{#snippet children({ props })}
-			<Form.Label>Role Override</Form.Label>
-			<Select.Root
-				type="single"
-				bind:value={$formData.roleOverride}
-				name={props.name}
-			>
-				<Select.Trigger {...props}>
-					{$formData.roleOverride
-						? roleString($formData.roleOverride)
-						: "Select an override role for this user"}
-				</Select.Trigger>
-				<Select.Content>
-					{#each [ROLE_STUDENT, ROLE_MENTOR, ROLE_STAFF, ROLE_DEVELOPER] as role}
-						<Select.Item value={role.toString()} label={roleString(role)} />
-					{/each}
-				</Select.Content>
-			</Select.Root>
+				<Form.Label>Role Override</Form.Label>
+				<Select.Root type="single" bind:value={$formData.roleOverride} name={props.name}>
+					<Select.Trigger {...props}>
+						{$formData.roleOverride
+							? roleString($formData.roleOverride)
+							: 'Select an override role for this user'}
+					</Select.Trigger>
+					<Select.Content>
+						{#each [ROLE_STUDENT, ROLE_MENTOR, ROLE_STAFF, ROLE_DEVELOPER] as role}
+							<Select.Item value={role.toString()} label={roleString(role)} />
+						{/each}
+					</Select.Content>
+				</Select.Root>
 			{/snippet}
 		</Form.Control>
 		<Form.Description>
