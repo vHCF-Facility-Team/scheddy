@@ -32,7 +32,7 @@
 			</DropdownMenu.Item>
 			<DropdownMenu.Item>
 				{#snippet child({ props })}
-					<a href="/dash/types/{id}" {...props}> Edit </a>
+					<a href="/dash/types/edit/{id}" {...props}> Edit </a>
 				{/snippet}
 			</DropdownMenu.Item>
 			<DropdownMenu.Item>

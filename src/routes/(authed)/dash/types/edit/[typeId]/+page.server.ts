@@ -8,47 +8,43 @@ import { sessionTypes } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { createSchema } from '../../createSchema';
-
+import { editSchema } from './editSchema';
 export const load: PageServerLoad = async ({ cookies, params }) => {
 	const { user } = (await loadUserData(cookies))!;
 	if (roleOf(user) < ROLE_STAFF) {
 		redirect(307, '/schedule');
 	}
 
+	const data = (await db.select().from(sessionTypes).where(eq(sessionTypes.id, params.typeId)))[0];
+
+	const form = await superValidate(data, zod(editSchema));
+
 	return {
-		user,
-		sType: await superValidate(
-			(await db.select().from(sessionTypes).where(eq(sessionTypes.id, params.typeId)))[0],
-			zod(createSchema)
-		)
+		form,
+		breadcrumbs: [{ title: 'Dashboard', url: '/dash' }, { title: 'Session Types', url: '/dash/types' }, { title: data.name }]
 	};
 };
-
-
 export const actions: Actions = {
-	update: async (event) => {
-		const form = await superValidate(event, zod(createSchema));
-
+	default: async (event) => {
+		const form = await superValidate(event, zod(editSchema));
 		const { user } = (await loadUserData(event.cookies))!;
 		if (roleOf(user) < ROLE_STAFF) {
-			return fail(403, { createForm: form });
+			redirect(307, '/schedule');
 		}
 		if (!form.valid) {
-			return fail(400, { createForm: form });
+			return fail(400, { form });
 		}
 
-		await db
-			.update(sessionTypes)
+		await db.update(sessionTypes)
 			.set({
 				name: form.data.name,
-				length: form.data.duration,
-				category: form.data.category,
-    order: form.data.order,
-				rating: form.data.rating
+				length: form.data.length,
+				order: form.data.order,
+				rating: form.data.rating,
+				category: form.data.category
 			})
-			.where(eq(sessionTypes.id, event.params.typeId as string));
+			.where(eq(sessionTypes.id, event.params.typeId));
 
-		return { createForm: form };
-	},
-};
+		return { form };
+	}
+}
