@@ -4,11 +4,11 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { toast } from 'svelte-sonner';
 	import * as Form from "$lib/components/ui/form";
-	import * as Select from "$lib/components/ui/select";
-
 	import { Input } from '$lib/components/ui/input';
 	import { LoaderCircle } from 'lucide-svelte';
 	import { ratingIdDisplay, RATINGS } from '$lib/utils';
+	import * as Select from "$lib/components/ui/select";
+
 
 	interface Props {
 		data: PageData;
@@ -19,7 +19,7 @@
 		async onUpdated({ form }) {
 			if (form.valid) {
 				await goto('/dash/types');
-				toast.success('Session type updated!');
+				toast.success('Session type added!');
 			}
 		}
 	});
