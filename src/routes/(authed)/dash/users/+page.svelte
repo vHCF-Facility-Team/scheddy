@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { invalidateAll } from '$app/navigation';
 	import DataTable from '$lib/ui/DataTable.svelte';
 	import { userColumns } from './userColumns';
 	interface Props {
@@ -14,4 +13,4 @@
 	by their VATUSA role.</i
 >
 
-<DataTable columns={userColumns} data={data.users} />
+<DataTable class="max-w-5xl" columns={userColumns} data={data.users} />

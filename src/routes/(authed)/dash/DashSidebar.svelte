@@ -1,18 +1,6 @@
 <script lang="ts">
 	import * as Sidebar from '$lib/components/ui/sidebar';
-	import {
-		CalendarClockIcon,
-		CalendarIcon,
-		CalendarPlusIcon,
-		GraduationCapIcon,
-		LayoutGridIcon,
-		LibraryIcon,
-		TowerControl,
-		UsersIcon
-	} from 'lucide-svelte';
-	import { ROLE_MENTOR, ROLE_STAFF, ROLE_STUDENT, roleString } from '$lib/utils';
-	import { PUBLIC_FACILITY_NAME } from '$env/static/public';
-	import { version } from '$app/environment';
+	import { roleString } from '$lib/utils';
 	import SbFacility from './SbFacility.svelte';
 	import MainNav from './MainNav.svelte';
 	import NavUser from './NavUser.svelte';

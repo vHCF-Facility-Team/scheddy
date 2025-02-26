@@ -1,8 +1,5 @@
 <script lang="ts">
 	import { Checkbox } from '$lib/components/ui/checkbox';
-	import * as Form from '$lib/components/ui/form';
-	import { Input } from '$lib/components/ui/input';
-	import { Separator } from '$lib/components/ui/separator';
 	import type { MentorAvailability } from '$lib/availability';
 	import { Label } from '$lib/components/ui/label';
 

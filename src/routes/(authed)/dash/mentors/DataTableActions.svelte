@@ -6,9 +6,8 @@
 
 	interface Props {
 		id: string;
-		roleOverride: number;
 	}
-	let { id, roleOverride }: Props = $props();
+	let { id }: Props = $props();
 </script>
 
 <DropdownMenu.Root>
@@ -33,10 +32,9 @@
 			</DropdownMenu.Item>
 			<DropdownMenu.Item>
 				{#snippet child({ props })}
-					<a href="/dash/users/set?id={id}&roleOverride={roleOverride}" {...props}> Edit </a>
+					<a href="/dash/mentors/{id}" {...props}> View/Edit </a>
 				{/snippet}
 			</DropdownMenu.Item>
-			<DropdownMenu.Item>Remove</DropdownMenu.Item>
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

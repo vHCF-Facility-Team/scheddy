@@ -26,7 +26,12 @@
 	<DropdownMenu.Content>
 		<DropdownMenu.Group>
 			<DropdownMenu.GroupHeading>Actions</DropdownMenu.GroupHeading>
-			<DropdownMenu.Item onclick={() => {navigator.clipboard.writeText(id); toast.success('Copied session ID to clipboard.')}}>
+			<DropdownMenu.Item
+				onclick={() => {
+					navigator.clipboard.writeText(id);
+					toast.success('Copied session ID to clipboard.');
+				}}
+			>
 				Copy session ID
 			</DropdownMenu.Item>
 			{#if roleOf(page.data.user) >= ROLE_STAFF || mentorId === page.data.user.id}

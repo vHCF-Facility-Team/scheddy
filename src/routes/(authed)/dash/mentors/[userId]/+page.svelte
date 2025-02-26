@@ -1,14 +1,5 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { DateTime } from 'luxon';
-	import TableHeadColumn from '$lib/ui/table/TableHeadColumn.svelte';
-	import { PencilIcon } from 'lucide-svelte';
-	import TableBody from '$lib/ui/table/TableBody.svelte';
-	import Button from '$lib/ui/Button.svelte';
-	import TableRoot from '$lib/ui/table/TableRoot.svelte';
-	import TableColumn from '$lib/ui/table/TableColumn.svelte';
-	import TableHead from '$lib/ui/table/TableHead.svelte';
-	import TableRow from '$lib/ui/table/TableRow.svelte';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import DataTable from '$lib/ui/DataTable.svelte';
 	import { columns } from './columns';

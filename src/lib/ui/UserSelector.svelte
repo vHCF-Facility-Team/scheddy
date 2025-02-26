@@ -1,30 +1,30 @@
 <script lang="ts">
 	import { tick } from 'svelte';
-	import * as Popover from "$lib/components/ui/popover";
-	import * as Command from "$lib/components/ui/command";
-	import * as Form from "$lib/components/ui/form";
-	import { Button, buttonVariants } from '$lib/components/ui/button';
+	import * as Popover from '$lib/components/ui/popover';
+	import * as Command from '$lib/components/ui/command';
+	import * as Form from '$lib/components/ui/form';
+	import { buttonVariants } from '$lib/components/ui/button';
 	import { ChevronsUpDown } from 'lucide-svelte';
 	import Check from 'lucide-svelte/icons/check';
 	import { cn } from '$lib/utils';
 	import { computeCommandScore, useId } from 'bits-ui';
 
 	interface Props {
-		usersMap: Record<number, string>,
-		form: never,
-		name: string,
-		value: string,
-		label: string
+		usersMap: Record<number, string>;
+		form: never;
+		name: string;
+		value: string;
+		label: string;
 	}
-	let { usersMap, form, name, label, value = $bindable("") }: Props = $props();
+	let { usersMap, form, name, label, value = $bindable('') }: Props = $props();
 
-	function customFilter(
-		commandValue: string,
-		search: string,
-		commandKeywords?: string[]
-	): number {
+	function customFilter(commandValue: string, search: string, commandKeywords?: string[]): number {
 		const defaultScore = computeCommandScore(commandValue, search, commandKeywords);
-		const nameScore = computeCommandScore(usersMap[Number.parseInt(commandValue)], search, commandKeywords);
+		const nameScore = computeCommandScore(
+			usersMap[Number.parseInt(commandValue)],
+			search,
+			commandKeywords
+		);
 
 		// Add custom logic here
 		return Math.max(defaultScore, nameScore);
@@ -49,46 +49,37 @@
 	<Popover.Root bind:open>
 		<Form.Control id={triggerId}>
 			{#snippet children({ props })}
-			<Form.Label>{label}</Form.Label>
-			<Popover.Trigger
-				class={cn(
-              buttonVariants({ variant: "outline" }),
-              "max-w-md justify-between",
-              !value && "text-muted-foreground"
-            )}
-				role="combobox"
-				{...props}
-			>
-				{usersMap[value] ? usersMap[value] + " (" + value + ")" :
-				"Select user"}
-				<ChevronsUpDown class="opacity-50" />
-			</Popover.Trigger>
-			<input hidden value={value} name={props.name} />
+				<Form.Label>{label}</Form.Label>
+				<Popover.Trigger
+					class={cn(
+						buttonVariants({ variant: 'outline' }),
+						'max-w-md justify-between',
+						!value && 'text-muted-foreground'
+					)}
+					role="combobox"
+					{...props}
+				>
+					{usersMap[value] ? usersMap[value] + ' (' + value + ')' : 'Select user'}
+					<ChevronsUpDown class="opacity-50" />
+				</Popover.Trigger>
+				<input hidden {value} name={props.name} />
 			{/snippet}
 		</Form.Control>
 		<Popover.Content class="p-0 max-w-lg">
 			<Command.Root filter={customFilter}>
-				<Command.Input
-					autofocus
-					placeholder="Search users..."
-					class="h-9"
-				/>
+				<Command.Input autofocus placeholder="Search users..." class="h-9" />
 				<Command.Empty>No language found.</Command.Empty>
 				<Command.Group>
 					{#each Object.entries(usersMap) as [cid, name]}
 						<Command.Item
 							value={cid}
 							onSelect={() => {
-                  value = cid;
-                  closeAndFocusTrigger(triggerId);
-                }}
+								value = cid;
+								closeAndFocusTrigger(triggerId);
+							}}
 						>
 							{name} ({cid})
-							<Check
-								class={cn(
-                    cid !== value && "text-transparent"
-                  )}
-							/>
+							<Check class={cn(cid !== value && 'text-transparent')} />
 						</Command.Item>
 					{/each}
 				</Command.Group>
