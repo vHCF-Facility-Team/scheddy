@@ -2,22 +2,7 @@
 	import type { PageData } from './$types';
 	import * as Sidebar from '$lib/components/ui/sidebar';
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb';
-	import { PUBLIC_FACILITY_NAME } from '$env/static/public';
-	import {
-		CalendarClockIcon,
-		CalendarIcon,
-		CalendarPlusIcon,
-		GraduationCapIcon,
-		LayoutGridIcon,
-		LibraryIcon,
-		LogOutIcon,
-		MenuIcon,
-		UsersIcon
-	} from 'lucide-svelte';
 	import type { Snippet } from 'svelte';
-	import { goto, invalidateAll } from '$app/navigation';
-	import { ROLE_MENTOR, ROLE_STAFF, ROLE_STUDENT } from '$lib/utils';
-	import Button from '$lib/ui/Button.svelte';
 	import DashSidebar from './DashSidebar.svelte';
 	import { roleOf } from '$lib';
 	import { Separator } from '$lib/components/ui/separator';

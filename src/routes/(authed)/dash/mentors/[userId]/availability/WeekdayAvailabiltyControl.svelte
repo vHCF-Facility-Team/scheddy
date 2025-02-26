@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { AvailSchema, DayAvailability } from './availSchema';
+	import type { AvailSchema } from './availSchema';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import type { Infer, SuperForm } from 'sveltekit-superforms';
 	import * as Form from '$lib/components/ui/form';
@@ -66,6 +66,9 @@
 				<Form.Field {form} name="{dayId}.start.minute">
 					<Form.Control>
 						{#snippet children({ props })}
+
+						<!-- required for spacing. it's cursed -->
+						<!-- eslint-disable-next-line no-irregular-whitespace -->
 							<Form.Label>​</Form.Label>
 							<Input onblur={pad} {...props} type="number" bind:value={startMinute} />
 						{/snippet}
@@ -90,6 +93,9 @@
 				<Form.Field {form} name="{dayId}.end.minute">
 					<Form.Control>
 						{#snippet children({ props })}
+
+						<!-- required for spacing. it's cursed -->
+						<!-- eslint-disable-next-line no-irregular-whitespace -->
 							<Form.Label>​</Form.Label>
 							<Input onblur={pad} {...props} type="number" bind:value={endMinute} />
 						{/snippet}

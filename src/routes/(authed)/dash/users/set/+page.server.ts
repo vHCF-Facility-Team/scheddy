@@ -17,11 +17,11 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 	}
 
 	const data = {};
-	if (url.searchParams.has("id")) {
-		data.id = Number.parseInt(url.searchParams.get("id"));
+	if (url.searchParams.has('id')) {
+		data.id = Number.parseInt(url.searchParams.get('id'));
 	}
-	if (url.searchParams.has("roleOverride")) {
-		data.roleOverride = Number.parseInt(url.searchParams.get("roleOverride"));
+	if (url.searchParams.has('roleOverride')) {
+		data.roleOverride = Number.parseInt(url.searchParams.get('roleOverride'));
 	}
 
 	const form = await superValidate(data, zod(setSchema));
@@ -29,7 +29,7 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 	const allUsers = await db.select().from(users);
 	const usersMap: Record<number, string> = {};
 	for (const user of allUsers) {
-		usersMap[user.id] = user.firstName + " " + user.lastName;
+		usersMap[user.id] = user.firstName + ' ' + user.lastName;
 	}
 
 	return {
@@ -37,7 +37,11 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		users: await db.select().from(users).where(ne(users.roleOverride, 0)),
 		usersMap,
 		form,
-		breadcrumbs: [{ title: 'Dashboard', url: '/dash' }, { title: 'User Management', url: '/dash/users' }, { title: 'Add/Update Override'} ]
+		breadcrumbs: [
+			{ title: 'Dashboard', url: '/dash' },
+			{ title: 'User Management', url: '/dash/users' },
+			{ title: 'Add/Update Override' }
+		]
 	};
 };
 export const actions: Actions = {
@@ -54,14 +58,17 @@ export const actions: Actions = {
 
 		console.log(form.data);
 
-		console.log(await db.update(users)
-			.set({
-				roleOverride: form.data.roleOverride
-			})
-			.where(eq(users.id, form.data.id)));
+		console.log(
+			await db
+				.update(users)
+				.set({
+					roleOverride: form.data.roleOverride
+				})
+				.where(eq(users.id, form.data.id))
+		);
 
 		return {
 			form
 		};
 	}
-}
+};

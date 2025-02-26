@@ -36,7 +36,7 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 		zod(availSchema)
 	);
 
-	let timezones = getTimeZones();
+	const timezones = getTimeZones();
 	timezones.sort((a, b) => {
 		const nameA = a.name.toUpperCase(); // ignore upper and lowercase
 		const nameB = b.name.toUpperCase(); // ignore upper and lowercase

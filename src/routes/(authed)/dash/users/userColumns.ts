@@ -5,11 +5,11 @@ import DataTableActions from './DataTableActions.svelte';
 import DataTableAddButton from './DataTableAddButton.svelte';
 
 export type TUser = {
-	id: number,
-	firstName: string,
-	lastName: string,
-	role: number,
-	roleOverride: number,
+	id: number;
+	firstName: string;
+	lastName: string;
+	role: number;
+	roleOverride: number;
 };
 
 export const userColumns: ColumnDef<TUser>[] = [
@@ -17,7 +17,7 @@ export const userColumns: ColumnDef<TUser>[] = [
 		id: 'name',
 		header: 'Name',
 		cell: ({ row }) => {
-			return row.original.firstName + " " + row.original.lastName;
+			return row.original.firstName + ' ' + row.original.lastName;
 		}
 	},
 	{
@@ -37,7 +37,10 @@ export const userColumns: ColumnDef<TUser>[] = [
 	{
 		id: 'actions',
 		cell: ({ row }) => {
-			return renderComponent(DataTableActions, { id: row.original.id, roleOverride: row.original.roleOverride });
+			return renderComponent(DataTableActions, {
+				id: row.original.id,
+				roleOverride: row.original.roleOverride
+			});
 		},
 		header: () => {
 			return renderComponent(DataTableAddButton, {});

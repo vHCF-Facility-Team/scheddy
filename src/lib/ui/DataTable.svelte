@@ -9,15 +9,17 @@
 	} from '@tanstack/table-core';
 	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
-	import { cn } from '$lib/utils';
 	import { Button } from '$lib/components/ui/button';
 
 	type DataTableProps<TData, TValue> = {
 		columns: ColumnDef<TData, TValue>[];
 		data: TData[];
+		class: string;
 	};
 
-	let { data, columns }: DataTableProps<TData, TValue> = $props();
+	// it does actually exist
+	// eslint-disable-next-line no-undef
+	let { data, columns, class: clazz }: DataTableProps<TData, TValue> = $props();
 
 	let pagination = $state<PaginationState>({ pageIndex: 0, pageSize: 10 });
 	let sorting = $state<SortingState>([]);
@@ -55,7 +57,7 @@
 	});
 </script>
 
-<div>
+<div class={clazz}>
 	<div class="rounded-md border">
 		<Table.Root>
 			<Table.Header>
