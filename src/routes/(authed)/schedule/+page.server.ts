@@ -19,10 +19,12 @@ import { superValidate, message, setError } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { getTimeZones } from '@vvo/tzdb';
 
-export const load: PageServerLoad = async ({ cookies }) => {
+export const load: PageServerLoad = async ({ cookies, url }) => {
 	const { user } = (await loadUserData(cookies))!;
 
-	const sTypes = await db.select().from(sessionTypes);
+	const sTypes = (await db.select().from(sessionTypes)).filter((u) => {
+		return user.rating >= u.rating;
+	});
 	const mentors = await db
 		.select()
 		.from(users)
@@ -37,15 +39,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
 	const pendingForStudent = allSessions.filter(
 		(session) => session.student === user.id && DateTime.fromISO(session.start) > now
 	).length;
-	const maxPending = Number.parseInt(MAX_PENDING_SESSIONS);
-	if (maxPending > 0 && pendingForStudent >= maxPending) {
-		// don't allow the student to book any more sessions
-		slotData = {};
-		atMaxSessions = true;
-	} else {
-		slotData = slottificate(sTypes, mentors, allSessions);
-		atMaxSessions = false;
-	}
+
 
 	const timezones = getTimeZones();
 	timezones.sort((a, b) => {
@@ -70,7 +64,25 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		timezone: z.enum(timezones.map((u) => u.name))
 	});
 
-	const form = await superValidate(zod(schema));
+	const data = {};
+	if (url.searchParams.has("sessionId")) {
+		const id = url.searchParams.get("sessionId");
+		const session = (await db.select().from(sessions).where(eq(sessions.id, id)))[0];
+		data.sessionType = session.type;
+		data.timezone = session.timezone;
+	}
+
+	const maxPending = Number.parseInt(MAX_PENDING_SESSIONS);
+	if (maxPending > 0 && pendingForStudent >= maxPending && !url.searchParams.has("sessionId")) {
+		// don't allow the student to book any more sessions
+		slotData = {};
+		atMaxSessions = true;
+	} else {
+		slotData = slottificate(sTypes, mentors, allSessions);
+		atMaxSessions = false;
+	}
+
+	const form = await superValidate(data, zod(schema));
 
 	const categories: { category: string; items: { id: string; name: string; order: number }[] }[] =
 		[];
@@ -111,7 +123,9 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		atMaxSessions,
 		form,
 		sessionMap,
-		timezones
+		timezones,
+		reschedule: url.searchParams.has("sessionId"),
+		oldId: url.searchParams.get("sessionId")
 	};
 };
 
@@ -183,6 +197,8 @@ export const actions: Actions = {
 
 		const id = ulid();
 
+		const oldId = event.url.searchParams.get("sessionId");
+
 		const studentEmailContent = appointment_booked({
 			startTime: start.setZone(form.data.timezone),
 			timezone: form.data.timezone,
@@ -191,7 +207,7 @@ export const actions: Actions = {
 			sessionId: id,
 			type: typename,
 			link_params: `?sessionId=${id}&reschedule=true&type=${form.data.sessionType}`,
-			reschedule: false,
+			reschedule: oldId != undefined,
 			facilityName: PUBLIC_FACILITY_NAME,
 			emailDomain: ARTCC_EMAIL_DOMAIN
 		});
@@ -206,19 +222,28 @@ export const actions: Actions = {
 			emailDomain: ARTCC_EMAIL_DOMAIN
 		});
 
-		await db.insert(sessions).values({
-			id,
-			mentor: slotObj.mentor,
-			student: user.id,
-			start: start.toISO(),
-			type: form.data.sessionType,
-			timezone: form.data.timezone
-		});
+		if ( oldId == undefined) {
+			await db.insert(sessions).values({
+				id,
+				mentor: slotObj.mentor,
+				student: user.id,
+				start: start.toISO(),
+				type: form.data.sessionType,
+				timezone: form.data.timezone
+			});
+		} else {
+			await db.update(sessions)
+				.set({
+					start: start.toISO(),
+					timezone: form.data.timezone
+				})
+				.where(eq(sessions.id, oldId));
+		}
 
 		try {
 			await sendEmail(
 				user.email,
-				'Appointment booked - ' +
+				'Appointment rescheduled - ' +
 					start.setZone(form.data.timezone).toLocaleString(DateTime.DATETIME_HUGE),
 				studentEmailContent.raw,
 				studentEmailContent.html
@@ -226,7 +251,7 @@ export const actions: Actions = {
 
 			await sendEmail(
 				mentor.email,
-				'New session booked - ' +
+				'Session rescheduled - ' +
 					start.setZone(mentor.timezone).toLocaleString(DateTime.DATETIME_HUGE),
 				mentorEmailContent.raw,
 				mentorEmailContent.html

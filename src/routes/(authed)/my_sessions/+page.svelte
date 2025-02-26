@@ -10,6 +10,8 @@
 	import TableColumn from '$lib/ui/table/TableColumn.svelte';
 	import Button from '$lib/ui/Button.svelte';
 	import { PencilIcon } from 'lucide-svelte';
+	import DataTable from '$lib/ui/DataTable.svelte';
+	import { columns } from './columns';
 
 	interface Props {
 		data: PageData;
@@ -17,13 +19,6 @@
 	let { data }: Props = $props();
 </script>
 
-<div class="flex flex-col">
-	<div
-		class="bg-slate-800 min-h-14 h-14 min-w-screen flex flex-row items-center px-6 pt-3 pb-4 justify-between border-b border-slate-900"
-	>
-		<h2 class="hidden md:block font-bold">{PUBLIC_FACILITY_NAME}</h2>
-		<p class="font-semibold">Hello, {data.user.firstName} {data.user.lastName} ({data.role})</p>
-	</div>
 	<div class="flex flex-col gap-4 p-4">
 		<h3 class="text-md">
 			<a
@@ -34,36 +29,5 @@
 			</a>
 		</h3>
 		<h2 class="font-semibold text-lg">Your Upcoming Sessions as a Student</h2>
-		<div class="relative overflow-x-auto shadow-md rounded mt-2">
-			<TableRoot>
-				<TableHead>
-					<TableHeadColumn>Date</TableHeadColumn>
-					<TableHeadColumn>Session Type</TableHeadColumn>
-					<TableHeadColumn>Mentor</TableHeadColumn>
-					<TableHeadColumn>Actions</TableHeadColumn>
-				</TableHead>
-				<TableBody>
-					{#each data.upcomingSessions as sess}
-						{@const date = DateTime.fromISO(sess.session.start)}
-						<TableRow>
-							<TableColumn>
-								{#if data.user.timezone}
-									{date.setZone(data.user.timezone).toLocaleString(DateTime.DATETIME_FULL)}
-								{:else}
-									{date.toLocaleString(DateTime.DATETIME_FULL)}
-								{/if}
-							</TableColumn>
-							<TableColumn>{data.typesMap[sess.session.type]}</TableColumn>
-							<TableColumn>{sess.mentor.firstName} {sess.mentor.lastName}</TableColumn>
-							<TableColumn>
-								<Button size="icon" href="/schedule?sessionId={sess.session.id}&reschedule=true&type={sess.session.type}">
-									<PencilIcon class="w-4 h-4" />
-								</Button>
-							</TableColumn>
-						</TableRow>
-					{/each}
-				</TableBody>
-			</TableRoot>
-		</div>
+		<DataTable data={data.upcomingSessions} {columns} />
 	</div>
-</div>

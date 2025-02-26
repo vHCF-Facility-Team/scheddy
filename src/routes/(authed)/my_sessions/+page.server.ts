@@ -10,18 +10,12 @@ import { roleString } from '$lib/utils';
 export const load: PageServerLoad = async ({ cookies }) => {
 	const { user } = (await loadUserData(cookies))!;
 
-	const validTypes = await db.select().from(sessionTypes);
-
-	const typesMap: Record<string, string> = {};
-	for (const typ of validTypes) {
-		typesMap[typ.id] = typ.name;
-	}
-
 	const now = DateTime.utc().toISO();
 	const upcomingSessions = await db
 		.select()
 		.from(sessions)
 		.leftJoin(mentors, eq(sessions.mentor, mentors.id))
+		.leftJoin(sessionTypes, eq(sessions.type, sessionTypes.id))
 		.where(and(eq(sessions.student, user.id), gte(sessions.start, now)));
 
 	upcomingSessions.sort((a, b) => {
@@ -39,7 +33,6 @@ export const load: PageServerLoad = async ({ cookies }) => {
 	return {
 		user,
 		upcomingSessions,
-		typesMap,
 		role: roleString(roleOf(user))
 	};
 };
