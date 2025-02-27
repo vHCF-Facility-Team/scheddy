@@ -71,7 +71,6 @@
 
 <table class="max-w-2xl">
 	<tbody>
-
 	<DataDisplay icon={GraduationCapIcon} label="Student">
 		{data.sessionInfo.student.firstName} {data.sessionInfo.student.lastName}
 	</DataDisplay>
