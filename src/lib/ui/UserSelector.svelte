@@ -25,11 +25,7 @@
 		let nameScore = 0;
 
 		if (parsedUserName) {
-			nameScore = computeCommandScore(
-				parsedUserName,
-				search,
-				commandKeywords
-			);
+			nameScore = computeCommandScore(parsedUserName, search, commandKeywords);
 		}
 
 		// Add custom logic here

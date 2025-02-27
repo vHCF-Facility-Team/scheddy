@@ -25,18 +25,18 @@ export function roleString(role: number): string {
 }
 
 export const RATINGS = [
-	{ id: 0, short: "SUS or higher", long: "Any"},
-	{ id: 1, short: "OBS", long: "Observer"},
-	{ id: 2, short: "S1", long: "Student 1"},
-	{ id: 3, short: "S2", long: "Student 2"},
-	{ id: 4, short: "S3", long: "Student 3" },
-	{ id: 5, short: "C1", long: "Enroute Controller"},
-	{ id: 7, short: "C3", long: "Senior Controller"},
-	{ id: 8, short: "I1", long: "Instructor"},
-	{ id: 10, short: "I3", long: "Senior Instructor"},
+	{ id: 0, short: 'SUS or higher', long: 'Any' },
+	{ id: 1, short: 'OBS', long: 'Observer' },
+	{ id: 2, short: 'S1', long: 'Student 1' },
+	{ id: 3, short: 'S2', long: 'Student 2' },
+	{ id: 4, short: 'S3', long: 'Student 3' },
+	{ id: 5, short: 'C1', long: 'Enroute Controller' },
+	{ id: 7, short: 'C3', long: 'Senior Controller' },
+	{ id: 8, short: 'I1', long: 'Instructor' },
+	{ id: 10, short: 'I3', long: 'Senior Instructor' }
 ];
-export function ratingIdLookup(id: number): { id: number, short: string, long: string } | null {
-	for (let rating of RATINGS) {
+export function ratingIdLookup(id: number): { id: number; short: string; long: string } | null {
+	for (const rating of RATINGS) {
 		if (rating.id === id) return rating;
 	}
 	return null;

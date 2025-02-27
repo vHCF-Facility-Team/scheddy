@@ -21,7 +21,11 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 
 	return {
 		form,
-		breadcrumbs: [{ title: 'Dashboard', url: '/dash' }, { title: 'Session Types', url: '/dash/types' }, { title: data.name }]
+		breadcrumbs: [
+			{ title: 'Dashboard', url: '/dash' },
+			{ title: 'Session Types', url: '/dash/types' },
+			{ title: data.name }
+		]
 	};
 };
 export const actions: Actions = {
@@ -35,7 +39,8 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 
-		await db.update(sessionTypes)
+		await db
+			.update(sessionTypes)
 			.set({
 				name: form.data.name,
 				length: form.data.length,
@@ -47,4 +52,4 @@ export const actions: Actions = {
 
 		return { form };
 	}
-}
+};

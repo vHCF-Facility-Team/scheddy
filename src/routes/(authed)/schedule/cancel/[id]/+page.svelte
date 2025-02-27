@@ -1,14 +1,13 @@
 <script lang="ts">
-	import * as Card from "$lib/components/ui/card";
-	import type { PageData } from "./$types";
+	import * as Card from '$lib/components/ui/card';
+	import type { PageData } from './$types';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { PUBLIC_FACILITY_NAME } from '$env/static/public';
 	import { Button } from '$lib/components/ui/button';
 	import { toast } from 'svelte-sonner';
 
-
 	interface Props {
-		data: PageData
+		data: PageData;
 	}
 	let { data }: Props = $props();
 
@@ -22,7 +21,7 @@
 		await fetch('?', {
 			method: 'POST',
 			headers: {
-				"Content-Type": "application/x-www-form-urlencoded"
+				'Content-Type': 'application/x-www-form-urlencoded'
 			}
 		});
 		await invalidateAll();

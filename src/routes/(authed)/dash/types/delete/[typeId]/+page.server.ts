@@ -21,7 +21,12 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 
 	return {
 		form,
-		breadcrumbs: [{ title: 'Dashboard', url: '/dash' }, { title: 'Session Types', url: '/dash/types' }, { title: data ? data.name : '' }, { title: 'Remove'} ]
+		breadcrumbs: [
+			{ title: 'Dashboard', url: '/dash' },
+			{ title: 'Session Types', url: '/dash/types' },
+			{ title: data ? data.name : '' },
+			{ title: 'Remove' }
+		]
 	};
 };
 export const actions: Actions = {
@@ -35,11 +40,9 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 
-		await db.delete(sessions)
-			.where(eq(sessions.type, event.params.typeId));
-		await db.delete(sessionTypes)
-			.where(eq(sessionTypes.id, event.params.typeId));
+		await db.delete(sessions).where(eq(sessions.type, event.params.typeId));
+		await db.delete(sessionTypes).where(eq(sessionTypes.id, event.params.typeId));
 
 		return { form };
 	}
-}
+};

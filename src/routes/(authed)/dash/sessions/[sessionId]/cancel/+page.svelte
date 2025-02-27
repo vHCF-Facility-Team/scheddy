@@ -1,11 +1,8 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { DateTime } from 'luxon';
 	import { goto, invalidateAll } from '$app/navigation';
-	import { CalendarDaysIcon, ClockIcon, GraduationCapIcon, IdCardIcon, ScrollTextIcon } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { toast } from 'svelte-sonner';
-
 
 	interface Props {
 		data: PageData;
@@ -25,14 +22,19 @@
 	}
 </script>
 
-<h2 class="text-xl font-semibold">
-	Cancel Session
-</h2>
+<h2 class="text-xl font-semibold">Cancel Session</h2>
 
-<p>Are you sure you wish to cancel? It is your responsibility to inform the student of the cancellation.</p>
+<p>
+	Are you sure you wish to cancel? It is your responsibility to inform the student of the
+	cancellation.
+</p>
 
 <div class="flex flex-row flex-wrap gap-2">
-	<Button onclick={() => {goto(`/dash/sessions/${data.sessionInfo.session.id}`)}} variant="outline">Nevermind</Button>
+	<Button
+		onclick={() => {
+			goto(`/dash/sessions/${data.sessionInfo.session.id}`);
+		}}
+		variant="outline">Nevermind</Button
+	>
 	<Button onclick={cancel} variant="destructive">Yes, I'm sure</Button>
-
 </div>

@@ -37,7 +37,7 @@
 			</DropdownMenu.Item>
 			<DropdownMenu.Item>
 				{#snippet child({ props })}
-				<a href="/dash/types/delete/{id}" {...props}> Remove </a>
+					<a href="/dash/types/delete/{id}" {...props}> Remove </a>
 				{/snippet}
 			</DropdownMenu.Item>
 		</DropdownMenu.Group>

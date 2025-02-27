@@ -7,7 +7,7 @@
 	import { version } from '$app/environment';
 	import { HeartIcon, LoaderCircle } from 'lucide-svelte';
 	import { goto, invalidateAll } from '$app/navigation';
-	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import { superForm } from 'sveltekit-superforms';
 	import { DateTime, Interval } from 'luxon';
 	import { roleOf } from '$lib';
 	import { ROLE_MENTOR, ROLE_STAFF } from '$lib/utils';
@@ -48,43 +48,49 @@
 				{data.user.lastName} ({data.role}) -
 				<button onclick={logout} class="hover:underline">Log out</button>
 			</p>
-			<Card.Title>{data.reschedule ? 'Reschedule' : 'Schedule'} appointment at {PUBLIC_FACILITY_NAME}</Card.Title>
+			<Card.Title
+				>{data.reschedule ? 'Reschedule' : 'Schedule'} appointment at {PUBLIC_FACILITY_NAME}</Card.Title
+			>
 		</Card.Header>
 		<Card.Content>
 			{#if done}
 				<p>{$message}</p>
 			{:else if !data.atMaxSessions}
 				<form class="text-left flex flex-col gap-4" method="POST" use:enhance>
-					<div class="{data.reschedule ? 'hidden' : ''}">
-					<!-- Step 1: Always shown - session type -->
-					<Form.Field  {form} name="sessionType">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>Session Type</Form.Label>
-								<Select.Root type="single" bind:value={$formData.sessionType} name={props.name}>
-									<Select.Trigger {...props}>
-										{$formData.sessionType && data.sessionMap[$formData.sessionType]
-											? `${data.sessionMap[$formData.sessionType].name} (${data.sessionMap[$formData.sessionType].length} minutes)`
-											: 'Select a session type'}
-									</Select.Trigger>
-									<Select.Content>
-										{#each data.categories as category}
-											<Select.Group>
-												<Select.GroupHeading>{category.category}</Select.GroupHeading>
-												{#each category.items as item}
-													{@const label = `${item.name} (${item.length} minutes)`}
-													<Select.Item value={item.id} {label}>{label}</Select.Item>
-												{/each}
-											</Select.Group>
-										{:else}
-											<Select.Item disabled value="_invalid_" label="No session types are available at the moment :(" />
-										{/each}
-									</Select.Content>
-								</Select.Root>
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
+					<div class={data.reschedule ? 'hidden' : ''}>
+						<!-- Step 1: Always shown - session type -->
+						<Form.Field {form} name="sessionType">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>Session Type</Form.Label>
+									<Select.Root type="single" bind:value={$formData.sessionType} name={props.name}>
+										<Select.Trigger {...props}>
+											{$formData.sessionType && data.sessionMap[$formData.sessionType]
+												? `${data.sessionMap[$formData.sessionType].name} (${data.sessionMap[$formData.sessionType].length} minutes)`
+												: 'Select a session type'}
+										</Select.Trigger>
+										<Select.Content>
+											{#each data.categories as category}
+												<Select.Group>
+													<Select.GroupHeading>{category.category}</Select.GroupHeading>
+													{#each category.items as item}
+														{@const label = `${item.name} (${item.length} minutes)`}
+														<Select.Item value={item.id} {label}>{label}</Select.Item>
+													{/each}
+												</Select.Group>
+											{:else}
+												<Select.Item
+													disabled
+													value="_invalid_"
+													label="No session types are available at the moment :("
+												/>
+											{/each}
+										</Select.Content>
+									</Select.Root>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
 					</div>
 					<!-- Step 2: Shown after specifying type - select slot -->
 					{#if $formData.sessionType && $formData.sessionType !== ''}
@@ -157,7 +163,9 @@
 					<!-- Step 3: Submit button -->
 					<div class="flex flex-row gap-4">
 						{#if data.reschedule}
-							<Button  href="/schedule/cancel/{data.oldId}" class="flex-1" variant="ghost">Cancel Session</Button>
+							<Button href="/schedule/cancel/{data.oldId}" class="flex-1" variant="ghost"
+								>Cancel Session</Button
+							>
 						{/if}
 						{#if $formData.slot && $formData.slot !== ''}
 							<Form.Button class="flex-2">
@@ -179,9 +187,7 @@
 		</Card.Content>
 		<Card.Footer class="text-sm text-muted-foreground justify-center flex flex-col gap-2">
 			<div class="flex flex-row gap-4 text-primary font-semibold">
-				<a class="hover:underline underline-offset-4" href="/my_sessions"
-				>My Bookings</a
-				>
+				<a class="hover:underline underline-offset-4" href="/my_sessions">My Bookings</a>
 				{#if roleOf(data.user) >= ROLE_MENTOR}
 					<a class="hover:underline underline-offset-4" href="/dash/mentors/{data.user.id}"
 						>My Schedule</a

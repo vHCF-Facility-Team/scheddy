@@ -66,9 +66,8 @@
 				<Form.Field {form} name="{dayId}.start.minute">
 					<Form.Control>
 						{#snippet children({ props })}
-
-						<!-- required for spacing. it's cursed -->
-						<!-- eslint-disable-next-line no-irregular-whitespace -->
+							<!-- required for spacing. it's cursed -->
+							<!-- eslint-disable-next-line no-irregular-whitespace -->
 							<Form.Label>​</Form.Label>
 							<Input onblur={pad} {...props} type="number" bind:value={startMinute} />
 						{/snippet}
@@ -93,9 +92,8 @@
 				<Form.Field {form} name="{dayId}.end.minute">
 					<Form.Control>
 						{#snippet children({ props })}
-
-						<!-- required for spacing. it's cursed -->
-						<!-- eslint-disable-next-line no-irregular-whitespace -->
+							<!-- required for spacing. it's cursed -->
+							<!-- eslint-disable-next-line no-irregular-whitespace -->
 							<Form.Label>​</Form.Label>
 							<Input onblur={pad} {...props} type="number" bind:value={endMinute} />
 						{/snippet}

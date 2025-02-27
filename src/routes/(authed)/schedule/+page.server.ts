@@ -13,7 +13,7 @@ import { new_session } from '$lib/emails/new_session';
 import { slottificate } from '$lib/slottificate';
 import { DateTime, Interval } from 'luxon';
 import { MAX_PENDING_SESSIONS, ARTCC_EMAIL_DOMAIN } from '$env/static/private';
-import { PUBLIC_FACILITY_NAME } from "$env/static/public";
+import { PUBLIC_FACILITY_NAME } from '$env/static/public';
 import { z } from 'zod';
 import { superValidate, message, setError } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -40,7 +40,6 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		(session) => session.student === user.id && DateTime.fromISO(session.start) > now
 	).length;
 
-
 	const timezones = getTimeZones();
 	timezones.sort((a, b) => {
 		const nameA = a.name.toUpperCase(); // ignore upper and lowercase
@@ -65,15 +64,15 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 	});
 
 	const data = {};
-	if (url.searchParams.has("sessionId")) {
-		const id = url.searchParams.get("sessionId");
+	if (url.searchParams.has('sessionId')) {
+		const id = url.searchParams.get('sessionId');
 		const session = (await db.select().from(sessions).where(eq(sessions.id, id)))[0];
 		data.sessionType = session.type;
 		data.timezone = session.timezone;
 	}
 
 	const maxPending = Number.parseInt(MAX_PENDING_SESSIONS);
-	if (maxPending > 0 && pendingForStudent >= maxPending && !url.searchParams.has("sessionId")) {
+	if (maxPending > 0 && pendingForStudent >= maxPending && !url.searchParams.has('sessionId')) {
 		// don't allow the student to book any more sessions
 		slotData = {};
 		atMaxSessions = true;
@@ -124,8 +123,8 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 		form,
 		sessionMap,
 		timezones,
-		reschedule: url.searchParams.has("sessionId"),
-		oldId: url.searchParams.get("sessionId")
+		reschedule: url.searchParams.has('sessionId'),
+		oldId: url.searchParams.get('sessionId')
 	};
 };
 
@@ -197,7 +196,7 @@ export const actions: Actions = {
 
 		const id = ulid();
 
-		const oldId = event.url.searchParams.get("sessionId");
+		const oldId = event.url.searchParams.get('sessionId');
 
 		const studentEmailContent = appointment_booked({
 			startTime: start.setZone(form.data.timezone),
@@ -222,7 +221,7 @@ export const actions: Actions = {
 			emailDomain: ARTCC_EMAIL_DOMAIN
 		});
 
-		if ( oldId == undefined) {
+		if (oldId == undefined) {
 			await db.insert(sessions).values({
 				id,
 				mentor: slotObj.mentor,
@@ -232,7 +231,8 @@ export const actions: Actions = {
 				timezone: form.data.timezone
 			});
 		} else {
-			await db.update(sessions)
+			await db
+				.update(sessions)
 				.set({
 					start: start.toISO(),
 					timezone: form.data.timezone

@@ -4,7 +4,7 @@ import { ROLE_MENTOR, ROLE_STAFF } from '$lib/utils';
 import { redirect } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { mentors, sessions, sessionTypes, students, users } from '$lib/server/db/schema';
-import { eq, gt, gte, ne, or } from 'drizzle-orm';
+import { eq, gte, or } from 'drizzle-orm';
 import type { PageServerLoad, Actions } from './$types';
 import { DateTime } from 'luxon';
 import { fail, superValidate } from 'sveltekit-superforms';
@@ -34,8 +34,8 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 
 	const start = DateTime.fromISO(session.start);
 
-	const sTypes = (await db.select().from(sessionTypes));
-	const typesMap: Record<string, { name: string, length: number }> = {};
+	const sTypes = await db.select().from(sessionTypes);
+	const typesMap: Record<string, { name: string; length: number }> = {};
 	for (const type of sTypes) {
 		typesMap[type.id] = type;
 	}
@@ -52,12 +52,14 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 
 	const form = await superValidate(data, zod(editSchema));
 
-	const dmentors = await db.select().from(users).where(or(gte(users.roleOverride, ROLE_MENTOR), gte(users.role, ROLE_MENTOR)));
+	const dmentors = await db
+		.select()
+		.from(users)
+		.where(or(gte(users.roleOverride, ROLE_MENTOR), gte(users.role, ROLE_MENTOR)));
 	const usersMap: Record<number, string> = {};
 	for (const user of dmentors) {
 		usersMap[user.id] = user.firstName + ' ' + user.lastName;
 	}
-
 
 	return {
 		sessionInfo: sessionAndFriends,
@@ -106,16 +108,14 @@ export const actions: Actions = {
 
 		const data = {
 			start: date.toString(),
-			type: form.data.type,
+			type: form.data.type
 		};
 
 		if (roleOf(user) >= ROLE_STAFF) {
 			data.mentor = form.data.mentor;
 		}
 
-		await db.update(sessions)
-			.set(data)
-			.where(eq(sessions.id, event.params.sessionId));
+		await db.update(sessions).set(data).where(eq(sessions.id, event.params.sessionId));
 
 		return { form };
 	}

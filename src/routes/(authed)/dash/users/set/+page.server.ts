@@ -56,7 +56,8 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 
-		await db.update(users)
+		await db
+			.update(users)
 			.set({
 				roleOverride: form.data.roleOverride
 			})

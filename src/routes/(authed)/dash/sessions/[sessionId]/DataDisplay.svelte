@@ -1,11 +1,10 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { ScrollTextIcon } from 'lucide-svelte';
 
 	interface Props {
-		icon: never,
-		label: string,
-		children: Snippet
+		icon: never;
+		label: string;
+		children: Snippet;
 	}
 	let props: Props = $props();
 	let { label, children } = props;

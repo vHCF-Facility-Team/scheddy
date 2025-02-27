@@ -5,13 +5,13 @@ import DataTableActions from './DataTableActions.svelte';
 import { ratingIdDisplay } from '$lib/utils';
 
 export type TSType = {
-	id: string,
-	category: string,
-	name: string,
-	order: number,
-	length: number,
-	rating: number
-}
+	id: string;
+	category: string;
+	name: string;
+	order: number;
+	length: number;
+	rating: number;
+};
 
 export const stColumns: ColumnDef<TSType>[] = [
 	{
@@ -20,7 +20,7 @@ export const stColumns: ColumnDef<TSType>[] = [
 	},
 	{
 		accessorKey: 'name',
-		header: 'Name',
+		header: 'Name'
 	},
 	{
 		accessorKey: 'length',
@@ -28,12 +28,12 @@ export const stColumns: ColumnDef<TSType>[] = [
 	},
 	{
 		accessorKey: 'order',
-		header: 'Ordering',
+		header: 'Ordering'
 	},
 	{
 		accessorKey: 'rating',
 		header: 'Required Rating',
-		cell: ({row}) => {
+		cell: ({ row }) => {
 			return ratingIdDisplay(row.original.rating);
 		}
 	},
@@ -42,7 +42,7 @@ export const stColumns: ColumnDef<TSType>[] = [
 		header: () => {
 			return renderComponent(DataTableAddButton, {});
 		},
-		cell: ({row}) => {
+		cell: ({ row }) => {
 			return renderComponent(DataTableActions, { id: row.original.id });
 		}
 	}

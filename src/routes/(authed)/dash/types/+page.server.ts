@@ -20,8 +20,12 @@ export const load: PageServerLoad = async ({ cookies }) => {
 			const orderCompare = a.order - b.order;
 			if (orderCompare == 0) {
 				return a.name.localeCompare(b.name);
-			} else { return orderCompare; }
-		} else { return categoryCompare; }
+			} else {
+				return orderCompare;
+			}
+		} else {
+			return categoryCompare;
+		}
 	});
 
 	return {

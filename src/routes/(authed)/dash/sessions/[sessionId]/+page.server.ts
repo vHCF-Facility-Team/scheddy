@@ -27,6 +27,10 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 		redirect(307, '/schedule');
 	}
 
+	if (DateTime.fromISO(sessionAndFriends.session.start).diffNow(['hours']).hours < 24) {
+		redirect(307, '/schedule');
+	}
+
 	return {
 		sessionInfo: sessionAndFriends,
 		isMentor: user.id == sessionAndFriends.session.mentor || roleOf(user) >= ROLE_STAFF,
@@ -39,7 +43,6 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 };
 
 export const actions: Actions = {
-
 	reschedule: async ({ cookies, params, request }) => {
 		const { user } = (await loadUserData(cookies))!;
 		const sessionList = await db

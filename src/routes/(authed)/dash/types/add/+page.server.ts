@@ -5,7 +5,6 @@ import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import { sessionTypes } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { addSchema } from './addSchema';
@@ -19,7 +18,11 @@ export const load: PageServerLoad = async ({ cookies }) => {
 
 	return {
 		form,
-		breadcrumbs: [{ title: 'Dashboard', url: '/dash' }, { title: 'Session Types', url: '/dash/types' }, { title: 'New' }]
+		breadcrumbs: [
+			{ title: 'Dashboard', url: '/dash' },
+			{ title: 'Session Types', url: '/dash/types' },
+			{ title: 'New' }
+		]
 	};
 };
 export const actions: Actions = {
@@ -33,16 +36,15 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 
-		await db.insert(sessionTypes)
-			.values({
-				id: nanoid(),
-				name: form.data.name,
-				length: form.data.length,
-				order: form.data.order,
-				rating: form.data.rating,
-				category: form.data.category
-			});
+		await db.insert(sessionTypes).values({
+			id: nanoid(),
+			name: form.data.name,
+			length: form.data.length,
+			order: form.data.order,
+			rating: form.data.rating,
+			category: form.data.category
+		});
 
 		return { form };
 	}
-}
+};

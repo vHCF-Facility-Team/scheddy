@@ -6,7 +6,6 @@ import { db } from '$lib/server/db';
 import { mentors, sessions, sessionTypes, students } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import type { PageServerLoad, Actions } from './$types';
-import { DateTime } from 'luxon';
 
 export const load: PageServerLoad = async ({ cookies, params }) => {
 	const { user } = (await loadUserData(cookies))!;
@@ -58,5 +57,5 @@ export const actions: Actions = {
 		}
 
 		await db.delete(sessions).where(eq(sessions.id, params.sessionId));
-	},
+	}
 };
