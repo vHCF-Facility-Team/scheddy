@@ -20,11 +20,17 @@
 
 	function customFilter(commandValue: string, search: string, commandKeywords?: string[]): number {
 		const defaultScore = computeCommandScore(commandValue, search, commandKeywords);
-		const nameScore = computeCommandScore(
-			usersMap[Number.parseInt(commandValue)],
-			search,
-			commandKeywords
-		);
+		const parsedUserName = usersMap[Number.parseInt(commandValue)];
+
+		let nameScore = 0;
+
+		if (parsedUserName) {
+			nameScore = computeCommandScore(
+				parsedUserName,
+				search,
+				commandKeywords
+			);
+		}
 
 		// Add custom logic here
 		return Math.max(defaultScore, nameScore);
