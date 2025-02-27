@@ -6,6 +6,8 @@
 	import WeekdayAvailability from './WeekdayAvailability.svelte';
 	import SpecificDateAvailability from './SpecificDateAvailability.svelte';
 	import { Separator } from '$lib/components/ui/separator';
+	import { ROLE_STAFF } from '$lib/utils';
+	import { roleOf } from '$lib';
 
 	interface Props {
 		data: PageData;
@@ -58,10 +60,12 @@
 
 	<h2 class="font-semibold text-lg">
 		Allowed Session Types
-		<a
-			class="text-sm text-blue-500 hover:text-blue-600 transition font-semibold"
-			href="/dash/mentors/{data.mentor.id}/types">Update allowed types &rarr;</a
-		>
+		{#if roleOf(data.user) >= ROLE_STAFF}
+			<a
+				class="text-sm text-blue-500 hover:text-blue-600 transition font-semibold"
+				href="/dash/mentors/{data.mentor.id}/types">Update allowed types &rarr;</a
+			>
+		{/if}
 	</h2>
 	{#if data.allowedTypes}
 		<ul class="list-disc list-inside">

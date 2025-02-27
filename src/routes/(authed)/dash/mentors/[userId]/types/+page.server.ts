@@ -12,7 +12,7 @@ import { typeSchema } from './typeSchema';
 
 export const load: PageServerLoad = async ({ cookies, params }) => {
 	const { user } = (await loadUserData(cookies))!;
-	if (roleOf(user) < ROLE_STAFF && user.id != params.userId) {
+	if (roleOf(user) < ROLE_STAFF) {
 		redirect(307, '/schedule');
 	}
 
