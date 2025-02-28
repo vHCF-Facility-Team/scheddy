@@ -22,9 +22,7 @@ import { getTimeZones } from '@vvo/tzdb';
 export const load: PageServerLoad = async ({ cookies, url }) => {
 	const { user } = (await loadUserData(cookies))!;
 
-	const sTypes = (await db.select().from(sessionTypes)).filter((u) => {
-		return user.rating >= u.rating;
-	});
+	const sTypes = (await db.select().from(sessionTypes));
 	const mentors = await db
 		.select()
 		.from(users)
@@ -116,7 +114,7 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 	return {
 		user,
 		role: roleString(roleOf(user)),
-		sessionTypes: sTypes,
+		sessionTypes: sTypes.filter((u) => u.rating >= user.rating),
 		categories,
 		slotData,
 		atMaxSessions,
@@ -132,9 +130,7 @@ export const actions: Actions = {
 	default: async (event) => {
 		const { user } = (await loadUserData(event.cookies))!;
 
-		const sTypes = (await db.select().from(sessionTypes)).filter((u) => {
-			return user.rating >= u.rating;
-		});
+		const sTypes = (await db.select().from(sessionTypes));
 		const mentors = await db
 			.select()
 			.from(users)
