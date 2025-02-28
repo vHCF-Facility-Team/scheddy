@@ -132,7 +132,9 @@ export const actions: Actions = {
 	default: async (event) => {
 		const { user } = (await loadUserData(event.cookies))!;
 
-		const sTypes = await db.select().from(sessionTypes);
+		const sTypes = (await db.select().from(sessionTypes)).filter((u) => {
+			return user.rating >= u.rating;
+		});
 		const mentors = await db
 			.select()
 			.from(users)
@@ -163,14 +165,19 @@ export const actions: Actions = {
 			return setError(form, 'sessionType', 'Session type does not exist.');
 		}
 
+		console.log(slotData);
+
 		const slotObj = {
 			slot: form.data.slot.split('@')[0],
 			mentor: Number.parseInt(form.data.slot.split('@')[1])
 		};
 		const availableSlots = slotData[form.data.sessionType];
 
+		console.log(availableSlots);
+
 		let slotStillAvailable = false;
 		for (const availSlot of availableSlots) {
+			console.log(availSlot, slotObj);
 			if (availSlot.slot === slotObj.slot && availSlot.mentor == slotObj.mentor) {
 				slotStillAvailable = true;
 			}
