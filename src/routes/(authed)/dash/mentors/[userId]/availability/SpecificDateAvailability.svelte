@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Infer, SuperForm } from 'sveltekit-superforms';
 	import type { AvailSchema } from './availSchema';
-	import { DateFormatter, type DateValue, getLocalTimeZone } from '@internationalized/date';
+	import { DateFormatter, type DateValue, getLocalTimeZone, today } from '@internationalized/date';
 	import { Button } from '$lib/components/ui/button';
 	import * as Popover from '$lib/components/ui/popover';
 	import { cn } from '$lib/utils';
@@ -60,7 +60,7 @@
 				{/snippet}
 			</Popover.Trigger>
 			<Popover.Content class="w-auto p-0" align="start">
-				<Calendar type="single" bind:value={dateAdd} />
+				<Calendar minValue={today(getLocalTimeZone())} type="single" bind:value={dateAdd} />
 			</Popover.Content>
 		</Popover.Root>
 		<Button onclick={addException}>Add override &rarr;</Button>
