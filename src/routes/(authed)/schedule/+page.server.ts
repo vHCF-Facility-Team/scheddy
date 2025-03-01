@@ -5,7 +5,7 @@ import { roleOf } from '$lib';
 import { db } from '$lib/server/db';
 import { sessions, sessionTypes, users } from '$lib/server/db/schema';
 import { eq, gte, or } from 'drizzle-orm';
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { ulid } from 'ulid';
 import { appointment_booked } from '$lib/emails/appointment_booked';
 import { sendEmail } from '$lib/email';
@@ -65,8 +65,10 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 	if (url.searchParams.has('sessionId')) {
 		const id = url.searchParams.get('sessionId');
 		const session = (await db.select().from(sessions).where(eq(sessions.id, id)))[0];
-		data.sessionType = session.type;
-		data.timezone = session.timezone;
+		if (!DateTime.fromISO(session.start).diffNow(['hours']).hours < 24) {
+			data.sessionType = session.type;
+			data.timezone = session.timezone;
+		}
 	}
 
 	const maxPending = Number.parseInt(MAX_PENDING_SESSIONS);
