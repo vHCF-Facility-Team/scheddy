@@ -11,7 +11,9 @@ This document explains different ways to help out with Scheddy, and details abou
 - [Code of Content](#code-of-conduct)
 - [I Have a Question](#i-have-a-question)
 - [I Want To Contribute](#i-want-to-contribute)
-
+- [Reporting Bugs](#reporting-bugs)
+- [Suggesting Enhancements](#suggesting-enhancements)
+- [Code Contributions](#code-contributions)
 
 ## Code of Conduct
 This project, all spaces surrounding it, and everyone participating in it is governed by both the [VATSIM Code of Conduct](https://vatsim.net/docs/policy/code-of-conduct) and [our own, adapted from the Contributor Covenant](CODE_OF_CONDUCT.md). By participating, you are expected to uphold the rules set out within both of these documents. Please report any unacceptable behavior to the maintainer @ <wm@ztlartcc.org>.
