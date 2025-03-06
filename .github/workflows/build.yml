@@ -41,7 +41,7 @@ jobs:
       - name: Build production bundle
         run: bun --bun run build
       - name: Copy package manager tools
-        run: cp package.json build/ && cp bun.lockb build/
+        run: cp package.json build/ && cp bun.lock build/
       - name: Install production dependencies
         run: cd build && bun i --frozen-lockfile --production
       - name: Pack production bundle
