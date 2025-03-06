@@ -44,9 +44,6 @@ jobs:
         run: cp package.json build/ && cp bun.lock build/
       - name: Install production dependencies
         run: cd build && bun i --frozen-lockfile --production
-      - name: Pack production bundle
-        run: cp -r build scheddy && tar -czvf scheddy.tar.gz scheddy
-
       - name: Stop main server
         uses: garygrossgarten/github-action-ssh@release
         with:
@@ -59,7 +56,7 @@ jobs:
         uses: burnett01/rsync-deployments@5.2
         with:
           switches: -avzP
-          path: scheddy
+          path: .
           remote_path: ${{ secrets.SERVER_PATH }}
           remote_host: ${{ secrets.SERVER_HOST }}
           remote_user: ${{ secrets.SERVER_USERNAME }}
