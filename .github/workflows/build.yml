@@ -30,13 +30,14 @@ jobs:
       PUBLIC_SENTRY_DSN: ${{ secrets.PUBLIC_SENTRY_DSN }}
       API_MASTER_KEY: ${{ secrets.API_MASTER_KEY }}
       BASE_URL: ${{ vars.BASE_URL }}
+      ARTCC_EMAIL_DOMAIN: ${{ vars.ARTCC_EMAIL_DOMAIN }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
       - name: Install build dependencies
-        run: bun install --frozen-lockfile
+        run: bun install --frozen-lockfile && bun svelte-kit sync
       - name: Build production bundle
         run: bun --bun run build
       - name: Copy package manager tools
