@@ -240,7 +240,8 @@ export const actions: Actions = {
 				.update(sessions)
 				.set({
 					start: start.toISO(),
-					timezone: form.data.timezone
+					timezone: form.data.timezone,
+					mentor: slotObj.mentor,
 				})
 				.where(eq(sessions.id, oldId));
 		}
