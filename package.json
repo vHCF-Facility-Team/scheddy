@@ -14,7 +14,8 @@
 		"db:studio": "drizzle-kit studio",
 		"db:generate": "drizzle-kit generate",
 		"lint": "eslint . && prettier --check .",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"run": "node build/index.js"
 	},
 	"devDependencies": {
 		"@internationalized/date": "^3.7.0",
