@@ -225,11 +225,6 @@ export const actions: Actions = {
 			emailDomain: ARTCC_EMAIL_DOMAIN
 		});
 
-		const createdByData = {
-			id: user.id,
-			time: DateTime.now().toISO()
-		};
-
 		if (oldId == undefined) {
 			await db.insert(sessions).values({
 				id,
@@ -238,7 +233,8 @@ export const actions: Actions = {
 				start: start.toISO(),
 				type: form.data.sessionType,
 				timezone: form.data.timezone,
-				createdBy: JSON.stringify(createdByData)
+				createdBy: user.id,
+				createdAt: DateTime.now().toISO()
 			});
 		} else {
 			await db
