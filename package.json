@@ -40,6 +40,7 @@
 		"eslint-plugin-svelte": "^2.46.1",
 		"formsnap": "^2.0.0",
 		"globals": "^15.15.0",
+		"ical": "^0.8.0",
 		"lucide-svelte": "^0.476.0",
 		"luxon": "^3.5.0",
 		"mode-watcher": "^0.5.1",
@@ -65,6 +66,7 @@
 		"zod": "^3.24.2"
 	},
 	"dependencies": {
-		"@sentry/sveltekit": "^8.55.0"
+		"@sentry/sveltekit": "^8.55.0",
+		"ics": "^3.8.1"
 	}
 }
