@@ -75,7 +75,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		usersMap[user.id] = { name: user.firstName + ' ' + user.lastName };
 	}
 
-	const now = DateTime.now().setZone(mentorsMap[user.id].timezone)
+	const now = DateTime.now().setZone(mentorsMap[user.id].timezone);
 
 	const data: typeof createSchema._type = {
 		date: now.toISODate(),
@@ -89,13 +89,15 @@ export const load: PageServerLoad = async ({ cookies }) => {
 
 	const form = await superValidate(data, zod(createSchema));
 
-	const now = DateTime.utc().toISO();
-
 	const mentorSessions = await db
 		.select()
 		.from(sessions)
 		.where(
-			and(eq(sessions.mentor, user.id), eq(sessions.cancelled, false), gte(sessions.start, now))
+			and(
+				eq(sessions.mentor, user.id),
+				eq(sessions.cancelled, false),
+				gte(sessions.start, now.toISO())
+			)
 		);
 
 	const timezones = getTimeZones();
@@ -153,11 +155,11 @@ export const actions: Actions = {
 			id,
 			mentor: form.data.mentor,
 			student: form.data.student,
-			start: date.toString(),
+			start: date.toUTC().toString(),
 			type: form.data.type,
 			timezone: form.data.timezone,
 			createdBy: user.id,
-			createdAt: now.toISO()
+			createdAt: DateTime.now().toISO()
 		});
 
 		const mentor = await db.select().from(users).where(eq(users.id, form.data.mentor));

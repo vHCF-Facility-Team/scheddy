@@ -117,7 +117,7 @@ export const actions: Actions = {
 		});
 
 		const data = {
-			start: date.toString(),
+			start: date.toUTC().toString(),
 			type: form.data.type
 		};
 
