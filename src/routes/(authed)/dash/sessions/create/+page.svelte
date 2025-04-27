@@ -2,7 +2,8 @@
 	import type { PageData } from './$types';
 	import { DateTime, Interval } from 'luxon';
 	import { goto } from '$app/navigation';
-	import { CalendarIcon, LoaderCircleIcon } from 'lucide-svelte';
+	import CalendarIcon from '@lucide/svelte/icons/calendar';
+	import LoaderCircleIcon from '@lucide/svelte/icons/loader-circle';
 	import { buttonVariants } from '$lib/components/ui/button';
 	import { toast } from 'svelte-sonner';
 	import { superForm } from 'sveltekit-superforms';
@@ -16,12 +17,11 @@
 		parseDate,
 		today
 	} from '@internationalized/date';
-	import { cn, ROLE_STAFF } from '$lib/utils';
+	import { cn } from '$lib/utils';
 	import { Calendar } from '$lib/components/ui/calendar';
 	import { Input } from '$lib/components/ui/input';
 	import * as Select from '$lib/components/ui/select';
 	import UserSelector from '$lib/ui/UserSelector.svelte';
-	import { roleOf } from '$lib';
 	import type { DayAvailability, MentorAvailability } from '$lib/availability';
 
 	interface Props {
@@ -68,42 +68,65 @@
 		);
 	};
 
-	const isMentorAvailable = $derived.by(() => {
-		if (!data.mentorsMap[$formData.mentor]) return false;
-		if (!Object.keys(data.mentorsMap[$formData.mentor]).includes('availability')) return false;
-		if (Object.keys(data.typesMap).length === 0) return false;
+	const calculateMentorAvailability = (sessionStart: DateTime, sessiondEnd: DateTime) => {
+		const mentor = data.mentorsMap[$formData.mentor];
+		if (!mentor || Object.keys(data.typesMap).length === 0) return false;
 
-		const availability: MentorAvailability | null = data.mentorsMap[$formData.mentor].availability
-			? JSON.parse(data.mentorsMap[$formData.mentor].availability as string)
+		const availability: MentorAvailability | null = mentor.availability
+			? JSON.parse(mentor.availability as string)
 			: null;
 
 		if (!availability) return false;
 
-		const s_date = DateTime.fromISO($formData.date, {
-			zone: $formData.timezone
-		});
-
-		const start = s_date.set({ hour: $formData.hour, minute: $formData.minute });
-		const end = start.plus({ minutes: data.typesMap[$formData.type].length });
-
 		if (
-			!availability[start.weekdayLong?.toLowerCase()].available &&
-			!availability[end.weekdayLong?.toLowerCase()].available &&
+			!availability[sessionStart.weekdayLong?.toLowerCase()].available &&
+			!availability[sessiondEnd.weekdayLong?.toLowerCase()].available &&
 			Object.keys(availability.exceptions).length === 0
 		)
 			return false;
 
-		const dayAvailability = availability[start.weekdayLong?.toLowerCase()] as DayAvailability;
+		const dayAvailability = availability[
+			sessionStart.weekdayLong?.toLowerCase()
+		] as DayAvailability;
 
-		if (availableInterval(dayAvailability, start, end)) {
+		if (availableInterval(dayAvailability, sessionStart, sessiondEnd)) {
 			return true;
 		} else {
 			for (const exception in availability.exceptions) {
 				if ($formData.date === exception) {
-					return availableInterval(availability.exceptions[exception], start, end);
+					return availableInterval(availability.exceptions[exception], sessionStart, sessiondEnd);
 				}
 			}
 		}
+	};
+
+	const notInAvailability =
+		"This session falls outside of this mentor's availability. Are you sure you want to create it?";
+	const conflictsWithExistingSession =
+		'This session falls during an existing session this mentor has booked. Are you sure you want to create it?';
+
+	const isMentorAvailable = $derived.by(() => {
+		const sessionDate = DateTime.fromISO($formData.date, {
+			zone: $formData.timezone
+		});
+
+		const start = sessionDate.set({ hour: $formData.hour, minute: $formData.minute });
+		const end = start.plus({ minutes: data.typesMap[$formData.type].length });
+
+		for (const session of data.mentorSessions) {
+			const sessionStart = DateTime.fromISO(session.start, {
+				zone: session.timezone
+			});
+
+			const sessionEnd = sessionStart.plus({ minutes: data.typesMap[session.type].length });
+			const sessionInterval = Interval.fromDateTimes(sessionStart, sessionEnd);
+
+			if (sessionInterval.contains(start) || sessionInterval.contains(end)) {
+				return { status: false, message: conflictsWithExistingSession };
+			}
+		}
+
+		return { status: calculateMentorAvailability(start, end), message: notInAvailability };
 	});
 
 	$effect(() => {
@@ -266,7 +289,7 @@
 
 	<UserSelector label="Student" {form} {usersMap} name="student" bind:value={$formData.student} />
 
-	{#if isMentorAvailable}
+	{#if isMentorAvailable.status}
 		<Form.Button>
 			{#if $delayed}
 				<LoaderCircleIcon class="animate-spin size-4" />
@@ -283,10 +306,9 @@
 	<Dialog.Root open={dialogOpen} onOpenChange={() => (dialogOpen = !dialogOpen)}>
 		<Dialog.Content>
 			<Dialog.Header>
-				<Dialog.Title>Schedule Outside Availability?</Dialog.Title>
+				<Dialog.Title>Schedule Conflict</Dialog.Title>
 				<Dialog.Description>
-					This session falls outside of this mentor's availability. Are you sure you want to create
-					it?
+					{isMentorAvailable.message}
 				</Dialog.Description>
 			</Dialog.Header>
 			<div class="flex flex-row gap-x-4">

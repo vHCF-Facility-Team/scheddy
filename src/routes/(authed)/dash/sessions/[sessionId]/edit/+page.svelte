@@ -2,7 +2,8 @@
 	import type { PageData } from './$types';
 	import { DateTime } from 'luxon';
 	import { goto } from '$app/navigation';
-	import { CalendarIcon, LoaderCircleIcon } from 'lucide-svelte';
+	import CalendarIcon from '@lucide/svelte/icons/calendar';
+	import LoaderCircleIcon from '@lucide/svelte/icons/loader-circle';
 	import { buttonVariants } from '$lib/components/ui/button';
 	import { toast } from 'svelte-sonner';
 	import { superForm } from 'sveltekit-superforms';
@@ -56,7 +57,7 @@
 
 <h2 class="text-xl font-semibold">Edit Session</h2>
 
-<form class="flex flex-col gap-2 max-w-sm" method="POST" use:enhance>
+<form class="flex flex-col gap-2 max-w-sm" method="POST" action="?/edit" use:enhance>
 	<p class="text-sm text-muted-foreground">
 		Enter all dates and times in {data.sessionInfo.session.timezone}, where it's currently {DateTime.now()
 			.setZone(data.sessionInfo.session.timezone)
@@ -106,7 +107,14 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label>Time</Form.Label>
-					<Input onblur={pad} {...props} type="number" bind:value={$formData.hour} min=0 max=23/>
+					<Input
+						onblur={pad}
+						{...props}
+						type="number"
+						bind:value={$formData.hour}
+						min="0"
+						max="23"
+					/>
 				{/snippet}
 			</Form.Control>
 			<Form.Description>Hours (HH)</Form.Description>
@@ -119,7 +127,14 @@
 					<!-- required for spacing. it's cursed -->
 					<!-- eslint-disable-next-line no-irregular-whitespace -->
 					<Form.Label>​</Form.Label>
-					<Input onblur={pad} {...props} type="number" bind:value={$formData.minute} min=0 max=59 />
+					<Input
+						onblur={pad}
+						{...props}
+						type="number"
+						bind:value={$formData.minute}
+						min="0"
+						max="59"
+					/>
 				{/snippet}
 			</Form.Control>
 			<Form.Description>Minutes (MM)</Form.Description>

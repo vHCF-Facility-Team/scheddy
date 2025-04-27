@@ -6,7 +6,6 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Separator } from '$lib/components/ui/separator';
 	import { Button } from '$lib/components/ui/button';
-	import { TrashIcon } from 'lucide-svelte';
 
 	interface Props {
 		dayId: string;
@@ -43,7 +42,14 @@
 				<Checkbox onblur={pad} {...props} bind:checked={$formData.exceptions[dayId].available} />
 				<div class="flex-1 leading-none flex flex-row justify-between mt-0.5">
 					<Form.Label>{dayId}</Form.Label>
-					<Button onclick={() => {delete $formData.exceptions[dayId]; $formData.exceptions = $formData.exceptions;}} class="float-right h-min text-sm text-destructive p-0" variant="link">
+					<Button
+						onclick={() => {
+							delete $formData.exceptions[dayId];
+							$formData.exceptions = $formData.exceptions;
+						}}
+						class="float-right h-min text-sm text-destructive p-0"
+						variant="link"
+					>
 						remove &rarr;
 					</Button>
 				</div>

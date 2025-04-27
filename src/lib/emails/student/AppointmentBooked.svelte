@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { AppointmentBookedProps } from '$lib/emails/appointment_booked';
+	import type { AppointmentBookedProps } from './appointment_booked';
 	import { DateTime } from 'luxon';
-	import { BASE_URL } from '$env/static/private';
+	import { serverConfig } from '$lib/config/server';
 
 	let {
 		startTime,
@@ -16,13 +16,15 @@
 		emailDomain
 	}: AppointmentBookedProps = $props();
 
-	let reschedule_link = `${BASE_URL}schedule${link_params}`;
+	let reschedule_link = `${serverConfig.site.base_public}schedule${link_params}`;
 	let title = reschedule ? 'Appointment updated' : 'Appointment booked';
+	let bookedText = 'This is your confirmation email for your upcoming session.';
+	let updatedText = 'The details for your upcoming session has changed.';
 </script>
 
 <h1>{title}</h1>
 
-<p>This is your confirmation email for your upcoming session.</p>
+<p>{reschedule ? updatedText : bookedText}</p>
 <p><b>Session type:</b> {type}</p>
 <p><b>Date/time:</b> {startTime.setZone(timezone).toLocaleString(DateTime.DATETIME_HUGE)}</p>
 <p><b>Timezone:</b> {timezone}</p>

@@ -1,15 +1,15 @@
 <script lang="ts">
-	import {
-		CalendarClockIcon,
-		CalendarIcon,
-		CalendarPlusIcon,
-		GraduationCapIcon,
-		HistoryIcon,
-		Layers2Icon,
-		LayoutGridIcon,
-		LibraryIcon,
-		UsersIcon
-	} from 'lucide-svelte';
+	import ArrowUpDown from '@lucide/svelte/icons/arrow-up-down';
+	import CalendarClockIcon from '@lucide/svelte/icons/calendar-clock';
+	import CalendarIcon from '@lucide/svelte/icons/calendar';
+	import CalendarPlusIcon from '@lucide/svelte/icons/calendar-plus';
+	import GraduationCapIcon from '@lucide/svelte/icons/graduation-cap';
+	import HistoryIcon from '@lucide/svelte/icons/history';
+	import LayoutGridIcon from '@lucide/svelte/icons/layout-grid';
+	import LibraryIcon from '@lucide/svelte/icons/library';
+	import Layers2Icon from '@lucide/svelte/icons/layers-2';
+	import UsersIcon from '@lucide/svelte/icons/users';
+	import X from '@lucide/svelte/icons/x';
 	import { ROLE_MENTOR, ROLE_STAFF, ROLE_STUDENT } from '$lib/utils';
 	import type { NestedMenuItem } from './nav';
 	import NavSection from './NavSection.svelte';
@@ -46,6 +46,18 @@
 					url: '/dash/cal/old',
 					title: 'Past Sessions',
 					icon: HistoryIcon,
+					visible: role >= ROLE_MENTOR
+				},
+				{
+					url: '/dash/cal/cancelled',
+					title: 'Cancelled Sessions',
+					icon: X,
+					visible: role >= ROLE_MENTOR
+				},
+				{
+					url: `/dash/cal/transfer-requests`,
+					title: 'Transfer Requests',
+					icon: ArrowUpDown,
 					visible: role >= ROLE_MENTOR
 				}
 			]

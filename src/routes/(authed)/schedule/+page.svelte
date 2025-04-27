@@ -1,16 +1,17 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { PUBLIC_FACILITY_NAME } from '$env/static/public';
 	import * as Card from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
 	import * as Select from '$lib/components/ui/select';
 	import { version } from '$app/environment';
-	import { HeartIcon, LoaderCircle } from 'lucide-svelte';
+	import HeartIcon from '@lucide/svelte/icons/heart';
+	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { superForm } from 'sveltekit-superforms';
 	import { DateTime, Interval } from 'luxon';
 	import { roleOf } from '$lib';
 	import { ROLE_MENTOR, ROLE_STAFF } from '$lib/utils';
+	import { clientConfig } from '$lib/config/client';
 	import { Button } from '$lib/components/ui/button';
 
 	interface Props {
@@ -49,7 +50,8 @@
 				<button onclick={logout} class="hover:underline">Log out</button>
 			</p>
 			<Card.Title
-				>{data.reschedule ? 'Reschedule' : 'Schedule'} appointment at {PUBLIC_FACILITY_NAME}</Card.Title
+				>{data.reschedule ? 'Reschedule' : 'Schedule'} appointment at {clientConfig.facility
+					.name_public}</Card.Title
 			>
 		</Card.Header>
 		<Card.Content>

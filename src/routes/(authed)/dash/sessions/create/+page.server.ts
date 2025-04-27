@@ -4,19 +4,19 @@ import { ROLE_MENTOR, ROLE_STAFF } from '$lib/utils';
 import { redirect } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { sessions, sessionTypes, users } from '$lib/server/db/schema';
-import { eq, inArray } from 'drizzle-orm';
+import { eq, and, inArray, gte } from 'drizzle-orm';
 import type { PageServerLoad, Actions } from './$types';
 import { DateTime } from 'luxon';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { createSchema } from './createSchema';
 import { ulid } from 'ulid';
-import { appointment_booked } from '$lib/emails/appointment_booked';
-import { PUBLIC_FACILITY_NAME } from '$env/static/public';
-import { ARTCC_EMAIL_DOMAIN } from "$env/static/private";
+import { appointment_booked } from '$lib/emails/student/appointment_booked';
+
 import { sendEmail } from '$lib/email';
 import { getTimeZones } from '@vvo/tzdb';
-import { new_session } from '$lib/emails/new_session';
+import { new_session } from '$lib/emails/mentor/new_session';
+import { serverConfig } from '$lib/config/server';
 
 export const load: PageServerLoad = async ({ cookies }) => {
 	const { user } = (await loadUserData(cookies))!;
@@ -27,7 +27,8 @@ export const load: PageServerLoad = async ({ cookies }) => {
 
 	let sTypes: (typeof sessionTypes.$inferSelect)[];
 
-	if (roleOf(user) >= ROLE_STAFF) {
+	// Bypass allowed types if Sr Staff or INS
+	if (roleOf(user) >= ROLE_STAFF || user.rating >= 8) {
 		sTypes = await db.select().from(sessionTypes);
 	} else {
 		const allowedTypes: string[] = user.allowedSessionTypes
@@ -42,14 +43,14 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		typesMap[type.id] = type;
 	}
 
-	const u_users = await db.select().from(users);
+	const usersList = await db.select().from(users);
 
-	let dmentors: (typeof users.$inferSelect)[];
+	let mentorsList: (typeof users.$inferSelect)[];
 
 	if (roleOf(user) >= ROLE_STAFF) {
-		dmentors = u_users.filter((u) => roleOf(u) >= ROLE_MENTOR);
+		mentorsList = usersList.filter((u) => roleOf(u) >= ROLE_MENTOR);
 	} else {
-		dmentors = [user];
+		mentorsList = [user];
 	}
 
 	const mentorsMap: Record<
@@ -61,30 +62,43 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		}
 	> = {};
 
-	for (const user of dmentors) {
+	for (const user of mentorsList) {
 		mentorsMap[user.id] = {
 			name: user.firstName + ' ' + user.lastName,
 			availability: user.mentorAvailability,
-			timezone: user.timezone ?? "America/New York"
+			timezone: user.timezone ?? 'America/New York'
 		};
 	}
 
 	const usersMap: Record<number, { name: string }> = {};
-	for (const user of u_users) {
+	for (const user of usersList) {
 		usersMap[user.id] = { name: user.firstName + ' ' + user.lastName };
 	}
 
+	const now = DateTime.now().setZone(mentorsMap[user.id].timezone);
+
 	const data: typeof createSchema._type = {
-		date: DateTime.now().toISODate(),
-		hour: DateTime.now().hour,
-		minute: DateTime.now().minute,
+		date: now.toISODate(),
+		hour: now.hour,
+		minute: now.minute,
 		type: sTypes.length === 0 ? '' : sTypes[0].id,
 		mentor: user.id,
-		student: u_users[0].id,
+		student: usersList[0].id,
 		timezone: mentorsMap[user.id].timezone
 	};
 
 	const form = await superValidate(data, zod(createSchema));
+
+	const mentorSessions = await db
+		.select()
+		.from(sessions)
+		.where(
+			and(
+				eq(sessions.mentor, user.id),
+				eq(sessions.cancelled, false),
+				gte(sessions.start, now.toISO())
+			)
+		);
 
 	const timezones = getTimeZones();
 	timezones.sort((a, b) => {
@@ -110,7 +124,8 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		typesMap,
 		mentorsMap,
 		usersMap,
-		timezones
+		timezones,
+		mentorSessions
 	};
 };
 
@@ -140,7 +155,7 @@ export const actions: Actions = {
 			id,
 			mentor: form.data.mentor,
 			student: form.data.student,
-			start: date.toString(),
+			start: date.toUTC().toString(),
 			type: form.data.type,
 			timezone: form.data.timezone,
 			createdBy: user.id,
@@ -160,8 +175,8 @@ export const actions: Actions = {
 			type: type[0].name,
 			link_params: `?sessionId=${id}&reschedule=true&type=${form.data.type}`,
 			reschedule: false,
-			facilityName: PUBLIC_FACILITY_NAME,
-			emailDomain: ARTCC_EMAIL_DOMAIN
+			facilityName: serverConfig.facility.name_public,
+			emailDomain: serverConfig.facility.mail_domain
 		});
 
 		const mentorEmailContent = new_session({
@@ -171,17 +186,16 @@ export const actions: Actions = {
 			duration: type[0].length,
 			sessionId: id,
 			type: type[0].name,
-			facilityName: PUBLIC_FACILITY_NAME,
-			emailDomain: ARTCC_EMAIL_DOMAIN
+			reschedule: false,
+			facilityName: serverConfig.facility.name_public,
+			emailDomain: serverConfig.facility.mail_domain
 		});
 
 		try {
 			await sendEmail(
 				student[0].email,
 				'Appointment booked - ' +
-					date
-						.setZone(form.data.timezone)
-						.toLocaleString(DateTime.DATETIME_HUGE),
+					date.setZone(form.data.timezone).toLocaleString(DateTime.DATETIME_HUGE),
 				studentEmailContent.raw,
 				studentEmailContent.html
 			);
@@ -189,9 +203,7 @@ export const actions: Actions = {
 			await sendEmail(
 				mentor[0].email,
 				'Session booked - ' +
-					date
-						.setZone(form.data.timezone)
-						.toLocaleString(DateTime.DATETIME_HUGE),
+					date.setZone(form.data.timezone).toLocaleString(DateTime.DATETIME_HUGE),
 				mentorEmailContent.raw,
 				mentorEmailContent.html
 			);

@@ -1,10 +1,10 @@
-import { loadUserData } from '$lib/userInfo';
+import { loadUserData, type SessionAndFriends } from '$lib/userInfo';
 import { roleOf } from '$lib';
 import { ROLE_MENTOR, ROLE_STAFF } from '$lib/utils';
 import { redirect } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { mentors, sessions, sessionTypes, students, users } from '$lib/server/db/schema';
-import { eq, gte, or } from 'drizzle-orm';
+import { eq, gte, inArray, or } from 'drizzle-orm';
 import type { PageServerLoad, Actions } from './$types';
 import { DateTime } from 'luxon';
 import { fail, superValidate } from 'sveltekit-superforms';
@@ -21,43 +21,50 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 		.leftJoin(mentors, eq(mentors.id, sessions.mentor))
 		.leftJoin(students, eq(students.id, sessions.student))
 		.where(eq(sessions.id, params.sessionId));
-	const sessionAndFriends = sessionList[0];
+	const sessionAndFriends = sessionList[0] as unknown as SessionAndFriends;
 
-	if (
-		roleOf(user) < ROLE_STAFF &&
-		!(user.id == sessionAndFriends.session.student || user.id == sessionAndFriends.session.mentor)
-	) {
+	if (roleOf(user) < ROLE_STAFF && user.id == sessionAndFriends.session.mentor) {
 		redirect(307, '/schedule');
 	}
 
 	const session = sessionAndFriends.session;
 
-	const start = DateTime.fromISO(session.start);
+	const start = DateTime.fromISO(session.start).setZone(session.timezone);
 
-	const sTypes = await db.select().from(sessionTypes);
+	let sTypes: (typeof sessionTypes.$inferSelect)[];
+
+	// Bypass allowed types if Sr Staff or INS
+	if (roleOf(user) >= ROLE_STAFF || user.rating >= 8) {
+		sTypes = await db.select().from(sessionTypes);
+	} else {
+		const allowedTypes: string[] = user.allowedSessionTypes
+			? JSON.parse(user.allowedSessionTypes)
+			: null;
+
+		sTypes = await db.select().from(sessionTypes).where(inArray(sessionTypes.id, allowedTypes));
+	}
+
 	const typesMap: Record<string, { name: string; length: number }> = {};
 	for (const type of sTypes) {
 		typesMap[type.id] = type;
 	}
 
 	const data = {
-		date: DateTime.fromISO(session.start).toISODate(),
+		date: start.toISODate(),
 		hour: start.hour,
 		minute: start.minute,
-
 		type: session.type,
-
 		mentor: session.mentor
 	};
 
 	const form = await superValidate(data, zod(editSchema));
 
-	const dmentors = await db
+	const mentorsList = await db
 		.select()
 		.from(users)
 		.where(or(gte(users.roleOverride, ROLE_MENTOR), gte(users.role, ROLE_MENTOR)));
 	const usersMap: Record<number, string> = {};
-	for (const user of dmentors) {
+	for (const user of mentorsList) {
 		usersMap[user.id] = user.firstName + ' ' + user.lastName;
 	}
 
@@ -86,12 +93,9 @@ export const actions: Actions = {
 			.leftJoin(mentors, eq(mentors.id, sessions.mentor))
 			.leftJoin(students, eq(students.id, sessions.student))
 			.where(eq(sessions.id, event.params.sessionId));
-		const sessionAndFriends = sessionList[0];
+		const sessionAndFriends = sessionList[0] as unknown as SessionAndFriends;
 
-		if (
-			roleOf(user) < ROLE_STAFF &&
-			!(user.id == sessionAndFriends.session.student || user.id == sessionAndFriends.session.mentor)
-		) {
+		if (roleOf(user) < ROLE_STAFF && !(user.id == sessionAndFriends.session.mentor)) {
 			redirect(307, '/schedule');
 		}
 
@@ -107,7 +111,7 @@ export const actions: Actions = {
 		});
 
 		const data = {
-			start: date.toString(),
+			start: date.toUTC().toString(),
 			type: form.data.type
 		};
 

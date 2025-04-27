@@ -4,7 +4,7 @@ import { ROLE_MENTOR } from '$lib/utils';
 import { redirect } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { mentors, sessions, sessionTypes, students } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
+import { and, eq, gte } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 import { DateTime } from 'luxon';
 
@@ -14,20 +14,15 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		redirect(307, '/schedule');
 	}
 
-	const allSessions = await db
+	const now = DateTime.utc().toISO();
+
+	const mentorSessions = await db
 		.select()
 		.from(sessions)
 		.leftJoin(students, eq(students.id, sessions.student))
 		.leftJoin(mentors, eq(mentors.id, sessions.mentor))
-		.leftJoin(sessionTypes, eq(sessionTypes.id, sessions.type));
-
-	const mentorSessions = [];
-	const now = DateTime.utc();
-	for (const sess of allSessions) {
-		const start = DateTime.fromISO(sess.session.start);
-		if (start < now) continue;
-		mentorSessions.push(sess);
-	}
+		.leftJoin(sessionTypes, eq(sessionTypes.id, sessions.type))
+		.where(and(eq(sessions.cancelled, false), gte(sessions.start, now)));
 
 	mentorSessions.sort((a, b) => {
 		const a_dt = DateTime.fromISO(a.session.start);

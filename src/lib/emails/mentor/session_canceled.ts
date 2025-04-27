@@ -1,39 +1,38 @@
 import { DateTime } from 'luxon';
 import { type EmailContent, templateOut } from '$lib/email';
-import plaintextTemplate from './AppointmentBooked.txt?raw';
-import AppointmentBooked from './AppointmentBooked.svelte';
+import plaintextTemplate from './SessionCanceled.txt';
+import SessionCanceled from './SessionCanceled.svelte';
 import { render } from 'svelte/server';
-import { BASE_URL } from '$env/static/private';
+import { roleString } from '$lib/utils';
 
-export interface AppointmentBookedProps {
+export interface SessionCanceledProps {
 	startTime: DateTime;
 	type: string;
 	duration: number;
-	mentorName: string;
+	studentName: string;
 	sessionId: string;
 	timezone: string;
-	link_params: string;
-	reschedule?: boolean;
 	facilityName: string;
 	emailDomain: string;
+	cancellationReason: string;
+	cancellationUserLevel: number;
 }
 
-export function appointment_booked(props: AppointmentBookedProps): EmailContent {
+export function session_canceled(props: SessionCanceledProps): EmailContent {
 	return {
 		raw: templateOut(plaintextTemplate, {
 			startTime: props.startTime.setZone(props.timezone).toLocaleString(DateTime.DATETIME_HUGE),
 			type: props.type,
 			duration: props.duration.toString(),
-			mentorName: props.mentorName,
+			studentName: props.studentName,
 			sessionId: props.sessionId,
 			timezone: props.timezone,
-			link_params: props.link_params,
-			reschedule: props.reschedule ? 'rescheduled' : '',
-			reschedule_link: `${BASE_URL}schedule/${props.link_params}`,
 			facilityName: props.facilityName,
-			emailDomain: props.emailDomain
+			emailDomain: props.emailDomain,
+			cancellationReason: props.cancellationReason,
+			role: roleString(props.cancellationUserLevel)
 		}),
-		html: render(AppointmentBooked, {
+		html: render(SessionCanceled, {
 			props: props
 		}).body
 	};

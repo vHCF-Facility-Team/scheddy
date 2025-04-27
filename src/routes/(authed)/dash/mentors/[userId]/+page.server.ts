@@ -4,19 +4,10 @@ import { ROLE_STAFF } from '$lib/utils';
 import { redirect } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { sessions, sessionTypes, students, mentors, users } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 import type { MentorAvailability } from '$lib/availability';
 import { DateTime } from 'luxon';
-import { getTimeZones } from '@vvo/tzdb';
-
-const createUTCInt = (date: string, hr: number, min: number, timezone: string) => {
-	const iso = `${date}T${hr.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}:00Z`;
-
-	const tz = getTimeZones().filter((tz) => tz.name === timezone)[0];
-
-	return new Date(iso).getTime() - tz.currentTimeOffsetInMinutes * 60 * 1000;
-};
 
 export const load: PageServerLoad = async ({ cookies, params }) => {
 	const { user } = (await loadUserData(cookies))!;
@@ -46,11 +37,14 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 	const allowedTypes: string[] | null = mentor[0].allowedSessionTypes
 		? JSON.parse(mentor[0].allowedSessionTypes)
 		: null;
+	const bookableTypes: string[] | null = mentor[0].bookableSessionTypes
+		? JSON.parse(mentor[0].bookableSessionTypes)
+		: null;
 
 	const allSessions = await db
 		.select()
 		.from(sessions)
-		.where(eq(sessions.mentor, mentor[0].id))
+		.where(and(eq(sessions.mentor, mentor[0].id), eq(sessions.cancelled, false)))
 		.leftJoin(students, eq(students.id, sessions.student))
 		.leftJoin(mentors, eq(mentors.id, sessions.mentor))
 		.leftJoin(sessionTypes, eq(sessionTypes.id, sessions.type));
@@ -79,14 +73,12 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 
 	if (avail?.exceptions) {
 		for (const ex in avail.exceptions) {
-			const ex_date = createUTCInt(
-				ex,
-				avail.exceptions[ex].start.hour,
-				avail.exceptions[ex].start.minute,
-				mentor[0].timezone
-			);
+			const ex_date = DateTime.fromISO(ex).setZone(mentor[0].timezone).set({
+				hour: avail.exceptions[ex].start.hour,
+				minute: avail.exceptions[ex].start.minute
+			});
 
-			const time_now = new Date().getTime();
+			const time_now = DateTime.now();
 
 			if (ex_date < time_now) {
 				delete avail.exceptions[ex];
@@ -109,6 +101,7 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 		mentor: mentor[0],
 		availability: avail,
 		allowedTypes,
+		bookableTypes,
 		typesMap,
 		mentorSessions,
 		breadcrumbs:

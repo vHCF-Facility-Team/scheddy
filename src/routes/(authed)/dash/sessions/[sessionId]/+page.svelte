@@ -1,22 +1,57 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { DateTime } from 'luxon';
-	import {
-		CalendarDaysIcon,
-		ClockIcon,
-		GraduationCapIcon,
-		IdCardIcon,
-		PencilIcon
-	} from 'lucide-svelte';
+	import CalendarDaysIcon from '@lucide/svelte/icons/calendar-days';
+	import ClockIcon from '@lucide/svelte/icons/clock';
+	import GraduationCapIcon from '@lucide/svelte/icons/graduation-cap';
+	import IdCardIcon from '@lucide/svelte/icons/id-card';
+	import PencilIcon from '@lucide/svelte/icons/pencil';
+	import X from '@lucide/svelte/icons/x';
 	import { Button } from '$lib/components/ui/button';
 	import DataDisplay from './DataDisplay.svelte';
 	import { roleOf } from '$lib';
-	import { ROLE_STAFF } from '$lib/utils';
+	import { ROLE_STAFF, roleString } from '$lib/utils';
+	import { goto, invalidateAll } from '$app/navigation';
+	import { toast } from 'svelte-sonner';
 
 	interface Props {
 		data: PageData;
 	}
 	let { data }: Props = $props();
+
+	async function accept() {
+		await fetch('?/accept', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			}
+		});
+		toast.success('Session accepted successfully!');
+		await invalidateAll();
+	}
+
+	async function decline() {
+		await fetch('?/decline', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			}
+		});
+		await goto(`/dash/mentors/${data.user.id}`);
+		toast.success('Session declined successfully!');
+		await invalidateAll();
+	}
+
+	async function cancel_request() {
+		await fetch('?/cancel', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			}
+		});
+		toast.success('Session transfer request cancelled successfully!');
+		await invalidateAll();
+	}
 </script>
 
 <h2 class="text-xl font-semibold">Session Information</h2>
@@ -41,13 +76,31 @@
 			<DataDisplay icon={PencilIcon} label="Created By">
 				{data.createdBy}
 			</DataDisplay>
+			{#if data.sessionInfo.session.cancelled}
+				<DataDisplay icon={X} label="Cancelled">
+					{roleString(data.sessionInfo.session.cancellationUserLevel ?? 0)}:
+					{data.sessionInfo.session.cancellationReason}
+				</DataDisplay>
+			{/if}
 		{/if}
 	</tbody>
 </table>
 
 <div class="flex flex-row flex-wrap gap-2">
-	<Button href="/dash/sessions/{data.sessionInfo.session.id}/edit">Edit</Button>
-	<Button href="/dash/sessions/{data.sessionInfo.session.id}/cancel" variant="destructive"
-		>Cancel</Button
-	>
+	{#if !data.newMentor || roleOf(data.user) >= ROLE_STAFF}
+		<Button href="/dash/sessions/{data.sessionInfo.session.id}/edit">Edit</Button>
+		<Button href="/dash/sessions/{data.sessionInfo.session.id}/cancel" variant="destructive">
+			Cancel
+		</Button>
+		{#if !data.pastSession && !data.pendingTransfer}
+			<Button href="/dash/sessions/{data.sessionInfo.session.id}/transfer">Transfer</Button>
+		{/if}
+		{#if data.pendingTransfer}
+			<Button onclick={cancel_request} variant="destructive">Cancel Transfer Request</Button>
+		{/if}
+	{/if}
+	{#if data.newMentor}
+		<Button onclick={accept}>Accept</Button>
+		<Button onclick={decline}>Decline</Button>
+	{/if}
 </div>

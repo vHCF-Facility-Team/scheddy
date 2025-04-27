@@ -2,9 +2,9 @@ import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { mentors, sessions, sessionTypes } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
-import { API_MASTER_KEY } from '$env/static/private';
+import { eq, and } from 'drizzle-orm';
 import { DateTime } from 'luxon';
+import { serverConfig } from '$lib/config/server';
 
 export const GET: RequestHandler = async ({ request, params }) => {
 	const token = request.headers.get('Authorization');
@@ -40,7 +40,7 @@ export const GET: RequestHandler = async ({ request, params }) => {
 	}
 
 	const real_token = token_parts[1];
-	if (real_token != API_MASTER_KEY) {
+	if (real_token != serverConfig.api.master_key) {
 		error(
 			403,
 			JSON.stringify({
@@ -55,7 +55,7 @@ export const GET: RequestHandler = async ({ request, params }) => {
 		.from(sessions)
 		.leftJoin(mentors, eq(sessions.mentor, mentors.id))
 		.leftJoin(sessionTypes, eq(sessions.type, sessionTypes.id))
-		.where(eq(sessions.student, params.userId));
+		.where(and(eq(sessions.student, params.userId), eq(sessions.cancelled, false)));
 
 	// return all sessions with the start date up to 24h in the past
 	const filtered = sess.filter((u) => {
