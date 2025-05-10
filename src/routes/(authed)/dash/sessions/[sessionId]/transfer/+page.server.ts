@@ -52,7 +52,7 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 			? JSON.parse(u.allowedSessionTypes)
 			: [];
 
-		if (allowedSessionTypes.includes(sessionAndFriends.session.type)) {
+		if (allowedSessionTypes && allowedSessionTypes.includes(sessionAndFriends.session.type)) {
 			return u;
 		}
 	});
