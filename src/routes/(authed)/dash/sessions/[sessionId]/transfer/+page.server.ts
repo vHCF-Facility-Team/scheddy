@@ -52,7 +52,7 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
 			? JSON.parse(u.allowedSessionTypes)
 			: [];
 
-		if (allowedSessionTypes.includes(sessionAndFriends.session.type)) {
+		if (allowedSessionTypes && allowedSessionTypes.includes(sessionAndFriends.session.type)) {
 			return u;
 		}
 	});
@@ -94,7 +94,7 @@ export const actions: Actions = {
 			.where(eq(sessions.id, event.params.sessionId));
 		const sessionAndFriends = sessionList[0] as unknown as SessionAndFriends;
 
-		if (roleOf(user) < ROLE_STAFF && user.id == sessionAndFriends.session.mentor) {
+		if (roleOf(user) < ROLE_STAFF && !(user.id == sessionAndFriends.session.mentor)) {
 			redirect(307, '/schedule');
 		}
 
@@ -106,12 +106,10 @@ export const actions: Actions = {
 		const newMentor = await db.select().from(users).where(eq(users.id, form.data.newMentor));
 
 		const mentorEmailContent = new_session_transfer_request({
-			startTime: DateTime.fromISO(sessionAndFriends.session.start).setZone(
-				sessionAndFriends.session.timezone
-			),
+			startTime: DateTime.fromISO(sessionAndFriends.session.start).setZone(newMentor[0].timezone),
 			timezone: sessionAndFriends.session.timezone,
 			studentName: sessionAndFriends.student?.firstName + ' ' + sessionAndFriends.student?.lastName,
-			mentorName: sessionAndFriends.student?.firstName + ' ' + sessionAndFriends.student?.lastName,
+			mentorName: sessionAndFriends.mentor?.firstName + ' ' + sessionAndFriends.mentor?.lastName,
 			duration: sessionAndFriends.sessionType?.length,
 			sessionId: sessionAndFriends.session.id,
 			type: sessionAndFriends.sessionType?.name,
@@ -124,7 +122,7 @@ export const actions: Actions = {
 			newMentor[0].email,
 			'Session transfer request - ' +
 				DateTime.fromISO(sessionAndFriends.session.start)
-					.setZone(sessionAndFriends.session.timezone)
+					.setZone(newMentor[0].timezone)
 					.toLocaleString(DateTime.DATETIME_HUGE),
 			mentorEmailContent.raw,
 			mentorEmailContent.html
