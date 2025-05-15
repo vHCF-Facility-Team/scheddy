@@ -7,7 +7,7 @@ export default defineConfig({
 	plugins: [
 		sentrySvelteKit({
 			sourceMapsUploadOptions: {
-				org: 'hcf-artcc',
+				org: 'ztl-artcc',
 				project: 'scheddy'
 			}
 		}),
